@@ -37,6 +37,6 @@ typedef struct _boot_info_t {
 
 #define SYS_DISK_SECTOR_SIZE		512			// 磁盘扇区大小
 
-#define SYS_KERNEL_LOAD_ADDR		(1024*1024)		// 内核加载的起始地址
+#define SYS_KERNEL_LOAD_ADDR		(0x10000)		// 内核加载的起始地址
 
 #endif // BOOT_INFO_H

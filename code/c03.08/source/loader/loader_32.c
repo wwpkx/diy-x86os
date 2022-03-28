@@ -84,7 +84,7 @@ static uint32_t reload_elf_file (uint8_t * file_buffer) {
  * 从磁盘上加载内核
  */
 void load_kernel(void) {
-	// 临时使用，加载kernel，从第100个扇区开始，到100KB起始地址处
+	// 临时使用，加载kernel，从第100个扇区开始，到400KB起始地址处
 	read_disk(100, 100, (uint8_t *)SYS_KERNEL_LOAD_ADDR);
 
      // 解析ELF文件，并通过调用的方式，进入到内核中去执行，同时传递boot参数
