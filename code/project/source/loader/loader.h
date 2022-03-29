@@ -1,7 +1,8 @@
 #ifndef LOADER_H
 #define LOADER_H
 
-#include "comm/types.h"
+#include "core/types.h"
+#include "core/boot_info.h"
 
 #pragma pack(1)
 // https://wiki.osdev.org/User:Omarrx024/VESA_Tutorial
@@ -59,11 +60,6 @@ struct ModeInfoBlock {
     uint8_t reserved1[206];
 };
 #pragma pack()
-
-// 启动配置 
-#define INIT_SCREEN_WIDTH       800         // 初始显示宽度像素
-#define INIT_SCREEN_HEIGHT      600         // 初始显示高度像素
-#define INIT_SCREEN_BPP         32          // 每像素的位数
 
 void protect_mode_entry (void);
 void load_kernel (void);

@@ -11,9 +11,8 @@
   	.code16
  	.text
  	.extern loader_entry
-	.global _start
 _start:
-	// 栈和段等沿用之前的设置
+	// 沿用之前的设置
 	jmp loader_entry
 
 	// 32位保护模式下的代码

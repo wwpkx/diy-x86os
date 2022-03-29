@@ -8,13 +8,14 @@
  * 作者：李述铜
  * 联系邮箱: 527676163@qq.com
  */
-
-// 16位代码，必须加上放在开头，以便有些io指令生成为32位
-__asm__(".code16gcc");
-
+#include <core/code16.h>
+#include <core/cpu.h>
+#include <core/cpu_instr.h>
+#include <core/boot_info.h>
+#include <core/elf.h>
+#include <core/os_cfg.h>
+#include <fs/fat.h>
 #include "loader.h"
-#include "comm/boot_info.h"
-#include "comm/cpu_instr.h"
 
 static boot_info_t * boot_info;			// 启动参数信息
 
@@ -31,8 +32,7 @@ static smap_entry_t smap_entry[SMAP_ENTRY_NR];
 static void show_msg (const char * msg) {
 	char c;
 
-	// 使用bios写显存，持续往下写
-	// 参考资料：https://blog.csdn.net/qq_40169767/article/details/101511805
+	// 然后再写显存
 	while ((c = *msg++) != '\0') {
 		__asm__ __volatile__(
 				"mov $0xe, %%ah\n\t"
@@ -148,14 +148,16 @@ static void switch_vga_mode (uint16_t width, uint16_t height, uint8_t bpp) {
  * 初始化引导信息
  */
 static void init_boot_info(void) {
-	// boot_info = (boot_info_t *)BOOT_INFO_ADDR;
+	boot_info = (boot_info_t *)BOOT_INFO_ADDR;
 
-	// dbr_t * dbr = (dbr_t *)BOOT_START_ADDR;
-    // boot_info->start_sector = dbr->BPB_HiddSec;
+	dbr_t * dbr = (dbr_t *)BOOT_START_ADDR;
+    boot_info->start_sector = dbr->BPB_HiddSec;
 }
 
 // GDT表。临时用，后面内容会替换成自己的
-static uint16_t gdt_table[][4] = {
+#define CODE_SELECTOR           8       // 缺省第1个
+#define DS_SELECTOR             16      // 缺省第2个
+uint16_t gdt_table[][4] = {
     {0, 0, 0, 0},
     {0xFFFF, 0x0000, 0x9A00, 0x00CF},
     {0xFFFF, 0x0000, 0x9200, 0x00CF},
@@ -165,7 +167,6 @@ static uint16_t gdt_table[][4] = {
  * 进入保护模式
  */
 static void  enter_protect_mode() {
-
     // 关中断
     cli();
 
@@ -181,10 +182,9 @@ static void  enter_protect_mode() {
     // 加载GDT。由于中断已经关掉，IDT不需要加载
     lgdt((uint32_t)gdt_table, sizeof(gdt_table));
 
-    // 长跳转进入到保护模式, cs选择子的偏移是8
-    far_jump(8, (uint32_t)protect_mode_entry);
+    // 长跳转进入到保护模式
+    far_jump(CODE_SELECTOR, (uint32_t)protect_mode_entry);
 }
-
 
 /**
  * loader入口
