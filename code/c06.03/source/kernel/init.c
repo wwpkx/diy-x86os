@@ -11,6 +11,7 @@
 #include "cpu/irq.h"
 #include "dev/timer.h"
 #include "tools/log.h"
+#include "core/task.h"
 #include "os_cfg.h"
 
 static boot_info_t * init_boot_info;        // 启动信息
@@ -26,6 +27,11 @@ void _start (boot_info_t *boot_info) {
     far_jump(KERNEL_SELECTOR_CS, (uint32_t)gdt_reload);
 }
 
+static uint32_t init_task_stack[1024];	// 空闲任务堆栈
+
+static task_t init_task;
+static task_t kernel_task;
+
 /**
  * 空闲任务代码
  */
@@ -34,7 +40,7 @@ void init_task_entry(void *param) {
 
     for (;;) {
         log_printf("init task: %d", count++);
-        //task_switch_to(&kernel_task);
+        task_switch_to(&kernel_task);
     }
 } 
 
@@ -49,10 +55,15 @@ void kernel_entry(boot_info_t *boot_info) {
     log_printf("Version: %s", OS_VERSION);
     log_printf("print int: %d, %x", 1234, 0x1234);
 
+    // 初始化任务
+    task_init(&init_task, (uint32_t)init_task_entry, (uint32_t)&init_task_stack[1024]);
+    task_init(&kernel_task, 0, 0);     // 里面的值不必要写
+    write_tr(kernel_task.tss_sel);
+
     //int a = 3 / 0;
     int count = 0;
     for (;;) {
         log_printf("kernel task: %d", count++);
-        //task_switch_to(&init_task);
+        task_switch_to(&init_task);
     }
 }

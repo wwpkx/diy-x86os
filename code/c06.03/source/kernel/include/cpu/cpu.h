@@ -47,6 +47,9 @@
 #define GDT_GATE_TYPE_IDT		(0xE << 8)		// ����:IDT, 32λ
 #define GDT_GATE_TYPE_CALL      (0xC << 8)      // 调用门
 
+#define EFLAGS_IF           (1 << 9)
+#define EFLAGS_DEFAULT      (1 << 1)
+
 #pragma pack(1)
 
 /**
@@ -88,6 +91,7 @@ void cpu_init (void);
 void gdt_reload (void);
 void set_gate_desc(gate_descriptor_t *desc, uint16_t selector, uint32_t offset, uint16_t attr);
 
+void switch_to_tss (uint32_t tss_selector);
 
 #endif
 

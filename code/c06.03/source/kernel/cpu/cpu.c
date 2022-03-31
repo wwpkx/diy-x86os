@@ -38,6 +38,28 @@ void set_gate_desc(gate_descriptor_t *desc, uint16_t selector, uint32_t offset, 
 }
 
 /**
+ * 分配一个GDT推荐表符
+ */
+gdt_descriptor_t * gdt_alloc_desc (void) {
+    for (int i = 1; i < GDT_TABLE_SIZE; i++) {
+        gdt_descriptor_t * desc = gdt_table + i;
+        if ((desc->attr & (0xF)) == 0) {
+            return desc;
+        }
+    }
+
+    return (gdt_descriptor_t *)0;
+}
+
+/**
+ * GDT描述符转换为索引
+ */
+uint16_t desc_2_gdt_selector(gdt_descriptor_t * desc) {
+    return (desc - gdt_table) * sizeof(gdt_descriptor_t);
+}
+
+
+/**
  * 初始化GDT
  */
 void init_gdt(void) {
@@ -58,6 +80,13 @@ void init_gdt(void) {
 
     // 加载gdt
     lgdt((uint32_t)gdt_table, sizeof(gdt_table));
+}
+
+/**
+ * 切换至TSS，即跳转实现任务切换
+ */
+void switch_to_tss (uint32_t tss_selector) {
+    far_jump(tss_selector, 0);
 }
 
 /**

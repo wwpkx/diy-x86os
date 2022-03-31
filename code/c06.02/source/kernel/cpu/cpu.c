@@ -61,6 +61,13 @@ void init_gdt(void) {
 }
 
 /**
+ * 切换至TSS，即跳转实现任务切换
+ */
+void switch_to_tss (uint32_t tss_selector) {
+    far_jump(tss_selector, 0);
+}
+
+/**
  * CPU初始化
  */
 void cpu_init (void) {
