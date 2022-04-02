@@ -30,6 +30,9 @@ c05.04 支持字符串的格式化
 c05.05 支持整数的格式化
 c05.06 打印异常的信息
 
+gdt_descriptor_t * gdt_alloc_segment (uint32_t base, uint32_t limit, uint16_t attr) {
+改成返回描述符的
+
 c06.01 添加任务状态段
 c06.02 任务的简单初始化
 c06.03 双任务相互切换
@@ -55,6 +58,11 @@ c09.04 互斥锁的解锁
 c09.05 字节FIFO的初始化
 c09.06 字节FIFO的数据写入
 c09.07 字节FIFO的数据读取
+
+内存管理和保护
+// 所有任务共享同一DPL3的代码和数据段，即Protected Flat Model
+
+
 
 
 
