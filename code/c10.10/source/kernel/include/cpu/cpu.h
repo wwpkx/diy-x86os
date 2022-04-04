@@ -10,6 +10,8 @@
 
 #include "comm/types.h"
 
+#define CR0_PG					(1 << 31)		// 分页开启位
+
 #define GDT_SEG_G				(1 << 15)		// ���ȵ�λΪ4KB
 #define GDT_SEG_D				(1 << 14)		// ���ݺ�ָ��Ϊ32λ
 #define GDT_SET_PRESENT			(1 << 7)		// ���Ƿ����

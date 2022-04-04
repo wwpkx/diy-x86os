@@ -26,6 +26,6 @@
             "dependsOrder": "sequence",
             "isBackground": false,
             "dependsOn": ["写映像文件", "启动qemu"]
-          }
+        }
     ]
 }

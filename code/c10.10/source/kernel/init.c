@@ -14,6 +14,7 @@
 #include "core/task.h"
 #include "tools/list.h"
 #include "ipc/bfifo.h"
+#include "core/memory.h"
 #include "os_cfg.h"
 
 static boot_info_t * init_boot_info;        // 启动信息
@@ -48,7 +49,8 @@ void init_task_entry(void *param) {
     }
 } 
 
-void kernel_entry(boot_info_t *boot_info) {
+void kernel_entry(void) {
+    memory_init(init_boot_info);
     irq_init();
 
     timer_init();

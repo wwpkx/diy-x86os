@@ -58,6 +58,10 @@ static inline void write_cr0(uint32_t v) {
 	__asm__ __volatile__("mov %0, %%cr0"::"r"(v));
 }
 
+static inline void write_cr3(uint32_t v) {
+	__asm__ __volatile__("mov %0, %%cr3"::"r"(v));
+}
+
 static inline void far_jump(uint32_t selector, uint32_t offset) {
 	uint32_t addr[] = {offset, selector };
 	__asm__ __volatile__("ljmpl *(%0)"::"r"(addr));

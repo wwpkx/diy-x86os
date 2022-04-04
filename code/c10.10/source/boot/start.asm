@@ -20,7 +20,7 @@
 _start:
 	// 重置数据段寄存器
 	mov $0, %ax
-	mov %ax, %ds
+	mov %ax, %ds 
 	mov %ax, %ss
 
 	// 根据https://wiki.osdev.org/Memory_Map_(x86)
