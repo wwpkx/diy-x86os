@@ -39,4 +39,6 @@ typedef struct _boot_info_t {
 
 #define SYS_KERNEL_LOAD_ADDR		(1024*1024)		// 内核加载的起始地址
 
+#define SYS_KERNEL_BASE_ADDR		0xc0000000		// 内核空间起始地址
+
 #endif // BOOT_INFO_H

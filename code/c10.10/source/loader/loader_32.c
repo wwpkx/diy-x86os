@@ -79,13 +79,42 @@ static uint32_t reload_elf_file (uint8_t * file_buffer) {
         }
 
 		// memsz和filesz不同时，后续要填0
-		dest= phdr->p_paddr + phdr->p_filesz;
+		dest= (uint8_t *)phdr->p_paddr + phdr->p_filesz;
 		for (int j = 0; j < phdr->p_memsz - phdr->p_filesz; j++) {
 			*((uint8_t *) phdr->p_paddr + phdr->p_filesz + j) = 0;
 		}
     }
 
     return elf_hdr->e_entry;
+}
+
+#define PDE_PRESENT			(1 << 0)
+#define PDE_EMPTY			(1 << 7)
+
+/**
+ * @brief 开启分页机制
+ * 将0-4M空间映射到0-4M和SYS_KERNEL_BASE_ADDR~+4MB空间
+ */
+void enable_page_mode (void) {
+	#define CR4_PSE		(1 << 4)
+	#define CR0_PG		(1 << 31)	
+
+	// 使用4MB页块，这样构造页表就简单很多，只需要1个表
+	// 以下表为临时使用，用于帮助内核正常运行，在内核运行起来之后，将重新设置
+	static uint32_t page_dir[1024] __attribute__((aligned(4096))) = {
+		[0] = PDE_PRESENT | PDE_EMPTY,			// PCD + PWT，地址0-4MB
+		[SYS_KERNEL_BASE_ADDR >> 22] = PDE_PRESENT | PDE_EMPTY,
+	};
+
+	// 设置PSE，以便启用4M的页，而不是4KB
+	uint32_t cr4 = read_cr4();
+	write_cr4(cr4 | CR4_PSE);
+
+	// 设置页表地址
+	write_cr3((uint32_t)page_dir);
+	
+	// 开启分页机制
+	write_cr0(read_cr0() | CR0_PG);
 }
 
 /**
@@ -101,6 +130,9 @@ void load_kernel(void) {
 		die(-1);
 	}
 	
+	// 开启分页机制
+	enable_page_mode();
+
     ((void (*)(boot_info_t *))kernel_entry)(&boot_info);
     for (;;) {}
 }

@@ -9,7 +9,6 @@
  */
 .set CODE_SEL, 8
 .set DATA_SEL, 16
-.set KERNEL_ESP, 0x10000		// 64KB大小的栈
 
   	// 不必加.code32因默认就是32位
  	.text
@@ -30,8 +29,8 @@ gdt_reload:
     mov %ax, %fs
     mov %ax, %gs
 
-	// 栈设置，32KB足够
-	mov $KERNEL_ESP, %esp
+	// 栈设置
+	mov $_start, %esp
 
 	// 栈和段等沿用之前的设置
 	jmp init_main
