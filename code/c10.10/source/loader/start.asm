@@ -7,6 +7,8 @@
  * 作者：李述铜
  * 联系邮箱: 527676163@qq.com
  */
+.set CODE_SEL, 8
+
   	// 16位代码，务必加上
   	.code16
  	.text
@@ -31,6 +33,6 @@ protect_mode_entry:
     mov %ax, %gs
 
     // 长跳转进入到32位内核加载模式中
-    jmp $8, $load_kernel
+    jmp $CODE_SEL, $load_kernel
 
 

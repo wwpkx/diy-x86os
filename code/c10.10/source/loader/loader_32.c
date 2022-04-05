@@ -54,6 +54,7 @@ static void die (int code) {
 
 /**
  * 解析elf文件，提取内容到相应的内存中
+ * https://wiki.osdev.org/ELF
  * @param file_buffer
  * @return
  */
@@ -70,11 +71,18 @@ static uint32_t reload_elf_file (uint8_t * file_buffer) {
     for (int i = 0; i < elf_hdr->e_phnum; i++) {
         Elf32_Phdr * phdr = (Elf32_Phdr *)(file_buffer + elf_hdr->e_phoff) + i;
 
+		// 全部使用物理地址，此时分页机制还未打开
         uint8_t * src = file_buffer + phdr->p_offset;
-        uint8_t * dest = (uint8_t *)phdr->p_vaddr;
+        uint8_t * dest = (uint8_t *)phdr->p_paddr;
         for (int j = 0; j < phdr->p_filesz; j++) {
             *dest++ = *src++;
         }
+
+		// memsz和filesz不同时，后续要填0
+		dest= phdr->p_paddr + phdr->p_filesz;
+		for (int j = 0; j < phdr->p_memsz - phdr->p_filesz; j++) {
+			*((uint8_t *) phdr->p_paddr + phdr->p_filesz + j) = 0;
+		}
     }
 
     return elf_hdr->e_entry;

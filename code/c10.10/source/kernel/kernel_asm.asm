@@ -7,12 +7,23 @@
  * 作者：李述铜
  * 联系邮箱: 527676163@qq.com
  */
+.set CODE_SEL, 8
+.set DATA_SEL, 16
+.set KERNEL_ESP, 0x10000		// 64KB大小的栈
+
   	// 不必加.code32因默认就是32位
  	.text
- 	.extern kernel_entry
-	.global gdt_reload
+ 	.global _start
+	.extern pre_init
+	.extern init_main
+_start:
+	call pre_init
+
+	// 重新加载GDT
+	jmp $CODE_SEL, $gdt_reload
+
 gdt_reload:
-	mov $16, %ax		// 16为数据段选择子
+	mov $DATA_SEL, %ax		// 16为数据段选择子
 	mov %ax, %ds
     mov %ax, %ss
     mov %ax, %es
@@ -20,10 +31,10 @@ gdt_reload:
     mov %ax, %gs
 
 	// 栈设置，32KB足够
-	mov $0x10000, %esp
+	mov $KERNEL_ESP, %esp
 
 	// 栈和段等沿用之前的设置
-	jmp kernel_entry
+	jmp init_main
 
     .text
 // 使用宏来生成相应的代码，这样简单

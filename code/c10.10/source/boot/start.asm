@@ -9,6 +9,8 @@
  * 作者：李述铜
  * 联系邮箱: 527676163@qq.com
  */
+ .set LOADER_START_ADDR, 0x8000
+
   	// 16位代码，务必加上
   	.code16
 
@@ -22,6 +24,7 @@ _start:
 	mov $0, %ax
 	mov %ax, %ds 
 	mov %ax, %ss
+	mov %ax, %es
 
 	// 根据https://wiki.osdev.org/Memory_Map_(x86)
 	// 使用0x7c00之前的空间作栈，大约有30KB的RAM，足够boot和loader使用
@@ -36,7 +39,7 @@ _start:
 	// 加载loader，只支持磁盘1
 	// https://wiki.osdev.org/Disk_access_using_the_BIOS_(INT_13h)
 read_loader:
-	mov $0x8000, %bx	// 读取到的内存地址
+	mov $LOADER_START_ADDR, %bx	// 读取到的内存地址
 	mov $0x2, %cx		// ch:磁道号，cl起始扇区号
 	mov $0x2, %ah		// ah: 0x2读磁盘命令
 	mov $64, %al		// al: 读取的扇区数量, 必须小于128，暂设置成32KB

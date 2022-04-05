@@ -19,22 +19,19 @@
 
 static boot_info_t * init_boot_info;        // 启动信息
 
-/**
- * 内核入口
- */
-void _start (boot_info_t *boot_info) {
-    init_boot_info = boot_info;
-
-    // 初始化CPU，再重新加载
-    cpu_init();
-    far_jump(KERNEL_SELECTOR_CS, (uint32_t)gdt_reload);
-}
-
 static uint32_t init_task_stack[1024];	// 空闲任务堆栈
 
 static task_t init_task;
 static bfifo_t bfifo;
 static uint8_t fifo_buf[32];
+
+/**
+ * @brief 预先初始化
+ */
+void pre_init (boot_info_t * boot_info) {
+    init_boot_info = boot_info;
+    cpu_init();
+}
 
 /**
  * 空闲任务代码
@@ -49,7 +46,7 @@ void init_task_entry(void *param) {
     }
 } 
 
-void kernel_entry(void) {
+void init_main(void) {
     memory_init(init_boot_info);
     irq_init();
 
