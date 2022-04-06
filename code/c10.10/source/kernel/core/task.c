@@ -79,11 +79,11 @@ void task_manager_init (void) {
     //数据段和代码段，使用DPL3，所有应用共用同一个
     //为调试方便，暂时使用DPL0
     task_manager.app_data_sel = gdt_alloc_segment(0x00000000, 0xFFFFFFFF,
-                     GDT_SET_PRESENT | GDT_SEG_DPL0 | GDT_SEG_S_CODE_DATA | 
+                     GDT_SET_PRESENT | GDT_SEG_DPL3 | GDT_SEG_S_CODE_DATA | 
                      GDT_SEG_TYPE_DATA | GDT_SEG_TYPE_RW | GDT_SEG_D);
 
     task_manager.app_code_sel = gdt_alloc_segment(0x00000000, 0xFFFFFFFF,
-                     GDT_SET_PRESENT | GDT_SEG_DPL0 | GDT_SEG_S_CODE_DATA | 
+                     GDT_SET_PRESENT | GDT_SEG_DPL3 | GDT_SEG_S_CODE_DATA | 
                      GDT_SEG_TYPE_CODE | GDT_SEG_TYPE_RW | GDT_SEG_D);
 
     task_manager.curr_task = (task_t *)0;

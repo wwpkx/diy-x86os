@@ -88,8 +88,9 @@ static uint32_t reload_elf_file (uint8_t * file_buffer) {
     return elf_hdr->e_entry;
 }
 
-#define PDE_PRESENT			(1 << 0)
-#define PDE_EMPTY			(1 << 7)
+#define PDE_P			(1 << 0)
+#define PDE_PS			(1 << 7)
+#define PDE_RW			(1 << 1)
 
 /**
  * @brief 开启分页机制
@@ -99,11 +100,11 @@ void enable_page_mode (void) {
 	#define CR4_PSE		(1 << 4)
 	#define CR0_PG		(1 << 31)	
 
-	// 使用4MB页块，这样构造页表就简单很多，只需要1个表
+	// 使用4MB页块，这样构造页表就简单很多，只需要1个表即可。
 	// 以下表为临时使用，用于帮助内核正常运行，在内核运行起来之后，将重新设置
 	static uint32_t page_dir[1024] __attribute__((aligned(4096))) = {
-		[0] = PDE_PRESENT | PDE_EMPTY,			// PCD + PWT，地址0-4MB
-		[SYS_KERNEL_BASE_ADDR >> 22] = PDE_PRESENT | PDE_EMPTY,
+		[0] = PDE_P | PDE_PS | PDE_RW,			
+		[SYS_KERNEL_BASE_ADDR >> 22] = PDE_P | PDE_PS | PDE_RW,	
 	};
 
 	// 设置PSE，以便启用4M的页，而不是4KB
