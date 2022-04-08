@@ -88,7 +88,7 @@ int bitmap_alloc_nbits (bitmap_t * bitmap, int bit, int count) {
 
         // 找到，设置各位，然后退出
         if (i >= count) {
-            bitmap_set_bit(bitmap, ok_idx, count, bit);
+            bitmap_set_bit(bitmap, ok_idx, count, ~bit);
             return ok_idx;
         }
     }

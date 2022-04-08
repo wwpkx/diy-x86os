@@ -81,7 +81,7 @@ static uint32_t reload_elf_file (uint8_t * file_buffer) {
 		// memsz和filesz不同时，后续要填0
 		dest= (uint8_t *)phdr->p_paddr + phdr->p_filesz;
 		for (int j = 0; j < phdr->p_memsz - phdr->p_filesz; j++) {
-			*((uint8_t *) phdr->p_paddr + phdr->p_filesz + j) = 0;
+			*dest++ = 0;
 		}
     }
 
@@ -95,6 +95,8 @@ static uint32_t reload_elf_file (uint8_t * file_buffer) {
 /**
  * @brief 开启分页机制
  * 将0-4M空间映射到0-4M和SYS_KERNEL_BASE_ADDR~+4MB空间
+ * 0-4MB的映射主要用于保护loader自己还能正常工作
+ * SYS_KERNEL_BASE_ADDR+4MB则用于为内核提供正确的虚拟地址空间
  */
 void enable_page_mode (void) {
 	#define CR4_PSE		(1 << 4)
@@ -103,13 +105,23 @@ void enable_page_mode (void) {
 	// 使用4MB页块，这样构造页表就简单很多，只需要1个表即可。
 	// 以下表为临时使用，用于帮助内核正常运行，在内核运行起来之后，将重新设置
 	static uint32_t page_dir[1024] __attribute__((aligned(4096))) = {
-		[0] = PDE_P | PDE_PS | PDE_RW,			
+		[0] = PDE_P | PDE_PS | PDE_RW,			// PDE_PS，开启4MB的页
 		[SYS_KERNEL_BASE_ADDR >> 22] = PDE_P | PDE_PS | PDE_RW,	
 	};
+	static uint32_t pte_1023[1024] __attribute__((aligned(4096))) = {
+		[0] = (uint32_t)page_dir,				// 0xFFC00000指向page_dir
+		[1023] = (uint32_t)pte_1023,			// 0xFFFF000指向自己
+	};
+
+	// 映射页表到0xFFC01000，即高10位为1
+	page_dir[1023] = PDE_P | PDE_RW | ((uint32_t)pte_1023 & 0xFFFFF000);
+	pte_1023[0] |= PDE_P | PDE_RW;
+	pte_1023[1023] |= PDE_P | PDE_RW;
 
 	// 设置PSE，以便启用4M的页，而不是4KB
 	uint32_t cr4 = read_cr4();
 	write_cr4(cr4 | CR4_PSE);
+
 
 	// 设置页表地址
 	write_cr3((uint32_t)page_dir);
@@ -126,6 +138,7 @@ void load_kernel(void) {
 	read_disk(100, 100, (uint8_t *)SYS_KERNEL_LOAD_ADDR);
 
      // 解析ELF文件，并通过调用的方式，进入到内核中去执行，同时传递boot参数
+	 // 临时将elf文件先读到SYS_KERNEL_LOAD_ADDR处，再进行解析
     uint32_t kernel_entry = reload_elf_file((uint8_t *)SYS_KERNEL_LOAD_ADDR);
 	if (kernel_entry == 0) {
 		die(-1);
@@ -134,6 +147,7 @@ void load_kernel(void) {
 	// 开启分页机制
 	enable_page_mode();
 
+	// 转换为函数指针，然后跳进内核
     ((void (*)(boot_info_t *))kernel_entry)(&boot_info);
     for (;;) {}
 }

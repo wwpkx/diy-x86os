@@ -2,30 +2,51 @@
     // See https://go.microsoft.com/fwlink/?LinkId=733558
     // for the documentation about the tasks.json format
     "version": "2.0.0", 
+    "windows": {
+
+    },
     "tasks": [
         {
             "label": "写映像文件",
-            "type": "shell",      // 以命令行方式启动
-            "command": "${workspaceRoot}/script/img-write-win.bat",  // 命令行脚本
+            "type": "shell",
+            "command": "${workspaceRoot}/script/img-write-win.bat",
+            "osx": {
+                "command": "bash",
+                "args": [
+                    "${workspaceRoot}/script/img-write-osx.sh"
+                ]
+            },
             "options": {
-                // 工作目录定位到image下, 以便脚本文件写正常
-                "cwd": "${workspaceRoot}/../../image/",        
+                "cwd": "${workspaceRoot}/../../image/"
+            },
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
             }
         },
         {
             "label": "启动qemu",
-            "type": "shell",      // 以命令行方式启动
-            "command": "${workspaceRoot}/script/qemu-debug-win.bat",  // 命令行脚本
+            "type": "shell",
+            "command": "${workspaceRoot}/script/qemu-debug-win.bat",
+            "osx": {
+                "command": "bash",
+                "args": [
+                    "${workspaceRoot}/script/qemu-debug-osx.sh"
+                ]
+            },
             "options": {
-                // 工作目录定位到image下, 以便脚本文件写正常
-                "cwd": "${workspaceRoot}/../../image/",        
+                "cwd": "${workspaceRoot}/../../image/"
             }
-        },       
+        },
         {
             "label": "调试准备",
             "dependsOrder": "sequence",
-            "isBackground": false,
-            "dependsOn": ["写映像文件", "启动qemu"]
+            "dependsOn": [
+                "写映像文件",
+                "启动qemu"
+            ],
+            "group": "test"
         }
     ]
 }

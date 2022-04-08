@@ -28,9 +28,16 @@ static uint8_t fifo_buf[32];
 /**
  * @brief 预先初始化
  */
-void pre_init (boot_info_t * boot_info) {
+void kernel_init (boot_info_t * boot_info) {
     init_boot_info = boot_info;
+
+    memory_init(init_boot_info);
     cpu_init();
+
+    irq_init();
+
+    timer_init();
+    log_init();
 }
 
 /**
@@ -47,11 +54,6 @@ void init_task_entry(void *param) {
 } 
 
 void init_main(void) {
-    memory_init(init_boot_info);
-    irq_init();
-
-    timer_init();
-    log_init();
 
     task_manager_init();
 

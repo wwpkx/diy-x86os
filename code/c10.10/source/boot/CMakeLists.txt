@@ -2,7 +2,7 @@
 project(boot LANGUAGES C)  
 
 # 使用自定义的链接器
-set(CMAKE_C_LINK_EXECUTABLE "i686-elf-ld <OBJECTS> -m elf_i386 -nostdlib  -nostartfiles -nodefaultlibs -Ttext=0x7c00  --section-start boot_end=0x7dfe -o ${PROJECT_NAME}.elf")
+set(CMAKE_C_LINK_EXECUTABLE "i686-elf-ld <OBJECTS> -m elf_i386  -Ttext=0x7c00  --section-start boot_end=0x7dfe -o ${PROJECT_NAME}.elf")
 
 # 将所有的汇编、C文件加入工程
 # 注意保证start.asm在最前头

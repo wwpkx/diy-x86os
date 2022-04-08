@@ -23,8 +23,15 @@ typedef struct _addr_alloc_t {
     uint32_t size;              // 地址大小
 }addr_alloc_t;
 
-uint32_t paddr_alloc_page (int page_count);
-void paddr_alloc_free (uint32_t addr, int page_count);
+/**
+ * @brief 虚拟地址到物理地址之间的映射关系表
+ */
+typedef struct _memory_map_t {
+    uint32_t vaddr;     // 虚拟地址
+    uint32_t paddr;     // 物理地址
+    uint32_t size;      // 大小
+    uint32_t perm;      // 访问权限
+}memory_map_t;
 
 void memory_init (boot_info_t * boot_info);
 

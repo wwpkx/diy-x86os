@@ -16,7 +16,8 @@
 	.extern pre_init
 	.extern init_main
 _start:
-	call pre_init
+	mov $_start, %esp
+	jmp kernel_init
 
 	// 重新加载GDT
 	jmp $CODE_SEL, $gdt_reload

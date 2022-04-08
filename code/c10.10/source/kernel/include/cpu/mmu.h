@@ -18,6 +18,17 @@
 
 #pragma pack(1)
 
+// Page table/directory entry flags.
+#define PTE_P           0x001   // Present
+#define PTE_W           0x002   // Writeable
+#define PTE_U           0x004   // User
+#define PTE_PWT         0x008   // Write-Through
+#define PTE_PCD         0x010   // Cache-Disable
+#define PTE_A           0x020   // Accessed
+#define PTE_D           0x040   // Dirty
+#define PTE_PS          0x080   // Page Size
+#define PTE_MBZ         0x180   // Bits must be zero
+
 /**
  * @brief Page-Table Entry
  */
@@ -59,6 +70,59 @@ typedef union _pte_t {
 
 #pragma pack()
 
-void page_init (void);
+/**
+ * @brief 返回vaddr在页目录中的索引
+ */
+static inline int pde_index (uint32_t vaddr) {
+    return (vaddr >> 22) & 0x3FF;   // 取高10位
+}
+
+/**
+ * @brief 获取pde中地址
+ */
+static inline uint32_t pde_paddr (pde_t * pde) {
+    return pde->phy_pt_addr << 22;
+}
+
+/**
+ * @brief 返回vaddr在页表中的索引
+ */
+static inline int pte_index (uint32_t vaddr) {
+    return (vaddr >> 12) & 0x3FF;   // 取中间10位
+}
+
+/**
+ * @brief 获取pte中的物理地址
+ */
+static inline uint32_t pte_paddr (pte_t * pte) {
+    return pte->phy_page_addr << 12;
+}
+
+/**
+ * @brief 获取指定虚拟地址对应的pde表项
+ */
+static inline pde_t * get_pde(uint32_t page_dir, uint32_t vaddr) {
+    uint32_t offset = pde_index(vaddr) * sizeof(pde_t);
+    return (pde_t *)(page_dir + offset);
+}
+
+/**
+ * @brief 获取虚拟地址所在的页表起始
+ */
+static inline pte_t * get_page_table (uint32_t page_dir, uint32_t vaddr) {
+    // 跳过最开始的页目录表
+    uint32_t offset = pde_index(vaddr) * sizeof(pde_t);
+    return (pte_t *)(page_dir + PAGE_SIZE + offset);
+}
+
+/**
+ * @brief 获取指定虚拟地址对应的pte表项
+ */
+static inline pte_t * get_pte (uint32_t page_dir, uint32_t vaddr) {
+    pte_t * pte_table = get_page_table(page_dir, vaddr);
+    return  pte_table + pte_index(vaddr);
+}
+
+void mmu_set_page_dir (uint32_t paddr);
 
 #endif // MMU_H

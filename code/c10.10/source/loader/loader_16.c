@@ -148,7 +148,7 @@ static void switch_vga_mode (uint16_t width, uint16_t height, uint8_t bpp) {
 // GDT表。临时用，后面内容会替换成自己的
 #define CODE_SELECTOR           8       // 缺省第1个
 #define DS_SELECTOR             16      // 缺省第2个
-uint16_t gdt_table[][4] = {
+uint16_t gdt_table[][4] __attribute__((aligned(2)))= {
     {0, 0, 0, 0},
     {0xFFFF, 0x0000, 0x9A00, 0x00CF},
     {0xFFFF, 0x0000, 0x9200, 0x00CF},
@@ -177,6 +177,7 @@ static void  enter_protect_mode() {
     lgdt((uint32_t)gdt_table, sizeof(gdt_table));
 
     // 长跳转进入到保护模式
+    // 使用长跳转，以便清空流水线，将里面的16位代码给清空
     far_jump(CODE_SELECTOR, (uint32_t)protect_mode_entry);
 }
 

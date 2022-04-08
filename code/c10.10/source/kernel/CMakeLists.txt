@@ -3,7 +3,7 @@ project(kernel LANGUAGES C)
 
 # 使用自定义的链接器
 set(CMAKE_C_LINK_EXECUTABLE 
-    "i686-elf-ld <OBJECTS> -m elf_i386 -nostdlib  -nostartfiles -nodefaultlibs -T ${PROJECT_SOURCE_DIR}/kernel.ld -o ${PROJECT_NAME}.elf")
+    "i686-elf-ld <OBJECTS> -m elf_i386 -T ${PROJECT_SOURCE_DIR}/kernel.lds -o ${PROJECT_NAME}.elf")
 
 include_directories(
     ${PROJECT_SOURCE_DIR}/include
