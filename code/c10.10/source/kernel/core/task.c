@@ -13,6 +13,7 @@
 
 // 任务各表项的LDT索引值
 static task_manager_t task_manager;     // 任务管理器
+static int task_incr_id;                // 任务自增id
 static uint32_t idle_task_stack[IDLE_STACK_SIZE];	// 空闲任务堆栈
 
 /**
@@ -51,6 +52,7 @@ int task_init (task_t *task, const char * name, uint32_t entry, uint32_t esp) {
 
     // 插入就绪队列中'
     irq_state_t state = irq_enter_protection();
+    task->pid = task_incr_id++;
     task_set_ready(task);
     irq_leave_protection(state);
     return 0;
@@ -87,6 +89,8 @@ void task_manager_init (void) {
                      GDT_SEG_TYPE_CODE | GDT_SEG_TYPE_RW | GDT_SEG_D);
 
     task_manager.curr_task = (task_t *)0;
+
+    task_incr_id = 0;
 
     // 各队列初始化
     list_init(&task_manager.ready_list);
@@ -256,4 +260,12 @@ void task_sleep (uint32_t ms) {
     task_dispatch();
 
     irq_leave_protection(state);
+}
+
+/**
+ * 返回任务的pid
+ */
+int sys_getpid (void) {
+    task_t * curr_task = task_current();
+    return curr_task->pid;
 }

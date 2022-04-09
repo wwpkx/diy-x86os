@@ -17,4 +17,6 @@ int kernel_memcmp (void * d1, void * d2, int size);
 void kernel_sprintf(char * buffer, const char * fmt, ...);
 void kernel_vsprintf(char * buffer, const char * fmt, va_list args);
 
+#define ARRAY_COUNT(array)  (sizeof(array)/sizeof(array[0]))
+
 #endif //KLIB_H

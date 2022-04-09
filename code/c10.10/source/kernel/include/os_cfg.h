@@ -18,8 +18,11 @@
 
 #define OS_VERSION              "0.0.1"     // OS版本号
 
-#define IDLE_STACK_SIZE       1024        // 空闲任务栈
+#define IDLE_STACK_SIZE       1024          // 空闲任务栈
 
-#define TASK_LDT_TABLE_SIZE   	10		// 任务的LDT表大小
+#define TASK_LDT_TABLE_SIZE   	10		    // 任务的LDT表大小
+
+#define SELECTOR_SYSCALL     	(3 << 3)	// 调用门的选择子
+#define OS_VERSION_NUM          0x1001      // OS版本号
 
 #endif //OS_OS_CFG_H

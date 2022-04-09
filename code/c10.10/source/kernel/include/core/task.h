@@ -30,6 +30,8 @@ typedef struct _task_t {
 
     char name[TASK_NAME_SIZE];		// 任务名字
 
+	int pid;				// 进程的pid
+	
 	int sleep_ticks;		// 睡眠时间
 	int time_slice;			// 时间片
 	int slice_ticks;		// 递减时间片计数
@@ -69,6 +71,8 @@ typedef struct _task_manager_t {
 }task_manager_t;
 
 void task_manager_init (void);
+
+int sys_getpid (void);
 
 #endif
 

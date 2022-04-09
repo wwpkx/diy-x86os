@@ -1,0 +1,21 @@
+What's new:
+-----------
+
+- Drop support for Vista and Server 2008.
+
+- Add code to handle setrlimit(RLIMIT_AS).
+
+- Add code to handle signal masks in /proc/<PID>/status.
+
+
+What changed:
+-------------
+
+- The CYGWIN=pipe_byte option is now set by default, so that pipes are
+  opened in byte mode rather than message mode.
+  Addresses: https://cygwin.com/pipermail/cygwin/2021-March/247987.html
+
+
+Bug Fixes
+---------
+

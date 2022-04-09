@@ -8,6 +8,7 @@
 #include "comm/cpu_instr.h"
 #include "cpu/cpu.h"
 #include "cpu/irq.h"
+#include "core/syscall.h"
 #include "os_cfg.h"
 
 static gdt_descriptor_t gdt_table[GDT_TABLE_SIZE];
@@ -107,6 +108,11 @@ void init_gdt(void) {
     set_segment_desc(gdt_table + (KERNEL_SELECTOR_CS >> 3), 0x00000000, 0xFFFFFFFF,
                      GDT_SET_PRESENT | GDT_SEG_DPL0 | GDT_SEG_S_CODE_DATA | GDT_SEG_TYPE_CODE | GDT_SEG_TYPE_RW | GDT_SEG_D);
 
+    // 调用门
+    set_gate_desc((gate_descriptor_t *)(gdt_table + (SELECTOR_SYSCALL >> 3)),
+            KERNEL_SELECTOR_CS,
+            (uint32_t)excetpion_handler_syscall,
+            GDT_GATE_PRESENT | GDT_GATE_DPL3 | GDT_GATE_TYPE_CALL | SYSCALL_PARAM_COUNT);
 
     // 加载gdt
     lgdt((uint32_t)gdt_table, sizeof(gdt_table));
