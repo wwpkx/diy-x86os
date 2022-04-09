@@ -3,6 +3,7 @@ SECTIONS
 {
 	/* 代码的起始地址为64KB地址处 */
 	. = 0xC0010000;
+	PROVIDE(text = .);	
 	.text : AT(0x10000) {
 		*(.text)
 	}
@@ -14,7 +15,7 @@ SECTIONS
 		*(.rodata .rodata.* .gnu.linkonce.r.*)
 	}
 
-	. = ALIGN(0x1000);
+	. = ALIGN(4096);
 
     /* 数据段 */
 	PROVIDE(data = .);
@@ -22,6 +23,7 @@ SECTIONS
 		*(.data)
 	}
 	PROVIDE(data_end = .);
+	PROVIDE(data_size = data_end - data)
 
     /* bss段 */
 	.bss : {

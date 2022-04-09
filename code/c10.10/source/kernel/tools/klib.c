@@ -2,6 +2,9 @@
 // Created by lishutong on 2021-07-30.
 //
 #include "tools/klib.h"
+#include "tools/log.h"
+#include "cpu/irq.h"
+#include "core/task.h"
 
 void kernel_strncpy(char * dest, const char * src, int size) {
     char * d = dest;
@@ -158,4 +161,14 @@ void kernel_vsprintf(char * buffer, const char * fmt, va_list args) {
     }
 }
 
+void panic_debug (const char * filename, int line, const char * func, const char * conditon) {
+    irq_disable_global();
+
+    log_printf("assert failed! %s", conditon);
+    log_printf("file: %s\nline %d\nfunc: %s\n", filename, line, func);
+
+    task_t * task = task_current();
+    log_printf("task: %s", task ？ task : "none");
+    for (;;) {}
+}
 

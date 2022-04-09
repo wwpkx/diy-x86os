@@ -11,6 +11,7 @@
 #include "comm/boot_info.h"
 #include "tools/bitmap.h"
 
+#define MEMORY_EBDA_START       0x00080000
 
 /**
  * @brief 地址分配结构

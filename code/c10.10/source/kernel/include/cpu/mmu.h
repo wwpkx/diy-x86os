@@ -14,7 +14,10 @@
 #define CR3_PCD             (1 << 4)            // Page-level cache disable
 
 #define PAGE_SIZE           (4*1024)            // 页大小
+#define PDE_CNT             1024
+#define PTE_CNT             1024
 #define ADDR_1MB            (1024*1024)
+#define SIZE_1GB            (1024*1024*1024)
 
 #pragma pack(1)
 
