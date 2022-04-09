@@ -112,7 +112,7 @@ task_t * task_current (void) {
 /**
  * @brief 当前任务主动放弃CPU
  */
-void task_yield (void) {
+int sys_sched_yield (void) {
     task_t * curr_task = task_current();
 
     irq_state_t state = irq_enter_protection();

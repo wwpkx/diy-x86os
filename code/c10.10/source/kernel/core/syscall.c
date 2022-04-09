@@ -14,10 +14,11 @@
 // 系统调用处理函数类型
 typedef int (*syscall_handler_t)(uint32_t arg0, uint32_t arg1, uint32_t arg2, uint32_t arg3);
 
-
 // 系统调用表
 static syscall_handler_t sys_call_table[] = {
     [SYS_getpid] =(syscall_handler_t)sys_getpid,
+	[SYS_sched_yield] = (syscall_handler_t)sys_sched_yield,
+	[SYS_msleep] = (syscall_handler_t)sys_msleep,
 };
 
 /**

@@ -93,7 +93,7 @@ int task_init (task_t * task, const char * name, int flags, task_entry_t * entry
         task_param_t * param, uint32_t * stack_top, uint32_t priority,  void * msg_buf, int msg_size,  int msg_count);
 int task_suspend (task_t * task);
 int task_wakeup (task_t * task);
-void task_sleep (uint32_t ms);
+void sys_msleep (uint32_t ms);
 void task_switch_to (task_t * task);
 
 void task_add_ready(task_t *task);

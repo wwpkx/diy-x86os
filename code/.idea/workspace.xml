@@ -1,0 +1,366 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CMakeRunConfigurationManager" shouldGenerate="true" shouldDeleteObsolete="true">
+    <generated />
+  </component>
+  <component name="CMakeSettings">
+    <configurations>
+      <configuration PROFILE_NAME="Debug" CONFIG_NAME="Debug" />
+    </configurations>
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="503b7bda-5c1b-4288-a1ee-02d955517940" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/c08.03/source/kernel/core/task.c" beforeDir="false" afterPath="$PROJECT_DIR$/c08.03/source/kernel/core/task.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c08.03/source/kernel/include/core/task.h" beforeDir="false" afterPath="$PROJECT_DIR$/c08.03/source/kernel/include/core/task.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c08.03/source/kernel/init.c" beforeDir="false" afterPath="$PROJECT_DIR$/c08.03/source/kernel/init.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c08.04/source/kernel/core/task.c" beforeDir="false" afterPath="$PROJECT_DIR$/c08.04/source/kernel/core/task.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c08.04/source/kernel/include/core/task.h" beforeDir="false" afterPath="$PROJECT_DIR$/c08.04/source/kernel/include/core/task.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c08.04/source/kernel/init.c" beforeDir="false" afterPath="$PROJECT_DIR$/c08.04/source/kernel/init.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c08.05/source/kernel/core/task.c" beforeDir="false" afterPath="$PROJECT_DIR$/c08.05/source/kernel/core/task.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c08.05/source/kernel/include/core/task.h" beforeDir="false" afterPath="$PROJECT_DIR$/c08.05/source/kernel/include/core/task.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c08.05/source/kernel/init.c" beforeDir="false" afterPath="$PROJECT_DIR$/c08.05/source/kernel/init.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c08.06/source/kernel/core/task.c" beforeDir="false" afterPath="$PROJECT_DIR$/c08.06/source/kernel/core/task.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c08.06/source/kernel/include/core/task.h" beforeDir="false" afterPath="$PROJECT_DIR$/c08.06/source/kernel/include/core/task.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c08.06/source/kernel/init.c" beforeDir="false" afterPath="$PROJECT_DIR$/c08.06/source/kernel/init.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c08.07/source/kernel/core/task.c" beforeDir="false" afterPath="$PROJECT_DIR$/c08.07/source/kernel/core/task.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c08.07/source/kernel/include/core/task.h" beforeDir="false" afterPath="$PROJECT_DIR$/c08.07/source/kernel/include/core/task.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c08.07/source/kernel/init.c" beforeDir="false" afterPath="$PROJECT_DIR$/c08.07/source/kernel/init.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c09.01/source/kernel/core/task.c" beforeDir="false" afterPath="$PROJECT_DIR$/c09.01/source/kernel/core/task.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c09.01/source/kernel/include/core/task.h" beforeDir="false" afterPath="$PROJECT_DIR$/c09.01/source/kernel/include/core/task.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c09.01/source/kernel/init.c" beforeDir="false" afterPath="$PROJECT_DIR$/c09.01/source/kernel/init.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c09.02/source/kernel/core/task.c" beforeDir="false" afterPath="$PROJECT_DIR$/c09.02/source/kernel/core/task.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c09.02/source/kernel/include/core/task.h" beforeDir="false" afterPath="$PROJECT_DIR$/c09.02/source/kernel/include/core/task.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c09.02/source/kernel/init.c" beforeDir="false" afterPath="$PROJECT_DIR$/c09.02/source/kernel/init.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c09.03/source/kernel/core/task.c" beforeDir="false" afterPath="$PROJECT_DIR$/c09.03/source/kernel/core/task.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c09.03/source/kernel/include/core/task.h" beforeDir="false" afterPath="$PROJECT_DIR$/c09.03/source/kernel/include/core/task.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c09.03/source/kernel/init.c" beforeDir="false" afterPath="$PROJECT_DIR$/c09.03/source/kernel/init.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c09.04/source/kernel/core/task.c" beforeDir="false" afterPath="$PROJECT_DIR$/c09.04/source/kernel/core/task.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c09.04/source/kernel/include/core/task.h" beforeDir="false" afterPath="$PROJECT_DIR$/c09.04/source/kernel/include/core/task.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c09.04/source/kernel/init.c" beforeDir="false" afterPath="$PROJECT_DIR$/c09.04/source/kernel/init.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c09.05/source/kernel/core/task.c" beforeDir="false" afterPath="$PROJECT_DIR$/c09.05/source/kernel/core/task.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c09.05/source/kernel/include/core/task.h" beforeDir="false" afterPath="$PROJECT_DIR$/c09.05/source/kernel/include/core/task.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c09.05/source/kernel/init.c" beforeDir="false" afterPath="$PROJECT_DIR$/c09.05/source/kernel/init.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c09.06/source/kernel/core/task.c" beforeDir="false" afterPath="$PROJECT_DIR$/c09.06/source/kernel/core/task.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c09.06/source/kernel/include/core/task.h" beforeDir="false" afterPath="$PROJECT_DIR$/c09.06/source/kernel/include/core/task.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c09.06/source/kernel/init.c" beforeDir="false" afterPath="$PROJECT_DIR$/c09.06/source/kernel/init.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c09.07/source/kernel/core/task.c" beforeDir="false" afterPath="$PROJECT_DIR$/c09.07/source/kernel/core/task.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c09.07/source/kernel/include/core/task.h" beforeDir="false" afterPath="$PROJECT_DIR$/c09.07/source/kernel/include/core/task.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c09.07/source/kernel/init.c" beforeDir="false" afterPath="$PROJECT_DIR$/c09.07/source/kernel/init.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c10.10/source/applib/lib_syscall.c" beforeDir="false" afterPath="$PROJECT_DIR$/c10.10/source/applib/lib_syscall.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c10.10/source/applib/lib_syscall.h" beforeDir="false" afterPath="$PROJECT_DIR$/c10.10/source/applib/lib_syscall.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c10.10/source/kernel/core/syscall.c" beforeDir="false" afterPath="$PROJECT_DIR$/c10.10/source/kernel/core/syscall.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c10.10/source/kernel/core/task.c" beforeDir="false" afterPath="$PROJECT_DIR$/c10.10/source/kernel/core/task.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c10.10/source/kernel/include/core/task.h" beforeDir="false" afterPath="$PROJECT_DIR$/c10.10/source/kernel/include/core/task.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c10.10/source/kernel/init.c" beforeDir="false" afterPath="$PROJECT_DIR$/c10.10/source/kernel/init.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/newlib/i686-elf/include/sched.h" beforeDir="false" afterPath="$PROJECT_DIR$/newlib/i686-elf/include/sched.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/source/kernel/core/syscall.c" beforeDir="false" afterPath="$PROJECT_DIR$/project/source/kernel/core/syscall.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/source/kernel/core/task.c" beforeDir="false" afterPath="$PROJECT_DIR$/project/source/kernel/core/task.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/source/kernel/include/core/task.h" beforeDir="false" afterPath="$PROJECT_DIR$/project/source/kernel/include/core/task.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/source/kernel/init/init_task.c" beforeDir="false" afterPath="$PROJECT_DIR$/project/source/kernel/init/init_task.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../image/kernel.elf" beforeDir="false" afterPath="$PROJECT_DIR$/../image/kernel.elf" afterDir="false" />
+    </list>
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ClangdSettings">
+    <option name="formatViaClangd" value="false" />
+  </component>
+  <component name="FileEditorManager">
+    <leaf>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/c10.10/source/kernel/core/task.c">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="52">
+              <caret line="177" column="20" selection-start-line="177" selection-start-column="20" selection-end-line="177" selection-end-column="20" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/c09.07/source/kernel/core/task.c">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="80">
+              <caret line="162" column="28" selection-start-line="162" selection-start-column="28" selection-end-line="162" selection-end-column="28" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/c09.06/source/kernel/core/task.c">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="297">
+              <caret line="229" column="13" selection-start-line="229" selection-start-column="13" selection-end-line="229" selection-end-column="13" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/c09.06/source/kernel/include/core/task.h">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="275">
+              <caret line="52" column="15" selection-start-line="52" selection-start-column="5" selection-end-line="52" selection-end-column="15" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>task_yield</find>
+      <find>void task_yield (void)</find>
+      <find>void sched_yield (void)</find>
+      <find>void sched_yield(void)</find>
+      <find>sched_yield</find>
+      <find>task_sleep</find>
+    </findStrings>
+    <replaceStrings>
+      <replace>sched_yield</replace>
+      <replace>int sched_yield (void)</replace>
+      <replace>sys_sched_yield</replace>
+      <replace>sys_msleep</replace>
+    </replaceStrings>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/c10.10/source/kernel/core/task.c" />
+        <option value="$PROJECT_DIR$/c09.07/source/kernel/core/task.c" />
+        <option value="$PROJECT_DIR$/c09.06/source/kernel/include/core/task.h" />
+        <option value="$PROJECT_DIR$/c09.06/source/kernel/core/task.c" />
+      </list>
+    </option>
+  </component>
+  <component name="OCFindUsagesOptions" text="true" ivars="false" properties="true" derivedClasses="false" />
+  <component name="ProjectConfigurationFiles">
+    <option name="files">
+      <list>
+        <option value="$PROJECT_DIR$/.idea/code.iml" />
+        <option value="$PROJECT_DIR$/.idea/misc.xml" />
+        <option value="$PROJECT_DIR$/.idea/vcs.xml" />
+        <option value="$PROJECT_DIR$/.idea/modules.xml" />
+        <option value="$PROJECT_DIR$/.idea/serialmonitor_settings.xml" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectFrameBounds">
+    <option name="width" value="1402" />
+    <option name="height" value="800" />
+  </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectView">
+    <navigator proportions="" version="1">
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="code" type="b2602c69:ProjectViewProjectNode" />
+              <item name="code" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="code" type="b2602c69:ProjectViewProjectNode" />
+              <item name="code" type="462c0819:PsiDirectoryNode" />
+              <item name="c09.06" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="code" type="b2602c69:ProjectViewProjectNode" />
+              <item name="code" type="462c0819:PsiDirectoryNode" />
+              <item name="c09.06" type="462c0819:PsiDirectoryNode" />
+              <item name="source" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="code" type="b2602c69:ProjectViewProjectNode" />
+              <item name="code" type="462c0819:PsiDirectoryNode" />
+              <item name="c09.06" type="462c0819:PsiDirectoryNode" />
+              <item name="source" type="462c0819:PsiDirectoryNode" />
+              <item name="kernel" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="code" type="b2602c69:ProjectViewProjectNode" />
+              <item name="code" type="462c0819:PsiDirectoryNode" />
+              <item name="c09.06" type="462c0819:PsiDirectoryNode" />
+              <item name="source" type="462c0819:PsiDirectoryNode" />
+              <item name="kernel" type="462c0819:PsiDirectoryNode" />
+              <item name="core" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="code" type="b2602c69:ProjectViewProjectNode" />
+              <item name="code" type="462c0819:PsiDirectoryNode" />
+              <item name="c09.06" type="462c0819:PsiDirectoryNode" />
+              <item name="source" type="462c0819:PsiDirectoryNode" />
+              <item name="kernel" type="462c0819:PsiDirectoryNode" />
+              <item name="include" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="code" type="b2602c69:ProjectViewProjectNode" />
+              <item name="code" type="462c0819:PsiDirectoryNode" />
+              <item name="c09.06" type="462c0819:PsiDirectoryNode" />
+              <item name="source" type="462c0819:PsiDirectoryNode" />
+              <item name="kernel" type="462c0819:PsiDirectoryNode" />
+              <item name="include" type="462c0819:PsiDirectoryNode" />
+              <item name="core" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="code" type="b2602c69:ProjectViewProjectNode" />
+              <item name="code" type="462c0819:PsiDirectoryNode" />
+              <item name="c09.07" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="code" type="b2602c69:ProjectViewProjectNode" />
+              <item name="code" type="462c0819:PsiDirectoryNode" />
+              <item name="c09.07" type="462c0819:PsiDirectoryNode" />
+              <item name="source" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="code" type="b2602c69:ProjectViewProjectNode" />
+              <item name="code" type="462c0819:PsiDirectoryNode" />
+              <item name="c09.07" type="462c0819:PsiDirectoryNode" />
+              <item name="source" type="462c0819:PsiDirectoryNode" />
+              <item name="kernel" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="code" type="b2602c69:ProjectViewProjectNode" />
+              <item name="code" type="462c0819:PsiDirectoryNode" />
+              <item name="c09.07" type="462c0819:PsiDirectoryNode" />
+              <item name="source" type="462c0819:PsiDirectoryNode" />
+              <item name="kernel" type="462c0819:PsiDirectoryNode" />
+              <item name="core" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="code" type="b2602c69:ProjectViewProjectNode" />
+              <item name="code" type="462c0819:PsiDirectoryNode" />
+              <item name="c10.10" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="code" type="b2602c69:ProjectViewProjectNode" />
+              <item name="code" type="462c0819:PsiDirectoryNode" />
+              <item name="c10.10" type="462c0819:PsiDirectoryNode" />
+              <item name="source" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="code" type="b2602c69:ProjectViewProjectNode" />
+              <item name="code" type="462c0819:PsiDirectoryNode" />
+              <item name="c10.10" type="462c0819:PsiDirectoryNode" />
+              <item name="source" type="462c0819:PsiDirectoryNode" />
+              <item name="kernel" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="code" type="b2602c69:ProjectViewProjectNode" />
+              <item name="code" type="462c0819:PsiDirectoryNode" />
+              <item name="c10.10" type="462c0819:PsiDirectoryNode" />
+              <item name="source" type="462c0819:PsiDirectoryNode" />
+              <item name="kernel" type="462c0819:PsiDirectoryNode" />
+              <item name="core" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+      <pane id="Scope" />
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
+    <property name="nodejs_npm_path_reset_for_default_project" value="true" />
+    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="503b7bda-5c1b-4288-a1ee-02d955517940" name="Default Changelist" comment="" />
+      <created>1649476871422</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1649476871422</updated>
+      <workItem from="1649476875131" duration="809000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TimeTrackingManager">
+    <option name="totallyTimeSpent" value="809000" />
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="0" y="0" width="1402" height="800" extended-state="0" />
+    <editor active="true" />
+    <layout>
+      <window_info id="Favorites" side_tool="true" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.25" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info anchor="bottom" id="Arduino Support" />
+      <window_info anchor="bottom" id="Database Changes" />
+      <window_info anchor="bottom" id="Version Control" />
+      <window_info anchor="bottom" id="Terminal" />
+      <window_info anchor="bottom" id="Event Log" side_tool="true" />
+      <window_info anchor="bottom" id="Serial Monitor" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info anchor="bottom" id="Run" order="2" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="right" id="Database" />
+      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+    </layout>
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/c10.10/source/kernel/core/task.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="52">
+          <caret line="177" column="20" selection-start-line="177" selection-start-column="20" selection-end-line="177" selection-end-column="20" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/c09.07/source/kernel/core/task.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="80">
+          <caret line="162" column="28" selection-start-line="162" selection-start-column="28" selection-end-line="162" selection-end-column="28" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/c09.06/source/kernel/core/task.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="297">
+          <caret line="229" column="13" selection-start-line="229" selection-start-column="13" selection-end-line="229" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/c09.06/source/kernel/include/core/task.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="275">
+          <caret line="52" column="15" selection-start-line="52" selection-start-column="5" selection-end-line="52" selection-end-column="15" />
+        </state>
+      </provider>
+    </entry>
+  </component>
+</project>

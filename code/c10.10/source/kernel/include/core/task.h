@@ -50,10 +50,10 @@ void task_set_ready(task_t *task);
 void task_set_block (task_t *task);
 void task_set_sleep(task_t *task, uint32_t ticks);
 void task_set_wakeup (task_t *task);
-void task_yield (void);
+int sys_sched_yield (void);
 void task_dispatch (void);
 void task_time_tick (void);
-void task_sleep (uint32_t ms);
+void sys_msleep (uint32_t ms);
 task_t * task_current (void);
 
 typedef struct _task_manager_t {

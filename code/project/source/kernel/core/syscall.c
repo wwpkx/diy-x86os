@@ -36,7 +36,7 @@ static int do_sys_get_ticks (void) {
  * @param ms
  */
 static void do_sys_sleep (uint32_t ms) {
-    task_sleep(ms);
+    sys_msleep(ms);
 }
 
 /**

@@ -10,7 +10,7 @@
 /**
  * 执行系统调用
  */
-static int exec_sys_call (int syscall_num, int arg0, int arg1, int arg2, int arg3) {
+static int sys_call (int syscall_num, int arg0, int arg1, int arg2, int arg3) {
 	static const uint32_t sys_gate_addr[] = {0, SELECTOR_SYSCALL | 0};  // 使用特权级0
     uint32_t ret;
 
@@ -27,6 +27,12 @@ static int exec_sys_call (int syscall_num, int arg0, int arg1, int arg2, int arg
     return ret;
 }
 
+// 系统调用的简化编写
+#define sys_call0(syscall_num) sys_call(syscall_num, 0, 0, 0, 0)
+#define sys_call1(syscall_num, arg0) sys_call(syscall_num, arg0, 0, 0, 0)
+#define sys_call2(syscall_num, arg0, arg1) sys_call(syscall_num, arg0, arg1, 0, 0)
+#define sys_call3(syscall_num, arg0, arg1, arg2) sys_call(syscall_num, arg0, arg1, arg2, 0)
+#define sys_call4(syscall_num, arg0, arg1, arg2, arg3) sys_call(syscall_num, arg0, arg1, arg2, arg3)
 
 // newlib需要的系统调用
 /**
@@ -113,7 +119,7 @@ int fork() {
 }
 
 int getpid() {
-	return exec_sys_call(SYS_getpid, 0, 0, 0, 0);
+	return sys_call0(SYS_getpid);
 }
 
 int kill(int pid, int sig) {
@@ -128,11 +134,25 @@ int wait(int *status) {
 	return -1;
 }
 
+/**
+ * @brief 切换至下一优先级相同或更高的进程
+ */
+int sched_yield (void) {
+    return sys_call0(SYS_sched_yield);
+}
+
 clock_t times(struct tms *buf) {
 	return -1;
 }
 
 int gettimeofday(struct timeval *p, void *z) {
 	return -1;
+}
+
+/**
+ * @brief 毫秒延时
+ */
+void msleep (unsigned int seconds) {
+    sys_call1(SYS_msleep, seconds);
 }
 

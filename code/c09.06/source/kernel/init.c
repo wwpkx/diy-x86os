@@ -41,7 +41,7 @@ void init_task_entry(void *param) {
 
     for (;;) {        
         log_printf("init task: %d", count++);
-        //task_sleep(500);
+        //sys_msleep(500);
     }
 } 
 
@@ -65,6 +65,6 @@ void kernel_entry(boot_info_t *boot_info) {
     int count = 0;
     for (;;) {
         log_printf("kernel task: %d", count++);
-        //task_sleep(1000);
+        //sys_msleep(1000);
     }
 }

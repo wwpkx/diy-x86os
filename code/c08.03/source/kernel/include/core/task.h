@@ -40,7 +40,7 @@ int task_init (task_t *task, const char * name, uint32_t entry, uint32_t esp);
 void task_switch_to (task_t * task);
 void task_set_ready(task_t *task);
 void task_set_block (task_t *task);
-void task_yield (void);
+int sys_sched_yield (void);
 void task_dispatch (void);
 
 typedef struct _task_manager_t {

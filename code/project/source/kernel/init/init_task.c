@@ -102,7 +102,7 @@ void init_task_entry(task_param_t *param) {
 	// 创建应用任务，
 	app_task_init();
     for (;;) {
-    	task_sleep(100);
+    	sys_msleep(100);
     }
 }
 

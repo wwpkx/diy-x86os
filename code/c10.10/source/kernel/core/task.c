@@ -175,7 +175,7 @@ task_t * task_current (void) {
 /**
  * @brief 当前任务主动放弃CPU
  */
-void task_yield (void) {
+int sys_sched_yield (void) {
     task_t * curr_task = task_current();
 
     irq_state_t state = irq_enter_protection();
@@ -189,6 +189,7 @@ void task_yield (void) {
     task_dispatch();
 
     irq_leave_protection(state);
+    return 0;
 }
 
 /**
@@ -244,7 +245,7 @@ void task_time_tick (void) {
  * 
  * @param ms 
  */
-void task_sleep (uint32_t ms) {
+void sys_msleep (uint32_t ms) {
     // 至少延时1个tick
     if (ms < OS_TICK_MS) {
         ms = OS_TICK_MS;

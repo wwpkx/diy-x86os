@@ -28,6 +28,8 @@
 #define SYS_kill                4
 #define SYS_sbrk                5
 #define SYS_wait                6
+#define SYS_sched_yield         7
+#define SYS_msleep              8
 
 #define SYS_open                100
 #define SYS_read                101
@@ -60,9 +62,11 @@ int getpid();
 int kill(int pid, int sig);
 caddr_t sbrk(int incr);
 int wait(int *status);
+int sched_yield (void);
 
 // 时间相关
 clock_t times(struct tms *buf);
 int gettimeofday(struct timeval *p, void *z);
+void msleep (unsigned int seconds);
 
 #endif //LIB_SYSCALL_H

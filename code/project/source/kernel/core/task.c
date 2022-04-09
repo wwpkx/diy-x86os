@@ -258,7 +258,7 @@ int task_init (task_t * task, const char * name, int flags, task_entry_t * entry
     return 0;
 }
 
-void task_sleep (uint32_t ms) {
+void sys_msleep (uint32_t ms) {
     if (task_manager.curr_task == task_manager.idle_task) {
         return;
     }

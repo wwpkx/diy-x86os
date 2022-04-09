@@ -109,7 +109,7 @@ task_t * task_current (void) {
 /**
  * @brief 当前任务主动放弃CPU
  */
-void task_yield (void) {
+int sys_sched_yield (void) {
     task_t * curr_task = task_current();
 
     // 如果队列中还有其它任务，则将当前任务移入到队列尾部
