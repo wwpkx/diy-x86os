@@ -103,31 +103,7 @@ static inline uint32_t pte_paddr (pte_t * pte) {
     return pte->phy_page_addr << 12;
 }
 
-/**
- * @brief 获取指定虚拟地址对应的pde表项
- */
-static inline pde_t * get_pde(uint32_t page_dir, uint32_t vaddr) {
-    uint32_t offset = pde_index(vaddr) * sizeof(pde_t);
-    return (pde_t *)(page_dir + offset);
-}
-
-/**
- * @brief 获取虚拟地址所在的页表起始
- */
-static inline pte_t * get_page_table (uint32_t page_dir, uint32_t vaddr) {
-    // 跳过最开始的页目录表
-    uint32_t offset = pde_index(vaddr) * sizeof(pde_t);
-    return (pte_t *)(page_dir + PAGE_SIZE + offset);
-}
-
-/**
- * @brief 获取指定虚拟地址对应的pte表项
- */
-static inline pte_t * get_pte (uint32_t page_dir, uint32_t vaddr) {
-    pte_t * pte_table = get_page_table(page_dir, vaddr);
-    return  pte_table + pte_index(vaddr);
-}
-
 void mmu_set_page_dir (uint32_t paddr);
+uint32_t mmu_get_page_dir (void);
 
 #endif // MMU_H

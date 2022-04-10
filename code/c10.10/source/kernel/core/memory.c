@@ -173,6 +173,31 @@ uint32_t memory_create_uvm (void) {
 }
 
 /**
+ * @brief 为指定的虚拟地址空间分配多页内存
+ */
+int memory_alloc_vaddr_page (uint32_t vaddr, uint32_t size, int perm) {
+    uint32_t curr_vaddr = vaddr;
+    int page_count = up_2bound(size, PAGE_SIZE) / PAGE_SIZE;
+
+    for (int i = 0; i < page_count; i++) {
+        uint32_t paddr = (uint32_t)addr_alloc_page(&paddr_alloc, 1);
+        if (paddr == 0) {
+            return 0;
+        }
+        kernel_memset((void *)paddr, 0, PAGE_SIZE);
+
+        pde_t * page_dir = (pde_t *)mmu_get_page_dir();
+        int err = memory_create_map(page_dir, curr_vaddr, paddr, 1, perm);
+        if (err < 0) {
+            addr_free_page(&paddr_alloc, vaddr, i + 1);
+            return -1;
+        }
+    }
+    
+    return 0;
+}
+
+/**
  * @brief 初始化内存管理系统
  * 该函数的主要任务：
  * 1、初始化物理内存分配器：将所有物理内存管理起来

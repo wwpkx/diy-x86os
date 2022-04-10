@@ -16,6 +16,8 @@
 #define TASK_NAME_SIZE				32			// 任务名字长度
 #define TASK_TIME_SLICE_DEFAULT		10			// 时间片计数
 
+#define TASK_FLAG_SYSTEM       	(1 << 0)		// 系统任务
+
 /**
  * @brief 任务控制块结构
  */

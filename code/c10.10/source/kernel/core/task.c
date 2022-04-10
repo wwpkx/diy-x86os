@@ -17,6 +17,10 @@ static task_manager_t task_manager;     // 任务管理器
 static int task_incr_id;                // 任务自增id
 static uint32_t idle_task_stack[IDLE_STACK_SIZE];	// 空闲任务堆栈
 
+static uint32_t task_user_stack_top (void) {
+    return MEMORY_PROC_STACK_TOP;
+}
+
 /**
  * @brief 初始化任务
  */
@@ -27,7 +31,7 @@ int task_init (task_t *task, const char * name, uint32_t entry, uint32_t esp) {
     if (tss_sel < 0) {
         return -1;
     }
-    
+
     // tss段初始化
     kernel_memset(&task->tss, 0, sizeof(tss_t));
     task->tss.eip = entry;
@@ -36,11 +40,13 @@ int task_init (task_t *task, const char * name, uint32_t entry, uint32_t esp) {
     task->tss.ss0 = task_manager.app_data_sel;     // 发生中断时使用特权级0
     task->tss.eip = entry;
     task->tss.eflags = EFLAGS_DEFAULT | EFLAGS_IF;
-    task->tss.es = task->tss.ss = task->tss.ds = task->tss.fs = task->tss.gs = task_manager.app_data_sel;   // 全部采用同一数据段
+    task->tss.es = task->tss.ss = task->tss.ds = task->tss.fs 
+            = task->tss.gs = task_manager.app_data_sel;   // 全部采用同一数据段
     task->tss.cs = task_manager.app_code_sel; 
     task->tss.iomap = 0x40000000;
     task->tss_sel = tss_sel;
 
+    // 页表初始化
     uint32_t page_dir = memory_create_uvm();
     if (page_dir == 0) {
         goto task_init_failed;
@@ -92,11 +98,11 @@ void task_manager_init (void) {
     //数据段和代码段，使用DPL3，所有应用共用同一个
     //为调试方便，暂时使用DPL0
     task_manager.app_data_sel = gdt_alloc_segment(0x00000000, 0xFFFFFFFF,
-                     GDT_SET_PRESENT | GDT_SEG_DPL0 | GDT_SEG_S_CODE_DATA | 
+                     GDT_SET_PRESENT | GDT_SEG_DPL3 | GDT_SEG_S_CODE_DATA | 
                      GDT_SEG_TYPE_DATA | GDT_SEG_TYPE_RW | GDT_SEG_D);
 
     task_manager.app_code_sel = gdt_alloc_segment(0x00000000, 0xFFFFFFFF,
-                     GDT_SET_PRESENT | GDT_SEG_DPL0 | GDT_SEG_S_CODE_DATA | 
+                     GDT_SET_PRESENT | GDT_SEG_DPL3 | GDT_SEG_S_CODE_DATA | 
                      GDT_SEG_TYPE_CODE | GDT_SEG_TYPE_RW | GDT_SEG_D);
 
     task_manager.curr_task = (task_t *)0;

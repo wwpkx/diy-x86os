@@ -50,8 +50,8 @@
             // gdb连接后的设置
             "postRemoteConnectCommands": [
                 {
-                    "description": "加载boot符号文件",
-                    "text": "-file-symbol-file ./build/source/boot/boot.elf",
+                    "description": "加载内核符号文件",
+                    "text": "-file-symbol-file ./build/source/kernel/kernel.elf",
                     "ignoreFailures": false
                 },
                 {
@@ -60,8 +60,8 @@
                     "ignoreFailures": false
                 },
                 {
-                    "description": "加载内核符号文件",
-                    "text": "add-symbol-file ./build/source/kernel/kernel.elf 0x10000",
+                    "description": "加载boot符号文件",
+                    "text": "add-symbol-file ./build/source/boot/boot.elf 0x7c00",
                     "ignoreFailures": false
                 },
                 {

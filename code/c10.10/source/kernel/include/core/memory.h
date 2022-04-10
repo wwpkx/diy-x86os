@@ -15,7 +15,8 @@
 #define MEM_EXT_START           (1024*1024)
 #define MEMORY_EXT_MAX_END      (32*1024*1024)
 
-#define MEMORY_PROC_BASE        (0x40000000)        // 进程起始地址空间
+#define MEMORY_PROC_BASE        (0x80000000)        // 进程起始地址空间
+#define MEMORY_PROC_STACK_TOP   (0xC0000000)        // 进程栈顶
 
 /**
  * @brief 地址分配结构
@@ -40,5 +41,6 @@ typedef struct _memory_map_t {
 
 void memory_init (boot_info_t * boot_info);
 uint32_t memory_create_uvm (void);
+int memory_alloc_vaddr_page (uint32_t vaddr, uint32_t size, int perm);
 
 #endif // MEMORY_H
