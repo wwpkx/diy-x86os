@@ -33,7 +33,7 @@ void bitmap_set_bit (bitmap_t * bitmap, int index, int count, int bit) {
     for (int i = 0; (i < count) && (index < bitmap->bit_count); i++, index++) {
         // 可以考虑进行一定程序的优化!!
         if (bit) {
-            bitmap->bits[index / 8] = 1 << (index % 8);
+            bitmap->bits[index / 8] |= 1 << (index % 8);
         } else {
             bitmap->bits[index / 8] &= ~(1 << (index % 8));
         }

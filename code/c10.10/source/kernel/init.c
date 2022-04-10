@@ -53,8 +53,11 @@ void init_task_entry(void *param) {
     }
 } 
 
-void init_main(void) {
+static void create_init_task (void) {
 
+}
+
+void init_main(void) {
     task_manager_init();
 
     log_printf("Kernel is running....");
@@ -64,7 +67,7 @@ void init_main(void) {
     // 初始化任务
     task_init(&init_task, "init task", (uint32_t)init_task_entry, (uint32_t)&init_task_stack[1024]);
     irq_enable_global();
-
+    
     bfifo_init(&bfifo, fifo_buf, 32);
     
     //int a = 3 / 0;

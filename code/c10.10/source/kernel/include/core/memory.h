@@ -12,6 +12,10 @@
 #include "tools/bitmap.h"
 
 #define MEMORY_EBDA_START       0x00080000
+#define MEM_EXT_START           (1024*1024)
+#define MEMORY_EXT_MAX_END      (32*1024*1024)
+
+#define MEMORY_PROC_BASE        (0x40000000)        // 进程起始地址空间
 
 /**
  * @brief 地址分配结构
@@ -28,12 +32,13 @@ typedef struct _addr_alloc_t {
  * @brief 虚拟地址到物理地址之间的映射关系表
  */
 typedef struct _memory_map_t {
-    uint32_t vaddr;     // 虚拟地址
-    uint32_t paddr;     // 物理地址
-    uint32_t size;      // 大小
+    void * vaddr_start;     // 虚拟地址
+    void * vaddr_end;
+    void * paddr;       // 物理地址
     uint32_t perm;      // 访问权限
 }memory_map_t;
 
 void memory_init (boot_info_t * boot_info);
+uint32_t memory_create_uvm (void);
 
 #endif // MEMORY_H

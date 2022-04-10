@@ -6,7 +6,8 @@
         "task.h": "c",
         "cpu_instr.h": "c",
         "elf.h": "c",
-        "loader.h": "c"
+        "loader.h": "c",
+        "os_cfg.h": "c"
     },
     "cmake.sourceDirectory": "${workspaceFolder}/."
 }

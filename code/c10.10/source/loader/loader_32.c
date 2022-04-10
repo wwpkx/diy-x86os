@@ -106,17 +106,7 @@ void enable_page_mode (void) {
 	// 以下表为临时使用，用于帮助内核正常运行，在内核运行起来之后，将重新设置
 	static uint32_t page_dir[1024] __attribute__((aligned(4096))) = {
 		[0] = PDE_P | PDE_PS | PDE_RW,			// PDE_PS，开启4MB的页
-		[SYS_KERNEL_BASE_ADDR >> 22] = PDE_P | PDE_PS | PDE_RW,	
 	};
-	static uint32_t pte_1023[1024] __attribute__((aligned(4096))) = {
-		[0] = (uint32_t)page_dir,				// 0xFFC00000指向page_dir
-		[1023] = (uint32_t)pte_1023,			// 0xFFFF000指向自己
-	};
-
-	// 映射页表到0xFFC01000，即高10位为1
-	page_dir[1023] = PDE_P | PDE_RW | ((uint32_t)pte_1023 & 0xFFFFF000);
-	pte_1023[0] |= PDE_P | PDE_RW;
-	pte_1023[1023] |= PDE_P | PDE_RW;
 
 	// 设置PSE，以便启用4M的页，而不是4KB
 	uint32_t cr4 = read_cr4();

@@ -53,6 +53,10 @@ gdt_descriptor_t * gdt_alloc_desc (void) {
     return (gdt_descriptor_t *)0;
 }
 
+void gdt_free_sel (int sel) {
+    gdt_table[sel / sizeof(gdt_descriptor_t)].attr = 0;
+}
+
 /**
  * 分配一个GDT推荐表符
  */

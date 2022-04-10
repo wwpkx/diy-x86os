@@ -16,6 +16,7 @@
 #define PAGE_SIZE           (4*1024)            // 页大小
 #define PDE_CNT             1024
 #define PTE_CNT             1024
+#define PAGE_TABLE_SIZE     (PTE_CNT * sizeof(pte_t))
 #define ADDR_1MB            (1024*1024)
 #define SIZE_1GB            (1024*1024*1024)
 
@@ -76,15 +77,16 @@ typedef union _pte_t {
 /**
  * @brief 返回vaddr在页目录中的索引
  */
-static inline int pde_index (uint32_t vaddr) {
-    return (vaddr >> 22) & 0x3FF;   // 取高10位
+static inline uint32_t pde_index (uint32_t vaddr) {
+    int index = (vaddr >> 22); // 只取高10位
+    return index;
 }
 
 /**
  * @brief 获取pde中地址
  */
 static inline uint32_t pde_paddr (pde_t * pde) {
-    return pde->phy_pt_addr << 22;
+    return pde->phy_pt_addr << 12;
 }
 
 /**

@@ -16,8 +16,10 @@
 	.extern pre_init
 	.extern init_main
 _start:
+	movl 4(%esp), %eax			// 取传给loader的参数
 	mov $_start, %esp
-	jmp kernel_init
+	push %eax					// 压入当前栈中
+	call kernel_init
 
 	// 重新加载GDT
 	jmp $KERNEL_SELECTOR_CS, $gdt_reload

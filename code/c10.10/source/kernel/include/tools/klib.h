@@ -8,8 +8,13 @@
 #include <stdarg.h>
 #include "comm/types.h"
 
-#define UP_BOUND(size, bound)       (((size) + (bound) - 1) & ~((bound) - 1))
-#define DOWN_BOUND(size, bound)     ((size) & ~((bound) - 1))
+static inline uint32_t up_2bound (uint32_t size, uint32_t bound) {
+    return (size + bound - 1) & ~(bound - 1);
+}
+
+static inline uint32_t down_2bound (uint32_t size, uint32_t bound) {
+    return size & ~(bound - 1);
+}
 
 void kernel_strncpy(char * dest, const char * src, int size);
 int kernel_strncmp (const char * s1, const char * s2, int size);
@@ -26,7 +31,7 @@ void kernel_vsprintf(char * buffer, const char * fmt, va_list args);
 
 #define ASSERT(condition)    if (!(condition)) panic_debug(__FILE__, __LINE__, __func__, #condition)
 
-void panic_debug (const char * filename, int line, const char * func, char * condition);
+void panic_debug (const char * filename, int line, const char * func, const char * condition);
 
 #else
 

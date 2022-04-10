@@ -5,6 +5,7 @@
 #include "tools/log.h"
 #include "cpu/irq.h"
 #include "core/task.h"
+#include "comm/cpu_instr.h"
 
 void kernel_strncpy(char * dest, const char * src, int size) {
     char * d = dest;
@@ -168,7 +169,9 @@ void panic_debug (const char * filename, int line, const char * func, const char
     log_printf("file: %s\nline %d\nfunc: %s\n", filename, line, func);
 
     task_t * task = task_current();
-    log_printf("task: %s", task ？ task : "none");
-    for (;;) {}
+    log_printf("task: %s", task ? task->name : "none");
+    for (;;) {
+        hlt();
+    }
 }
 

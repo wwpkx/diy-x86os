@@ -16,10 +16,11 @@
 extern uint8_t mem_free_start[];        // 内核末端空闲ram
 static addr_alloc_t paddr_alloc;        // 物理地址分配结构
 static addr_alloc_t kvaddr_alloc;       // 物理地址分配结构
-static pde_t kernel_pde_table[PDE_CNT]; // 内核页目录表
 
-extern uint8_t data[];                  // 内核数据起始
-extern uint8_t text[];                  // 内核代码起始
+static pde_t kernel_page_dir[PDE_CNT] __attribute__((aligned(PAGE_SIZE))); // 内核页目录表
+
+extern uint8_t text_start[], text_end[], data_start[], data_end[];
+extern uint8_t kernel_base_addr[];
 
 /**
  * @brief 初始化地址分配结构
@@ -67,86 +68,108 @@ static uint32_t total_mem_size(boot_info_t * boot_info) {
     return mem_size;
 }
 
-#define PDE_START_ADDR      0xFFC00000
+pte_t * find_pte (pde_t * page_dir, uint32_t vaddr, int alloc) {
+    pte_t * page_table;
+
+    pde_t *pde = page_dir + pde_index(vaddr);
+    if (pde->present) {
+        page_table = (pte_t *)pde_paddr(pde);
+    } else {
+        // 如果不存在，则考虑分配一个
+        if (alloc == 0) {
+            return (pte_t *)0;
+        }
+
+        // 分配一个物理页表
+        uint32_t pg_paddr = addr_alloc_page(&paddr_alloc, 1);
+        if (pg_paddr == 0) {
+            return (pte_t *)0;
+        }
+        pde->v = pg_paddr | PTE_P | PTE_W | PTE_U;      // 暂设置为用户可读写
+
+        // 为物理页表绑定虚拟地址的映射，这样下面就可以计算出虚拟地址了
+        //kernel_pg_last[pde_index(vaddr)].v = pg_paddr | PTE_P | PTE_W;
+
+        // 清空页表，防止出现异常
+        // 这里虚拟地址和物理地址一一映射，所以直接写入
+        page_table = (pte_t *)(pg_paddr);
+        kernel_memset(page_table, 0, PAGE_SIZE);
+    }
+
+    return page_table + pte_index(vaddr);
+}
 
 /**
  * @brief 将指定的地址空间进行一页的映射
  */
-void memory_create_map (pde_t * page_dir, uint32_t vaddr, uint32_t paddr, uint32_t perm) {    
-    // 获取当前页表的地址, 在pde和pte中进行映射
-    pde_t * pde = get_pde(page_dir, vaddr);
-    if (pde->present) {
-        // PTE表存在，则定位到PTE表项进行添加
-        pte_t * pte = get_pte(page_dir, vaddr);
-        pte->v = paddr | perm;
-    } else {
-        // 不存在，则分配一个Page Table，然后进行更新
-        uint32_t pg_paddr = addr_alloc_page(&paddr_alloc, 1);
-        pde->v = pg_paddr | perm;      // 更新pde表项
+int memory_create_map (pde_t * page_dir, uint32_t vaddr, uint32_t paddr, int count, uint32_t perm) { 
+    static int j = 0; 
+    for (int i = 0; i < count; i++) {
+        pte_t * pte = find_pte(page_dir, vaddr, 1);
+        if (pte == (pte_t *)0) {
+            return -1;
+        }
 
-        // 新分配的表，需要在memory中建立映射关系
-        uint32_t pg_vaddr = (uint32_t)get_page_table(page_dir, vaddr);
-        memory_create_map((pde_t *)PDE_START_ADDR, pg_vaddr, pg_paddr, perm);
+        // 创建映射的时候，这条pte应当是不存在的。
+        // 如果存在，说明可能有问题
+        ASSERT(pte->present == 0);
 
-        // 清空，避免无效数据影响
-        pte_t * pte_start = get_page_table(page_dir, vaddr);
-        kernel_memset(pte_start, 0, PAGE_SIZE);
+        pte->v = paddr | perm | PTE_P;
 
-        // 最后写入新值
-        pte_t * pte = pte_start + pte_index(vaddr);
-        pte->v = paddr | perm;
+        vaddr += PAGE_SIZE;
+        paddr += PAGE_SIZE;
     }
-}
+}  
 
 /**
- * @brief 分配一页内核页面，并返回虚拟地址
+ * @brief 根据内存映射表，构造内核页表
  */
-static uint32_t alloc_kernel_page (uint32_t perm, int clear) {
-    uint32_t vaddr = addr_alloc_page(&kvaddr_alloc, 1);
-    if (vaddr == 0) {
-        return vaddr;
-    } 
-
-    uint32_t paddr = addr_alloc_page(&paddr_alloc, 1);
-    if (paddr == 0) {
-        goto failed;
-    }
-
-    memory_create_map(PDE_START_ADDR, vaddr, paddr, perm);
-    return vaddr;
-
-    if (clear) {
-        kernel_memset((void *)vaddr, 0, PAGE_SIZE);
-    }
-failed:
-    return 0;
-}
-
-/**
- * @brief 根据内存映射表，建立pde页表
- */
-uint32_t create_kernel_table (void) {
+void create_kernel_table (void) {
     // 地址映射表, 用于建立内核级的地址映射
     static memory_map_t kernel_map[] = {
-        {SYS_KERNEL_BASE_ADDR,      0,   text - SYS_KERNEL_BASE_ADDR,   PTE_W},       // 内核栈区
-        {text, text-SYS_KERNEL_BASE_ADDR, MEMORY_EBDA_START-SYS_KERNEL_BASE_ADDR, 0},      // 代码和只读数据区
+        {kernel_base_addr,  text_start,     0,              PTE_W},        // 内核栈区
+        {text_start,        text_end,       text_start,     0},             // 代码区
+        {data_start,        (void *)(MEMORY_EBDA_START - 1),   data_start,        PTE_W},      // 数据区
+
+        // // 扩展存储空间一一映射，方便直接操作
+        {(void *)MEM_EXT_START, (void *)MEMORY_EXT_MAX_END, (void *)MEM_EXT_START, PTE_W},      
     };
 
-    // 清空其它表项，设置页表自己定位到PDE_START_ADDR开始处
-    // kernel_memset(kernel_pde_table, 0, sizeof(kernel_pde_table));
+    // 清空页目录表
+    kernel_memset(kernel_page_dir, 0, sizeof(kernel_page_dir));
+    
+    // 清空后，然后依次根据映射关系创建映射表
+    for (int i = 0; i < sizeof(kernel_map) / sizeof(memory_map_t); i++) {
+        memory_map_t * map = kernel_map + i;
 
-    // // 清空后，然后依次根据映射关系创建映射表
-    // for (int i = 0; i < sizeof(kernel_map) / sizeof(memory_map_t); i++) {
-    //     memory_map_t * map = kernel_map + i;
+        // 可能有多个页，建立多个页的配置
+        // 简化起见，不考虑4M的情况
+        int vstart = down_2bound((uint32_t)map->vaddr_start, PAGE_SIZE);
+        int vend = up_2bound((uint32_t)map->vaddr_end, PAGE_SIZE);
+        int page_count = down_2bound((uint32_t)(vend - vstart), PAGE_SIZE) / PAGE_SIZE;
+        memory_create_map(kernel_page_dir, vstart, (uint32_t)map->paddr, page_count, map->perm);
+    }
+}
 
-    //     // 可能有多个页，建立多个页的配置
-    //     int page_count = map->size / PAGE_SIZE;
-    //     for (int i = 0; i < page_count; i++) {
-    //         memory_create_map(page_dir, map->vaddr, map->paddr, map->perm);
-    //     }
-    // }
+/**
+ * @brief 创建进程的初始页表
+ * 主要的工作创建页目录表，然后从内核页表中复制一部分
+ */
+uint32_t memory_create_uvm (void) {
+    pde_t * page_dir = (pde_t *)addr_alloc_page(&paddr_alloc, 1);
+    if (page_dir == 0) {
+        return 0;
+    }
+    kernel_memset((void *)page_dir, 0, PAGE_SIZE);
 
-    return 0;
+    // 复制整个内核空间的页目录项，以便与其它进程共享内核空间
+    // 用户空间的内存映射暂不处理，等加载程序时创建
+    uint32_t user_pde_start = pde_index(MEMORY_PROC_BASE);
+    for (int i = 0; i < user_pde_start; i++) {
+        page_dir[i].v = kernel_page_dir[i].v;
+    }
+
+    return (uint32_t)page_dir;
 }
 
 /**
@@ -161,18 +184,21 @@ void memory_init (boot_info_t * boot_info) {
     uint32_t total_mem = 128 * 1024 * 1024; // total_mem_size(boot_info);
 
     // 4GB大小需要总共4*1024*1024*1024/4096/8=128KB的位图, 使用低1MB的RAM空间中足够
-    total_mem = DOWN_BOUND(total_mem, PAGE_SIZE);   // 对齐到4KB页
+    total_mem = down_2bound(total_mem, PAGE_SIZE);   // 对齐到4KB页
     addr_alloc_init(&paddr_alloc, mem_free, PADDR_ALLOC_START, total_mem, PAGE_SIZE);
 
     // 再分配一些空间用于内核虚拟地址池，也放在低端1MB内存区域。1GB只需要32KB
     mem_free += bitmap_byte_count(paddr_alloc.size / PAGE_SIZE);
-    addr_alloc_init(&kvaddr_alloc, mem_free, SYS_KERNEL_BASE_ADDR, SIZE_1GB, PAGE_SIZE);
+    addr_alloc_init(&kvaddr_alloc, mem_free, (uint32_t)kernel_base_addr, SIZE_1GB, PAGE_SIZE);
 
     // 最后mem不能超过ebda区域
     mem_free += bitmap_byte_count(kvaddr_alloc.size / PAGE_SIZE);
-    ASSERT(mem_free < (uint8_t *)(SYS_KERNEL_BASE_ADDR + MEMORY_EBDA_START));
+    ASSERT(mem_free < (kernel_base_addr + MEMORY_EBDA_START));
 
-    uint32_t addr = create_kernel_table();
-    mmu_set_page_dir(addr);
+    // 创建内核页表并切换过去
+    create_kernel_table();
+    
+    // 先切换到当前页表
+    mmu_set_page_dir((uint32_t)kernel_page_dir);
 }
 
