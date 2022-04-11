@@ -89,7 +89,10 @@ static inline int fork() {
     return sys_call0(SYS_fork);
 }
 
-int getpid();
+static inline int getpid() {
+	return sys_call0(SYS_getpid);
+}
+
 int kill(int pid, int sig);
 caddr_t sbrk(int incr);
 int wait(int *status);

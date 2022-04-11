@@ -86,10 +86,6 @@ int execve(char *name, char **argv, char **env) {
 	return -1;
 }
 
-int getpid() {
-	return sys_call0(SYS_getpid);
-}
-
 int kill(int pid, int sig) {
 	return -1;
 }

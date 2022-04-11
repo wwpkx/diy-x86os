@@ -139,7 +139,7 @@ void task_manager_init (void) {
                      GDT_SET_PRESENT | GDT_SEG_DPL3 | GDT_SEG_S_CODE_DATA | 
                      GDT_SEG_TYPE_CODE | GDT_SEG_TYPE_RW | GDT_SEG_D);
 
-    task_incr_id = 0;
+    task_incr_id = 1;
 
     // 各队列初始化
     list_init(&task_manager.ready_list);
