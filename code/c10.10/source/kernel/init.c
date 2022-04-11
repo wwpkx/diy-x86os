@@ -45,16 +45,10 @@ void kernel_init (boot_info_t * boot_info) {
  * @brief 移至第一个任务运行
  */
 void move_to_first_task(uint32_t entry) {
-    extern uint8_t * init_load_addr;
-    extern uint8_t * init_load_size;
-
-    // 分配一页内存供代码存放使用，然后将代码复制过去
-    uint32_t size = (uint32_t)&init_load_size;
-    memory_alloc_vaddr_page(MEMORY_PROC_BASE,  size, PTE_P | PTE_U);
-    kernel_memcpy((void *)MEMORY_PROC_BASE, (void *)&init_load_addr, size);
-
     // 不能直接用Jmp far进入，因为当前特权级0，不能跳到低特权级的代码
     // 下面的iret后，还需要手动加载ds, fs, es等寄存器值，iret不会自动加载
+    // 注意，运行下面的代码可能会产生异常：段保护异常或页保护异常。
+    // 可根据产生的异常类型和错误码，并结合手册来找到问题所在
     tss_t * tss = &(task_current()->tss);
     __asm__ __volatile__(
         // 模拟中断返回，切换入第1个可运行应用进程
@@ -63,20 +57,8 @@ void move_to_first_task(uint32_t entry) {
         "push %1\n\t"			// ESP
         "pushfl\n\t"			// EFLAGS
         "push %2\n\t"			// CS
-        "push $first\n\t"		// ip
-        "iret\n\t"
-        "first:\n\t"
-
-        // 注意开中断，因为之前EFLAGS的IF=0，中断是关掉的
-        // IRET指令执行并不改变IF
-        "sti\n\t"
-
-        // 更新各个数据段寄存器为应用的自己的。SS由IRET指令自行设置
-        "mov %0, %%ds\n\t"
-        "mov %0, %%es\n\t"
-        "mov %0, %%fs\n\t"
-        "mov %0, %%gs\n\t"
-        "jmp *%3"::"r"(tss->ss), "r"(tss->esp), "r"(tss->cs), "r"(entry));
+        "push %3\n\t"		    // ip
+        "iret\n\t"::"r"(tss->ss), "r"(tss->esp), "r"(tss->cs), "r"(entry));
 }
 
 int init_task_entry (void);

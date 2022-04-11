@@ -10,7 +10,8 @@
         "os_cfg.h": "c",
         "memory.h": "c",
         "boot_info.h": "c",
-        "bfifo.h": "c"
+        "bfifo.h": "c",
+        "klib.h": "c"
     },
     "cmake.sourceDirectory": "${workspaceFolder}/."
 }

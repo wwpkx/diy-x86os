@@ -164,12 +164,19 @@ uint32_t memory_create_uvm (void) {
 
     // 复制整个内核空间的页目录项，以便与其它进程共享内核空间
     // 用户空间的内存映射暂不处理，等加载程序时创建
-    uint32_t user_pde_start = pde_index(MEMORY_PROC_BASE);
+    uint32_t user_pde_start = pde_index(MEMORY_TASK_BASE);
     for (int i = 0; i < user_pde_start; i++) {
         page_dir[i].v = kernel_page_dir[i].v;
     }
 
     return (uint32_t)page_dir;
+}
+
+/**
+ * @brief 分配一页内存
+ */
+uint32_t memory_alloc_page (void) {
+    return addr_alloc_page(&paddr_alloc, 1);
 }
 
 /**
@@ -180,7 +187,7 @@ int memory_alloc_vaddr_page (uint32_t vaddr, uint32_t size, int perm) {
     int page_count = up_2bound(size, PAGE_SIZE) / PAGE_SIZE;
 
     for (int i = 0; i < page_count; i++) {
-        uint32_t paddr = (uint32_t)addr_alloc_page(&paddr_alloc, 1);
+        uint32_t paddr = addr_alloc_page(&paddr_alloc, 1);
         if (paddr == 0) {
             return 0;
         }
@@ -192,6 +199,8 @@ int memory_alloc_vaddr_page (uint32_t vaddr, uint32_t size, int perm) {
             addr_free_page(&paddr_alloc, vaddr, i + 1);
             return -1;
         }
+
+        curr_vaddr += PAGE_SIZE;
     }
     
     return 0;
@@ -206,7 +215,7 @@ int memory_alloc_vaddr_page (uint32_t vaddr, uint32_t size, int perm) {
 void memory_init (boot_info_t * boot_info) { 
     // 空闲物理块的分配：将1M以上的空间用来分配
     uint8_t * mem_free =(uint8_t *) mem_free_start;
-    uint32_t total_mem = 128 * 1024 * 1024; // total_mem_size(boot_info);
+    uint32_t total_mem = total_mem_size(boot_info);
 
     // 4GB大小需要总共4*1024*1024*1024/4096/8=128KB的位图, 使用低1MB的RAM空间中足够
     total_mem = down_2bound(total_mem, PAGE_SIZE);   // 对齐到4KB页

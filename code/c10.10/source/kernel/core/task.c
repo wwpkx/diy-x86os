@@ -11,38 +11,51 @@
 #include "cpu/irq.h"
 #include "os_cfg.h"
 #include "core/memory.h"
+#include "cpu/mmu.h"
 
 // 任务各表项的LDT索引值
 static task_manager_t task_manager;     // 任务管理器
 static int task_incr_id;                // 任务自增id
-static uint32_t idle_task_stack[IDLE_STACK_SIZE];	// 空闲任务堆栈
-
-static uint32_t task_user_stack_top (void) {
-    return MEMORY_PROC_STACK_TOP;
-}
 
 /**
  * @brief 初始化任务
  */
-int task_init (task_t *task, const char * name, uint32_t entry, uint32_t esp) {
+int task_init (task_t *task, const char * name, int flag, uint32_t entry, uint32_t esp) {
     // 为TSS分配GDT
     int tss_sel = gdt_alloc_segment((uint32_t)&task->tss, 
                                 sizeof(tss_t), GDT_SET_PRESENT | GDT_SEG_DPL0 | GDB_TSS_TYPE);
     if (tss_sel < 0) {
         return -1;
     }
-
-    // tss段初始化
     kernel_memset(&task->tss, 0, sizeof(tss_t));
+
+    // 分配内核栈
+    uint32_t kernel_stack = memory_alloc_page();
+    if (kernel_stack == 0) {
+        goto task_init_failed;
+    }
+    
+    // 根据不同的权限选择不同的访问选择子
+    int code_sel, data_sel;
+    if (flag & TASK_FLAG_SYSTEM) {
+        code_sel = KERNEL_SELECTOR_CS;
+        data_sel = KERNEL_SELECTOR_DS;
+    } else {
+        // 注意加了RP3,不然将产生段保护错误
+        code_sel = task_manager.app_code_sel | GDT_RPL3;
+        data_sel = task_manager.app_data_sel | GDT_RPL3;
+    }
+
+    // 预先配置好进程的状态，方便运行
     task->tss.eip = entry;
-    task->tss.esp = esp;                    // ???单独分配空间
-    task->tss.esp0 = esp;
-    task->tss.ss0 = task_manager.app_data_sel;     // 发生中断时使用特权级0
+    task->tss.esp = esp;                    // 特权级3单独分配空间
+    task->tss.esp0 = kernel_stack + PAGE_SIZE;
+    task->tss.ss0 = KERNEL_SELECTOR_DS;     // 发生中断时使用特权级0
     task->tss.eip = entry;
     task->tss.eflags = EFLAGS_DEFAULT | EFLAGS_IF;
     task->tss.es = task->tss.ss = task->tss.ds = task->tss.fs 
-            = task->tss.gs = task_manager.app_data_sel;   // 全部采用同一数据段
-    task->tss.cs = task_manager.app_code_sel; 
+            = task->tss.gs = data_sel;   // 全部采用同一数据段
+    task->tss.cs = code_sel; 
     task->tss.iomap = 0x40000000;
     task->tss_sel = tss_sel;
 
@@ -91,6 +104,23 @@ static void idle_task_entry (void) {
     }
 }
 
+static void kernel_task_init (void) {
+    extern uint8_t * init_load_addr;
+    extern uint8_t * init_load_size;
+
+    uint32_t init_size = (uint32_t)&init_load_size;
+    uint32_t total_size = 2 * PAGE_SIZE;
+    ASSERT(init_size < PAGE_SIZE);
+
+    // 第一个任务代码量小一些，好和栈放在1个页面呢
+    // 这样就不要立即考虑还要给栈分配空间的问题
+    task_init(&task_manager.kernel_task, "kernel task", 0, 0, MEMORY_TASK_BASE + total_size);     // 里面的值不必要写
+
+    // 分配一页内存供代码存放使用，然后将代码复制过去
+    memory_alloc_vaddr_page(MEMORY_TASK_BASE,  total_size, PTE_P | PTE_U | PTE_W);
+    kernel_memcpy((void *)MEMORY_TASK_BASE, (void *)&init_load_addr, init_size);
+}
+
 /**
  * @brief 任务管理器初始化
  */
@@ -114,17 +144,16 @@ void task_manager_init (void) {
     list_init(&task_manager.task_list);
     list_init(&task_manager.sleep_list);
 
-    // 初始化内核任务
-    task_t * first_task = &task_manager.kernel_task;
-    task_init(first_task, "kernel task", 0, 0);     // 里面的值不必要写
+    kernel_task_init();
     task_init(&task_manager.idle_task, 
                 "idle task", 
+                TASK_FLAG_SYSTEM,
                 (uint32_t)idle_task_entry, 
-                (uint32_t)(idle_task_stack + IDLE_STACK_SIZE));     // 里面的值不必要写
-    task_manager.curr_task = first_task;
+                0);     // 运行于内核模式，无需指定特权级3的栈
+    task_manager.curr_task = &task_manager.kernel_task;
 
     // 写TR寄存器，指示当前运行的第一个任务
-    write_tr(first_task->tss_sel);
+    write_tr(task_manager.kernel_task.tss_sel);
 }
 
 /**
