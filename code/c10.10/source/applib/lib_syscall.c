@@ -8,34 +8,6 @@
 #include "lib_syscall.h"
 
 /**
- * 执行系统调用
- */
-static int sys_call (int syscall_num, int arg0, int arg1, int arg2, int arg3) {
-	static const uint32_t sys_gate_addr[] = {0, SELECTOR_SYSCALL | 0};  // 使用特权级0
-    uint32_t ret;
-
-    // 采用调用门, 最多支持5个参数
-    __asm__ __volatile__(
-            "push %1\n\t"
-            "push %2\n\t"
-            "push %3\n\t"
-            "push %4\n\t"
-            "push %5\n\t"
-            "lcalll *(%6)\n\n"
-    		:"=a"(ret)
-			 :"r"(arg3), "r"(arg2), "r"(arg1), "r"(arg0), "r"(syscall_num), "r"(sys_gate_addr));
-    return ret;
-}
-
-// 系统调用的简化编写
-#define sys_call0(syscall_num) sys_call(syscall_num, 0, 0, 0, 0)
-#define sys_call1(syscall_num, arg0) sys_call(syscall_num, arg0, 0, 0, 0)
-#define sys_call2(syscall_num, arg0, arg1) sys_call(syscall_num, arg0, arg1, 0, 0)
-#define sys_call3(syscall_num, arg0, arg1, arg2) sys_call(syscall_num, arg0, arg1, arg2, 0)
-#define sys_call4(syscall_num, arg0, arg1, arg2, arg3) sys_call(syscall_num, arg0, arg1, arg2, arg3)
-
-// newlib需要的系统调用
-/**
  * 打开文件
  */
 int open(const char *name, int flags, ...) {
@@ -114,10 +86,6 @@ int execve(char *name, char **argv, char **env) {
 	return -1;
 }
 
-int fork() {
-	return -1;
-}
-
 int getpid() {
 	return sys_call0(SYS_getpid);
 }
@@ -149,10 +117,4 @@ int gettimeofday(struct timeval *p, void *z) {
 	return -1;
 }
 
-/**
- * @brief 毫秒延时
- */
-void msleep (unsigned int seconds) {
-    sys_call1(SYS_msleep, seconds);
-}
 

@@ -11,8 +11,8 @@ include_directories(
 
 # 将所有的汇编、C文件加入工程
 # 注意保证start.asm在最前头
-file(GLOB_RECURSE C_LIST "*.c" "*.h")
-add_executable(${PROJECT_NAME} kernel_asm.S ${C_LIST})
+file(GLOB_RECURSE C_LIST "*.c" "*.h" "*.asm")
+add_executable(${PROJECT_NAME} ${C_LIST})
 
 # lbin文件生成，写入到image目录下
 add_custom_command(TARGET ${PROJECT_NAME}

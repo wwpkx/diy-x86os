@@ -48,7 +48,7 @@ int task_init (task_t *task, const char * name, int flag, uint32_t entry, uint32
 
     // 预先配置好进程的状态，方便运行
     task->tss.eip = entry;
-    task->tss.esp = esp;                    // 特权级3单独分配空间
+    task->tss.esp = esp ? esp : kernel_stack + PAGE_SIZE;  // 未指定栈则用内核栈
     task->tss.esp0 = kernel_stack + PAGE_SIZE;
     task->tss.ss0 = KERNEL_SELECTOR_DS;     // 发生中断时使用特权级0
     task->tss.eip = entry;
@@ -115,6 +115,10 @@ static void kernel_task_init (void) {
     // 第一个任务代码量小一些，好和栈放在1个页面呢
     // 这样就不要立即考虑还要给栈分配空间的问题
     task_init(&task_manager.kernel_task, "kernel task", 0, 0, MEMORY_TASK_BASE + total_size);     // 里面的值不必要写
+    task_manager.curr_task = (task_t *)&task_manager.kernel_task;
+
+    // 更新页表地址为自己的
+    mmu_set_page_dir(task_manager.kernel_task.tss.cr3);
 
     // 分配一页内存供代码存放使用，然后将代码复制过去
     memory_alloc_vaddr_page(MEMORY_TASK_BASE,  total_size, PTE_P | PTE_U | PTE_W);
@@ -134,8 +138,6 @@ void task_manager_init (void) {
     task_manager.app_code_sel = gdt_alloc_segment(0x00000000, 0xFFFFFFFF,
                      GDT_SET_PRESENT | GDT_SEG_DPL3 | GDT_SEG_S_CODE_DATA | 
                      GDT_SEG_TYPE_CODE | GDT_SEG_TYPE_RW | GDT_SEG_D);
-
-    task_manager.curr_task = (task_t *)0;
 
     task_incr_id = 0;
 
@@ -307,6 +309,13 @@ void sys_msleep (uint32_t ms) {
     task_dispatch();
 
     irq_leave_protection(state);
+}
+
+/**
+ * @brief 创建子进程
+ */
+int sys_fork (void) {
+
 }
 
 /**

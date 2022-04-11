@@ -56,6 +56,7 @@ int sys_sched_yield (void);
 void task_dispatch (void);
 void task_time_tick (void);
 void sys_msleep (uint32_t ms);
+int sys_fork (void);
 task_t * task_current (void);
 
 typedef struct _task_manager_t {

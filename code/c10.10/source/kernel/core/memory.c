@@ -10,6 +10,7 @@
 #include "tools/bitmap.h"
 #include "tools/klib.h"
 #include "os_cfg.h"
+#include "core/task.h"
 
 #define PADDR_ALLOC_START           (1024*1024)
 
@@ -193,7 +194,7 @@ int memory_alloc_vaddr_page (uint32_t vaddr, uint32_t size, int perm) {
         }
         kernel_memset((void *)paddr, 0, PAGE_SIZE);
 
-        pde_t * page_dir = (pde_t *)mmu_get_page_dir();
+        pde_t * page_dir = (pde_t *)task_current()->tss.cr3;
         int err = memory_create_map(page_dir, curr_vaddr, paddr, 1, perm);
         if (err < 0) {
             addr_free_page(&paddr_alloc, vaddr, i + 1);
@@ -204,7 +205,7 @@ int memory_alloc_vaddr_page (uint32_t vaddr, uint32_t size, int perm) {
     }
     
     return 0;
-}
+ }
 
 /**
  * @brief 初始化内存管理系统

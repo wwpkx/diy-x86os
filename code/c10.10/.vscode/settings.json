@@ -11,7 +11,8 @@
         "memory.h": "c",
         "boot_info.h": "c",
         "bfifo.h": "c",
-        "klib.h": "c"
+        "klib.h": "c",
+        "lib_syscall.h": "c"
     },
     "cmake.sourceDirectory": "${workspaceFolder}/."
 }

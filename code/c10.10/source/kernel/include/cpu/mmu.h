@@ -104,6 +104,5 @@ static inline uint32_t pte_paddr (pte_t * pte) {
 }
 
 void mmu_set_page_dir (uint32_t paddr);
-uint32_t mmu_get_page_dir (void);
 
 #endif // MMU_H

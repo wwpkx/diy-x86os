@@ -1,11 +1,11 @@
-
+ENTRY(_start)
 SECTIONS
 {
 	PROVIDE(kernel_base_addr = 0x0);
 
 	/* 启动代码，放在最开头，加载地址为0x80000000 */
 	.text.init 0x80000000: AT(0x10000) {
-		*init_task*(.text .data .bss)
+		*init_*(.text .data .bss)
 	}
 	PROVIDE(init_load_addr = LOADADDR(.text.init));
 	PROVIDE(init_load_size = SIZEOF(.text.init));

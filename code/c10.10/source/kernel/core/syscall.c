@@ -19,6 +19,7 @@ static syscall_handler_t sys_call_table[] = {
     [SYS_getpid] =(syscall_handler_t)sys_getpid,
 	[SYS_sched_yield] = (syscall_handler_t)sys_sched_yield,
 	[SYS_msleep] = (syscall_handler_t)sys_msleep,
+	[SYS_fork] = (syscall_handler_t)sys_fork,
 };
 
 /**
