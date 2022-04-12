@@ -16,11 +16,6 @@
             "options": {
                 "cwd": "${workspaceRoot}/../../image/"
             },
-            "problemMatcher": [],
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            }
         },
         {
             "label": "启动qemu",
@@ -39,10 +34,7 @@
         {
             "label": "调试准备",
             "dependsOrder": "sequence",
-            "dependsOn": [
-                "写映像文件",
-                "启动qemu"
-            ],
+            "dependsOn": ["写映像文件", "启动qemu"],
             "group": "test"
         }
     ]

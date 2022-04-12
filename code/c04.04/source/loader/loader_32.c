@@ -71,7 +71,7 @@ static uint32_t reload_elf_file (uint8_t * file_buffer) {
         Elf32_Phdr * phdr = (Elf32_Phdr *)(file_buffer + elf_hdr->e_phoff) + i;
 
         uint8_t * src = file_buffer + phdr->p_offset;
-        uint8_t * dest = (uint8_t *)phdr->p_vaddr;
+        uint8_t * dest = (uint8_t *)phdr->p_paddr;
         for (int j = 0; j < phdr->p_filesz; j++) {
             *dest++ = *src++;
         }

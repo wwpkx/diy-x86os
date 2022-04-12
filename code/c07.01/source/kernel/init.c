@@ -20,7 +20,7 @@ static boot_info_t * init_boot_info;        // 启动信息
 /**
  * 内核入口
  */
-void _start (boot_info_t *boot_info) {
+void kernel_init (boot_info_t * boot_info) {
     init_boot_info = boot_info;
 
     // 初始化CPU，再重新加载
@@ -52,7 +52,7 @@ void list_test (void) {
     list_init(&list);
 }
 
-void kernel_entry(boot_info_t *boot_info) {
+void init_main(void) {
     list_test();
 
     irq_init();

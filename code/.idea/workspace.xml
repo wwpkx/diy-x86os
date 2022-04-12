@@ -10,54 +10,141 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="503b7bda-5c1b-4288-a1ee-02d955517940" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/c08.03/source/kernel/core/task.c" beforeDir="false" afterPath="$PROJECT_DIR$/c08.03/source/kernel/core/task.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c08.03/source/kernel/include/core/task.h" beforeDir="false" afterPath="$PROJECT_DIR$/c08.03/source/kernel/include/core/task.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/c10.01/script/img-write-osx.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/c10.01/script/qemu-debug-osx.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/c10.01/source/kernel/include/tools/bitmap.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/c10.01/source/kernel/tools/bitmap.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c03.07/source/kernel/init.c" beforeDir="false" afterPath="$PROJECT_DIR$/c03.07/source/kernel/init.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c03.08/source/kernel/init.c" beforeDir="false" afterPath="$PROJECT_DIR$/c03.08/source/kernel/init.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c03.08/source/loader/loader_32.c" beforeDir="false" afterPath="$PROJECT_DIR$/c03.08/source/loader/loader_32.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c04.01/source/kernel/init.c" beforeDir="false" afterPath="$PROJECT_DIR$/c04.01/source/kernel/init.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c04.01/source/loader/loader_32.c" beforeDir="false" afterPath="$PROJECT_DIR$/c04.01/source/loader/loader_32.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c04.02/source/kernel/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/c04.02/source/kernel/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c04.02/source/kernel/init.c" beforeDir="false" afterPath="$PROJECT_DIR$/c04.02/source/kernel/init.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c04.02/source/loader/loader_32.c" beforeDir="false" afterPath="$PROJECT_DIR$/c04.02/source/loader/loader_32.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c04.03/source/kernel/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/c04.03/source/kernel/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c04.03/source/kernel/init.c" beforeDir="false" afterPath="$PROJECT_DIR$/c04.03/source/kernel/init.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c04.03/source/loader/loader_32.c" beforeDir="false" afterPath="$PROJECT_DIR$/c04.03/source/loader/loader_32.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c04.04/source/kernel/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/c04.04/source/kernel/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c04.04/source/kernel/init.c" beforeDir="false" afterPath="$PROJECT_DIR$/c04.04/source/kernel/init.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c04.04/source/loader/loader_32.c" beforeDir="false" afterPath="$PROJECT_DIR$/c04.04/source/loader/loader_32.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c04.05/source/kernel/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/c04.05/source/kernel/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c04.05/source/kernel/init.c" beforeDir="false" afterPath="$PROJECT_DIR$/c04.05/source/kernel/init.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c04.05/source/loader/loader_32.c" beforeDir="false" afterPath="$PROJECT_DIR$/c04.05/source/loader/loader_32.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c04.06/source/kernel/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/c04.06/source/kernel/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c04.06/source/kernel/init.c" beforeDir="false" afterPath="$PROJECT_DIR$/c04.06/source/kernel/init.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c04.06/source/loader/loader_32.c" beforeDir="false" afterPath="$PROJECT_DIR$/c04.06/source/loader/loader_32.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c04.07/source/kernel/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/c04.07/source/kernel/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c04.07/source/kernel/init.c" beforeDir="false" afterPath="$PROJECT_DIR$/c04.07/source/kernel/init.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c04.07/source/loader/loader_32.c" beforeDir="false" afterPath="$PROJECT_DIR$/c04.07/source/loader/loader_32.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c04.08/source/kernel/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/c04.08/source/kernel/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c04.08/source/kernel/init.c" beforeDir="false" afterPath="$PROJECT_DIR$/c04.08/source/kernel/init.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c04.08/source/loader/loader_32.c" beforeDir="false" afterPath="$PROJECT_DIR$/c04.08/source/loader/loader_32.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c04.09/source/kernel/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/c04.09/source/kernel/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c04.09/source/kernel/init.c" beforeDir="false" afterPath="$PROJECT_DIR$/c04.09/source/kernel/init.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c04.09/source/loader/loader_32.c" beforeDir="false" afterPath="$PROJECT_DIR$/c04.09/source/loader/loader_32.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c04.10/source/kernel/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/c04.10/source/kernel/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c04.10/source/kernel/init.c" beforeDir="false" afterPath="$PROJECT_DIR$/c04.10/source/kernel/init.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c04.10/source/loader/loader_32.c" beforeDir="false" afterPath="$PROJECT_DIR$/c04.10/source/loader/loader_32.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c05.01/source/kernel/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/c05.01/source/kernel/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c05.01/source/kernel/init.c" beforeDir="false" afterPath="$PROJECT_DIR$/c05.01/source/kernel/init.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c05.01/source/loader/loader_32.c" beforeDir="false" afterPath="$PROJECT_DIR$/c05.01/source/loader/loader_32.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c05.02/source/kernel/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/c05.02/source/kernel/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c05.02/source/kernel/init.c" beforeDir="false" afterPath="$PROJECT_DIR$/c05.02/source/kernel/init.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c05.02/source/loader/loader_32.c" beforeDir="false" afterPath="$PROJECT_DIR$/c05.02/source/loader/loader_32.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c05.03/source/kernel/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/c05.03/source/kernel/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c05.03/source/kernel/init.c" beforeDir="false" afterPath="$PROJECT_DIR$/c05.03/source/kernel/init.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c05.03/source/loader/loader_32.c" beforeDir="false" afterPath="$PROJECT_DIR$/c05.03/source/loader/loader_32.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c05.04/source/kernel/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/c05.04/source/kernel/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c05.04/source/kernel/init.c" beforeDir="false" afterPath="$PROJECT_DIR$/c05.04/source/kernel/init.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c05.04/source/loader/loader_32.c" beforeDir="false" afterPath="$PROJECT_DIR$/c05.04/source/loader/loader_32.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c05.05/source/kernel/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/c05.05/source/kernel/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c05.05/source/kernel/init.c" beforeDir="false" afterPath="$PROJECT_DIR$/c05.05/source/kernel/init.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c05.05/source/loader/loader_32.c" beforeDir="false" afterPath="$PROJECT_DIR$/c05.05/source/loader/loader_32.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c05.06/source/kernel/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/c05.06/source/kernel/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c05.06/source/kernel/init.c" beforeDir="false" afterPath="$PROJECT_DIR$/c05.06/source/kernel/init.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c05.06/source/loader/loader_32.c" beforeDir="false" afterPath="$PROJECT_DIR$/c05.06/source/loader/loader_32.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c06.01/source/kernel/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/c06.01/source/kernel/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c06.01/source/kernel/init.c" beforeDir="false" afterPath="$PROJECT_DIR$/c06.01/source/kernel/init.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c06.01/source/loader/loader_32.c" beforeDir="false" afterPath="$PROJECT_DIR$/c06.01/source/loader/loader_32.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c06.02/source/kernel/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/c06.02/source/kernel/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c06.02/source/kernel/init.c" beforeDir="false" afterPath="$PROJECT_DIR$/c06.02/source/kernel/init.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c06.02/source/loader/loader_32.c" beforeDir="false" afterPath="$PROJECT_DIR$/c06.02/source/loader/loader_32.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c06.03/source/kernel/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/c06.03/source/kernel/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c06.03/source/kernel/init.c" beforeDir="false" afterPath="$PROJECT_DIR$/c06.03/source/kernel/init.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c06.03/source/loader/loader_32.c" beforeDir="false" afterPath="$PROJECT_DIR$/c06.03/source/loader/loader_32.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c07.01/source/kernel/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/c07.01/source/kernel/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c07.01/source/kernel/init.c" beforeDir="false" afterPath="$PROJECT_DIR$/c07.01/source/kernel/init.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c07.01/source/loader/loader_32.c" beforeDir="false" afterPath="$PROJECT_DIR$/c07.01/source/loader/loader_32.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c07.02/source/kernel/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/c07.02/source/kernel/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c07.02/source/kernel/init.c" beforeDir="false" afterPath="$PROJECT_DIR$/c07.02/source/kernel/init.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c07.02/source/loader/loader_32.c" beforeDir="false" afterPath="$PROJECT_DIR$/c07.02/source/loader/loader_32.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c07.03/source/kernel/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/c07.03/source/kernel/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c07.03/source/kernel/init.c" beforeDir="false" afterPath="$PROJECT_DIR$/c07.03/source/kernel/init.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c07.03/source/loader/loader_32.c" beforeDir="false" afterPath="$PROJECT_DIR$/c07.03/source/loader/loader_32.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c07.04/source/kernel/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/c07.04/source/kernel/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c07.04/source/kernel/init.c" beforeDir="false" afterPath="$PROJECT_DIR$/c07.04/source/kernel/init.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c07.04/source/loader/loader_32.c" beforeDir="false" afterPath="$PROJECT_DIR$/c07.04/source/loader/loader_32.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c07.05/source/kernel/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/c07.05/source/kernel/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c07.05/source/kernel/init.c" beforeDir="false" afterPath="$PROJECT_DIR$/c07.05/source/kernel/init.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c07.05/source/loader/loader_32.c" beforeDir="false" afterPath="$PROJECT_DIR$/c07.05/source/loader/loader_32.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c08.01/source/kernel/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/c08.01/source/kernel/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c08.01/source/kernel/init.c" beforeDir="false" afterPath="$PROJECT_DIR$/c08.01/source/kernel/init.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c08.01/source/loader/loader_32.c" beforeDir="false" afterPath="$PROJECT_DIR$/c08.01/source/loader/loader_32.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c08.02/source/kernel/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/c08.02/source/kernel/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c08.02/source/kernel/init.c" beforeDir="false" afterPath="$PROJECT_DIR$/c08.02/source/kernel/init.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c08.02/source/loader/loader_32.c" beforeDir="false" afterPath="$PROJECT_DIR$/c08.02/source/loader/loader_32.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c08.03/source/kernel/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/c08.03/source/kernel/CMakeLists.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/c08.03/source/kernel/init.c" beforeDir="false" afterPath="$PROJECT_DIR$/c08.03/source/kernel/init.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c08.04/source/kernel/core/task.c" beforeDir="false" afterPath="$PROJECT_DIR$/c08.04/source/kernel/core/task.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c08.04/source/kernel/include/core/task.h" beforeDir="false" afterPath="$PROJECT_DIR$/c08.04/source/kernel/include/core/task.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c08.03/source/loader/loader_32.c" beforeDir="false" afterPath="$PROJECT_DIR$/c08.03/source/loader/loader_32.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c08.04/source/kernel/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/c08.04/source/kernel/CMakeLists.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/c08.04/source/kernel/init.c" beforeDir="false" afterPath="$PROJECT_DIR$/c08.04/source/kernel/init.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c08.05/source/kernel/core/task.c" beforeDir="false" afterPath="$PROJECT_DIR$/c08.05/source/kernel/core/task.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c08.05/source/kernel/include/core/task.h" beforeDir="false" afterPath="$PROJECT_DIR$/c08.05/source/kernel/include/core/task.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c08.04/source/loader/loader_32.c" beforeDir="false" afterPath="$PROJECT_DIR$/c08.04/source/loader/loader_32.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c08.05/source/kernel/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/c08.05/source/kernel/CMakeLists.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/c08.05/source/kernel/init.c" beforeDir="false" afterPath="$PROJECT_DIR$/c08.05/source/kernel/init.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c08.06/source/kernel/core/task.c" beforeDir="false" afterPath="$PROJECT_DIR$/c08.06/source/kernel/core/task.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c08.06/source/kernel/include/core/task.h" beforeDir="false" afterPath="$PROJECT_DIR$/c08.06/source/kernel/include/core/task.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c08.05/source/loader/loader_32.c" beforeDir="false" afterPath="$PROJECT_DIR$/c08.05/source/loader/loader_32.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c08.06/source/kernel/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/c08.06/source/kernel/CMakeLists.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/c08.06/source/kernel/init.c" beforeDir="false" afterPath="$PROJECT_DIR$/c08.06/source/kernel/init.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c08.07/source/kernel/core/task.c" beforeDir="false" afterPath="$PROJECT_DIR$/c08.07/source/kernel/core/task.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c08.07/source/kernel/include/core/task.h" beforeDir="false" afterPath="$PROJECT_DIR$/c08.07/source/kernel/include/core/task.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c08.06/source/loader/loader_32.c" beforeDir="false" afterPath="$PROJECT_DIR$/c08.06/source/loader/loader_32.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c08.07/source/kernel/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/c08.07/source/kernel/CMakeLists.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/c08.07/source/kernel/init.c" beforeDir="false" afterPath="$PROJECT_DIR$/c08.07/source/kernel/init.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c09.01/source/kernel/core/task.c" beforeDir="false" afterPath="$PROJECT_DIR$/c09.01/source/kernel/core/task.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c09.01/source/kernel/include/core/task.h" beforeDir="false" afterPath="$PROJECT_DIR$/c09.01/source/kernel/include/core/task.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c08.07/source/loader/loader_32.c" beforeDir="false" afterPath="$PROJECT_DIR$/c08.07/source/loader/loader_32.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c09.01/source/kernel/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/c09.01/source/kernel/CMakeLists.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/c09.01/source/kernel/init.c" beforeDir="false" afterPath="$PROJECT_DIR$/c09.01/source/kernel/init.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c09.02/source/kernel/core/task.c" beforeDir="false" afterPath="$PROJECT_DIR$/c09.02/source/kernel/core/task.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c09.02/source/kernel/include/core/task.h" beforeDir="false" afterPath="$PROJECT_DIR$/c09.02/source/kernel/include/core/task.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c09.01/source/loader/loader_32.c" beforeDir="false" afterPath="$PROJECT_DIR$/c09.01/source/loader/loader_32.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c09.02/source/kernel/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/c09.02/source/kernel/CMakeLists.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/c09.02/source/kernel/init.c" beforeDir="false" afterPath="$PROJECT_DIR$/c09.02/source/kernel/init.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c09.03/source/kernel/core/task.c" beforeDir="false" afterPath="$PROJECT_DIR$/c09.03/source/kernel/core/task.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c09.03/source/kernel/include/core/task.h" beforeDir="false" afterPath="$PROJECT_DIR$/c09.03/source/kernel/include/core/task.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c09.02/source/loader/loader_32.c" beforeDir="false" afterPath="$PROJECT_DIR$/c09.02/source/loader/loader_32.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c09.03/source/kernel/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/c09.03/source/kernel/CMakeLists.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/c09.03/source/kernel/init.c" beforeDir="false" afterPath="$PROJECT_DIR$/c09.03/source/kernel/init.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c09.04/source/kernel/core/task.c" beforeDir="false" afterPath="$PROJECT_DIR$/c09.04/source/kernel/core/task.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c09.04/source/kernel/include/core/task.h" beforeDir="false" afterPath="$PROJECT_DIR$/c09.04/source/kernel/include/core/task.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c09.03/source/loader/loader_32.c" beforeDir="false" afterPath="$PROJECT_DIR$/c09.03/source/loader/loader_32.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c09.04/source/kernel/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/c09.04/source/kernel/CMakeLists.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/c09.04/source/kernel/init.c" beforeDir="false" afterPath="$PROJECT_DIR$/c09.04/source/kernel/init.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c09.05/source/kernel/core/task.c" beforeDir="false" afterPath="$PROJECT_DIR$/c09.05/source/kernel/core/task.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c09.05/source/kernel/include/core/task.h" beforeDir="false" afterPath="$PROJECT_DIR$/c09.05/source/kernel/include/core/task.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c09.04/source/loader/loader_32.c" beforeDir="false" afterPath="$PROJECT_DIR$/c09.04/source/loader/loader_32.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c09.05/source/kernel/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/c09.05/source/kernel/CMakeLists.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/c09.05/source/kernel/init.c" beforeDir="false" afterPath="$PROJECT_DIR$/c09.05/source/kernel/init.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c09.06/source/kernel/core/task.c" beforeDir="false" afterPath="$PROJECT_DIR$/c09.06/source/kernel/core/task.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c09.06/source/kernel/include/core/task.h" beforeDir="false" afterPath="$PROJECT_DIR$/c09.06/source/kernel/include/core/task.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c09.05/source/loader/loader_32.c" beforeDir="false" afterPath="$PROJECT_DIR$/c09.05/source/loader/loader_32.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c09.06/source/kernel/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/c09.06/source/kernel/CMakeLists.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/c09.06/source/kernel/init.c" beforeDir="false" afterPath="$PROJECT_DIR$/c09.06/source/kernel/init.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c09.06/source/loader/loader_32.c" beforeDir="false" afterPath="$PROJECT_DIR$/c09.06/source/loader/loader_32.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c09.07/source/boot/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/c09.07/source/boot/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c09.07/source/boot/start.asm" beforeDir="false" afterPath="$PROJECT_DIR$/c09.07/source/boot/start.asm" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c09.07/source/kernel/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/c09.07/source/kernel/CMakeLists.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/c09.07/source/kernel/core/task.c" beforeDir="false" afterPath="$PROJECT_DIR$/c09.07/source/kernel/core/task.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c09.07/source/kernel/include/core/task.h" beforeDir="false" afterPath="$PROJECT_DIR$/c09.07/source/kernel/include/core/task.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/c09.07/source/kernel/init.c" beforeDir="false" afterPath="$PROJECT_DIR$/c09.07/source/kernel/init.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c10.10/source/applib/lib_syscall.c" beforeDir="false" afterPath="$PROJECT_DIR$/c10.10/source/applib/lib_syscall.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c10.10/source/applib/lib_syscall.h" beforeDir="false" afterPath="$PROJECT_DIR$/c10.10/source/applib/lib_syscall.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c10.10/source/kernel/core/syscall.c" beforeDir="false" afterPath="$PROJECT_DIR$/c10.10/source/kernel/core/syscall.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c10.10/source/kernel/core/task.c" beforeDir="false" afterPath="$PROJECT_DIR$/c10.10/source/kernel/core/task.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c10.10/source/kernel/include/core/task.h" beforeDir="false" afterPath="$PROJECT_DIR$/c10.10/source/kernel/include/core/task.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c10.10/source/kernel/init.c" beforeDir="false" afterPath="$PROJECT_DIR$/c10.10/source/kernel/init.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/newlib/i686-elf/include/sched.h" beforeDir="false" afterPath="$PROJECT_DIR$/newlib/i686-elf/include/sched.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/source/kernel/core/syscall.c" beforeDir="false" afterPath="$PROJECT_DIR$/project/source/kernel/core/syscall.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/source/kernel/core/task.c" beforeDir="false" afterPath="$PROJECT_DIR$/project/source/kernel/core/task.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/source/kernel/include/core/task.h" beforeDir="false" afterPath="$PROJECT_DIR$/project/source/kernel/include/core/task.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/source/kernel/init/init_task.c" beforeDir="false" afterPath="$PROJECT_DIR$/project/source/kernel/init/init_task.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c09.07/source/loader/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/c09.07/source/loader/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c09.07/source/loader/loader_16.c" beforeDir="false" afterPath="$PROJECT_DIR$/c09.07/source/loader/loader_16.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c09.07/source/loader/loader_32.c" beforeDir="false" afterPath="$PROJECT_DIR$/c09.07/source/loader/loader_32.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c09.07/source/loader/start.asm" beforeDir="false" afterPath="$PROJECT_DIR$/c09.07/source/loader/start.asm" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c10.10/.vscode/tasks.json" beforeDir="false" afterPath="$PROJECT_DIR$/c10.10/.vscode/tasks.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c10.10/source/kernel/include/tools/bitmap.h" beforeDir="false" afterPath="$PROJECT_DIR$/c10.10/source/kernel/include/tools/bitmap.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c10.10/source/kernel/init/kernel_asm.asm" beforeDir="false" afterPath="$PROJECT_DIR$/c10.10/source/kernel/init/kernel_asm.asm" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/source/kernel/init/init.c" beforeDir="false" afterPath="$PROJECT_DIR$/project/source/kernel/init/init.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/source/loader/loader_32.c" beforeDir="false" afterPath="$PROJECT_DIR$/project/source/loader/loader_32.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/目录.txt" beforeDir="false" afterPath="$PROJECT_DIR$/目录.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../image/kernel.elf" beforeDir="false" afterPath="$PROJECT_DIR$/../image/kernel.elf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../image/loader.bin" beforeDir="false" afterPath="$PROJECT_DIR$/../image/loader.bin" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -69,7 +156,7 @@
     <option name="formatViaClangd" value="false" />
   </component>
   <component name="FileEditorManager">
-    <leaf />
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300" />
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
@@ -79,12 +166,18 @@
       <find>void sched_yield(void)</find>
       <find>sched_yield</find>
       <find>task_sleep</find>
+      <find>uint8_t * dest = (uint8_t *)phdr-&gt;p_vaddr;</find>
+      <find>void _start (boot_info_t *boot_info)</find>
+      <find>void kernel_entry(boot_info_t *boot_info)</find>
     </findStrings>
     <replaceStrings>
       <replace>sched_yield</replace>
       <replace>int sched_yield (void)</replace>
       <replace>sys_sched_yield</replace>
       <replace>sys_msleep</replace>
+      <replace>uint8_t * dest = (uint8_t *)phdr-&gt;p_paddr;</replace>
+      <replace>void kernel_init (boot_info_t * boot_info)</replace>
+      <replace>void init_main(void)</replace>
     </replaceStrings>
   </component>
   <component name="Git.Settings">
@@ -97,21 +190,18 @@
         <option value="$PROJECT_DIR$/c09.07/source/kernel/core/task.c" />
         <option value="$PROJECT_DIR$/c09.06/source/kernel/include/core/task.h" />
         <option value="$PROJECT_DIR$/c09.06/source/kernel/core/task.c" />
+        <option value="$PROJECT_DIR$/c10.01/source/kernel/CMakeLists.txt" />
+        <option value="$PROJECT_DIR$/c10.01/script/qemu-debug-osx.sh" />
+        <option value="$PROJECT_DIR$/c10.10/.vscode/tasks.json" />
+        <option value="$PROJECT_DIR$/c10.01/source/kernel/init/init.c" />
+        <option value="$PROJECT_DIR$/c10.10/source/kernel/init/kernel_asm.asm" />
+        <option value="$PROJECT_DIR$/目录.txt" />
+        <option value="$PROJECT_DIR$/c10.02/source/kernel/include/tools/bitmap.h" />
+        <option value="$PROJECT_DIR$/c10.10/source/kernel/include/tools/bitmap.h" />
       </list>
     </option>
   </component>
   <component name="OCFindUsagesOptions" text="true" ivars="false" properties="true" derivedClasses="false" />
-  <component name="ProjectConfigurationFiles">
-    <option name="files">
-      <list>
-        <option value="$PROJECT_DIR$/.idea/code.iml" />
-        <option value="$PROJECT_DIR$/.idea/misc.xml" />
-        <option value="$PROJECT_DIR$/.idea/vcs.xml" />
-        <option value="$PROJECT_DIR$/.idea/modules.xml" />
-        <option value="$PROJECT_DIR$/.idea/serialmonitor_settings.xml" />
-      </list>
-    </option>
-  </component>
   <component name="ProjectFrameBounds">
     <option name="width" value="1402" />
     <option name="height" value="800" />
@@ -122,6 +212,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -132,71 +223,13 @@
             <path>
               <item name="code" type="b2602c69:ProjectViewProjectNode" />
               <item name="code" type="462c0819:PsiDirectoryNode" />
-              <item name="c09.06" type="462c0819:PsiDirectoryNode" />
+              <item name="c10.02" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="code" type="b2602c69:ProjectViewProjectNode" />
               <item name="code" type="462c0819:PsiDirectoryNode" />
-              <item name="c09.06" type="462c0819:PsiDirectoryNode" />
+              <item name="c10.02" type="462c0819:PsiDirectoryNode" />
               <item name="source" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="code" type="b2602c69:ProjectViewProjectNode" />
-              <item name="code" type="462c0819:PsiDirectoryNode" />
-              <item name="c09.06" type="462c0819:PsiDirectoryNode" />
-              <item name="source" type="462c0819:PsiDirectoryNode" />
-              <item name="kernel" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="code" type="b2602c69:ProjectViewProjectNode" />
-              <item name="code" type="462c0819:PsiDirectoryNode" />
-              <item name="c09.06" type="462c0819:PsiDirectoryNode" />
-              <item name="source" type="462c0819:PsiDirectoryNode" />
-              <item name="kernel" type="462c0819:PsiDirectoryNode" />
-              <item name="core" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="code" type="b2602c69:ProjectViewProjectNode" />
-              <item name="code" type="462c0819:PsiDirectoryNode" />
-              <item name="c09.06" type="462c0819:PsiDirectoryNode" />
-              <item name="source" type="462c0819:PsiDirectoryNode" />
-              <item name="kernel" type="462c0819:PsiDirectoryNode" />
-              <item name="include" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="code" type="b2602c69:ProjectViewProjectNode" />
-              <item name="code" type="462c0819:PsiDirectoryNode" />
-              <item name="c09.06" type="462c0819:PsiDirectoryNode" />
-              <item name="source" type="462c0819:PsiDirectoryNode" />
-              <item name="kernel" type="462c0819:PsiDirectoryNode" />
-              <item name="include" type="462c0819:PsiDirectoryNode" />
-              <item name="core" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="code" type="b2602c69:ProjectViewProjectNode" />
-              <item name="code" type="462c0819:PsiDirectoryNode" />
-              <item name="c09.07" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="code" type="b2602c69:ProjectViewProjectNode" />
-              <item name="code" type="462c0819:PsiDirectoryNode" />
-              <item name="c09.07" type="462c0819:PsiDirectoryNode" />
-              <item name="source" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="code" type="b2602c69:ProjectViewProjectNode" />
-              <item name="code" type="462c0819:PsiDirectoryNode" />
-              <item name="c09.07" type="462c0819:PsiDirectoryNode" />
-              <item name="source" type="462c0819:PsiDirectoryNode" />
-              <item name="kernel" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="code" type="b2602c69:ProjectViewProjectNode" />
-              <item name="code" type="462c0819:PsiDirectoryNode" />
-              <item name="c09.07" type="462c0819:PsiDirectoryNode" />
-              <item name="source" type="462c0819:PsiDirectoryNode" />
-              <item name="kernel" type="462c0819:PsiDirectoryNode" />
-              <item name="core" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="code" type="b2602c69:ProjectViewProjectNode" />
@@ -222,21 +255,31 @@
               <item name="c10.10" type="462c0819:PsiDirectoryNode" />
               <item name="source" type="462c0819:PsiDirectoryNode" />
               <item name="kernel" type="462c0819:PsiDirectoryNode" />
-              <item name="core" type="462c0819:PsiDirectoryNode" />
+              <item name="tools" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/c10.01/source/kernel/tools" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
     <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/c10.01/source/kernel/init" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/c10.01/source/kernel/tools" />
+      <recent name="$PROJECT_DIR$/c10.01/source/kernel/include/tools" />
+      <recent name="$PROJECT_DIR$/c10.01/script" />
+    </key>
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -261,24 +304,20 @@
       <option name="presentableId" value="Default" />
       <updated>1649476871422</updated>
       <workItem from="1649476875131" duration="1379000" />
+      <workItem from="1649751628076" duration="1407000" />
+      <workItem from="1649753786808" duration="1374000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="1379000" />
+    <option name="totallyTimeSpent" value="4160000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1402" height="800" extended-state="0" />
     <layout>
-      <window_info id="Favorites" side_tool="true" />
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.25" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.25735295" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info anchor="bottom" id="Arduino Support" />
-      <window_info anchor="bottom" id="Database Changes" />
-      <window_info anchor="bottom" id="Version Control" />
-      <window_info anchor="bottom" id="Terminal" />
-      <window_info anchor="bottom" id="Event Log" side_tool="true" />
-      <window_info anchor="bottom" id="Serial Monitor" />
+      <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
       <window_info anchor="bottom" id="Run" order="2" />
@@ -286,10 +325,16 @@
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="right" id="Database" />
+      <window_info anchor="bottom" id="Arduino Support" order="7" />
+      <window_info anchor="bottom" id="Serial Monitor" order="8" />
+      <window_info anchor="bottom" id="Database Changes" order="9" />
+      <window_info anchor="bottom" id="Version Control" order="10" />
+      <window_info anchor="bottom" id="Terminal" order="11" />
+      <window_info anchor="bottom" id="Event Log" order="12" side_tool="true" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="right" id="Database" order="3" />
     </layout>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -323,6 +368,38 @@
           <caret line="177" column="20" selection-start-line="177" selection-start-column="20" selection-end-line="177" selection-end-column="20" />
         </state>
       </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/c10.01/script/qemu-debug-osx.sh">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="14">
+          <caret line="1" selection-start-line="1" selection-end-line="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/c10.01/script/qemu-debug-win.bat">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/c10.01/script/img-write-osx.sh">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/c10.01/source/kernel/core/task.c">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/c10.01/source/kernel/include/core/task.h">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/目录.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="506">
+          <caret line="64" column="6" selection-start-line="64" selection-start-column="6" selection-end-line="64" selection-end-column="6" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/c10.01/source/kernel/include/tools/bitmap.h">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/c10.01/source/kernel/tools/bitmap.c">
+      <provider selected="true" editor-type-id="text-editor" />
     </entry>
   </component>
 </project>

@@ -14,7 +14,7 @@
   	// 不必加.code32因默认就是32位
  	.text
  	.global _start
-	.extern pre_init
+	.extern kernel_init
 	.extern init_main
 _start:
 	movl 4(%esp), %eax			// 取传给loader的参数

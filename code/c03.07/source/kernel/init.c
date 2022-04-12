@@ -10,6 +10,6 @@
 /**
  * 内核入口
  */
-void kernel_entry(boot_info_t *boot_info) {
+void init_main(void) {
     for (;;) {}
 }
