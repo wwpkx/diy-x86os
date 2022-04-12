@@ -15,12 +15,15 @@
 
 // 任务各表项的LDT索引值
 static task_manager_t task_manager;     // 任务管理器
+static task_t task_table[TASK_NR];      // 用户进程表
 static int task_incr_id;                // 任务自增id
 
 /**
  * @brief 初始化任务
  */
 int task_init (task_t *task, const char * name, int flag, uint32_t entry, uint32_t esp) {
+    kernel_memset(task, 0, sizeof(task_t));
+
     // 为TSS分配GDT
     int tss_sel = gdt_alloc_segment((uint32_t)&task->tss, 
                                 sizeof(tss_t), GDT_SET_PRESENT | GDT_SEG_DPL0 | GDB_TSS_TYPE);
@@ -72,6 +75,7 @@ int task_init (task_t *task, const char * name, int flag, uint32_t entry, uint32
     task->sleep_ticks = 0;
     task->time_slice = TASK_TIME_SLICE_DEFAULT;
     task->slice_ticks = task->time_slice;
+    task->parent = (task_t *)0;
     list_node_init(&task->all_node);
     list_node_init(&task->run_node);
     list_node_init(&task->wait_node);
@@ -85,7 +89,30 @@ int task_init (task_t *task, const char * name, int flag, uint32_t entry, uint32
 
 task_init_failed:
     gdt_free_sel(tss_sel);
+
+    if (kernel_stack) {
+        memory_free_page(kernel_stack);
+    }
     return -1;    
+}
+
+/**
+ * @brief 任务任务初始时分配的各项资源
+ */
+void task_uninit (task_t * task) {
+    if (task->tss_sel) {
+        gdt_free_sel(task->tss_sel);
+    }
+
+    if (task->tss.esp0) {
+        memory_free_page(task->tss.esp0 - PAGE_SIZE);
+    }
+
+    if (task->tss.cr3) {
+        memory_destroy_uvm(task->tss.cr3);
+    }
+
+    kernel_memset(task, 0, sizeof(task_t));
 }
 
 /**
@@ -129,6 +156,8 @@ static void kernel_task_init (void) {
  * @brief 任务管理器初始化
  */
 void task_manager_init (void) {
+    kernel_memset(task_table, 0, sizeof(task_table));
+
     //数据段和代码段，使用DPL3，所有应用共用同一个
     //为调试方便，暂时使用DPL0
     task_manager.app_data_sel = gdt_alloc_segment(0x00000000, 0xFFFFFFFF,
@@ -289,6 +318,27 @@ void task_time_tick (void) {
 }
 
 /**
+ * @brief 分配一个任务结构
+ */
+static task_t * alloc_task (void) {
+    for (int i = 0; i < TASK_NR; i++) {
+        task_t * task = task_table + i;
+        if (task->name[0] == 0) {
+            return task;
+        }
+    }
+
+    return (task_t *)0;
+}
+
+/**
+ * @brief 释放任务结构
+ */
+static void free_task (task_t * task) {
+    task->name[0] = 0;
+}
+
+/**
  * @brief 任务进入睡眠状态
  * 
  * @param ms 
@@ -315,7 +365,38 @@ void sys_msleep (uint32_t ms) {
  * @brief 创建子进程
  */
 int sys_fork (void) {
+    task_t * parent_task = task_current();
 
+    // 分配任务结构
+    task_t * child_task = alloc_task();
+    if (child_task == (task_t *)0) {
+        return fork_failed;
+    }
+
+    // 对子进程进行初始化，并对必要的字段进行调整
+    tss_t * parent_tss = &parent_task->tss;
+    int err = task_init(child_task,  parent_task->name, 0, parent_tss->eip, parent_tss->esp);
+    if (err < 0) {
+        goto fork_failed;
+    }
+
+    // 子进程的pid返回值为0
+    child_task->tss.eax = 0;
+    child_task->parent = parent_task;
+
+    // 复制父进程的内存空间到子进程
+    if (memory_copy_task(child_task, parent_task) < 0) {
+        goto fork_failed;
+    } 
+
+    // 父进程返回的pid为子进程的pid
+    return child_task->pid;
+fork_failed:
+    if (child_task) {
+        task_uninit (child_task);
+        free_task(child_task);
+    }
+    return -1;    
 }
 
 /**

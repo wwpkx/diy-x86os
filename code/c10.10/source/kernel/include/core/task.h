@@ -22,7 +22,7 @@
  * @brief 任务控制块结构
  */
 typedef struct _task_t {
-		enum {
+	enum {
 		TASK_CREATED,
 		TASK_RUNNING,
 		TASK_SLEEP,
@@ -33,6 +33,7 @@ typedef struct _task_t {
     char name[TASK_NAME_SIZE];		// 任务名字
 
 	int pid;				// 进程的pid
+	task_t * parent;		// 父进程
 	
 	int sleep_ticks;		// 睡眠时间
 	int time_slice;			// 时间片
