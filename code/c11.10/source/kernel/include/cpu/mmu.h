@@ -10,10 +10,6 @@
 
 #include "comm/types.h"
 
-#define CR3_PWT             (1 << 3)            // Page-level write-through
-#define CR3_PCD             (1 << 4)            // Page-level cache disable
-
-#define PAGE_SIZE           (4*1024)            // 页大小
 #define PDE_CNT             1024
 #define PTE_CNT             1024
 #define PAGE_TABLE_SIZE     (PTE_CNT * sizeof(pte_t))

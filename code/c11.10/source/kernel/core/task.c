@@ -54,7 +54,7 @@ int task_init (task_t *task, const char * name, int flag, uint32_t entry, uint32
     task->tss.eip = entry;
     task->tss.esp = esp ? esp : kernel_stack + PAGE_SIZE;  // 未指定栈则用内核栈
     task->tss.esp0 = kernel_stack + PAGE_SIZE;
-    task->tss.ss0 = KERNEL_SELECTOR_DS;     // 发生中断时使用特权级0
+    task->tss.ss0 = KERNEL_SELECTOR_DS;
     task->tss.eip = entry;
     task->tss.eflags = EFLAGS_DEFAULT | EFLAGS_IF;
     task->tss.es = task->tss.ss = task->tss.ds = task->tss.fs 
@@ -137,8 +137,8 @@ static void kernel_task_init (void) {
     extern uint8_t * init_load_size;
 
     uint32_t init_size = (uint32_t)&init_load_size;
-    uint32_t total_size = 10 * PAGE_SIZE;        // 可以设置的大一些, 如40KB
-    ASSERT(init_size < PAGE_SIZE);
+    uint32_t total_size = 10 * MEM_PAGE_SIZE;        // 可以设置的大一些, 如40KB
+    ASSERT(init_size < MEM_PAGE_SIZE);
 
     // 第一个任务代码量小一些，好和栈放在1个页面呢
     // 这样就不要立即考虑还要给栈分配空间的问题

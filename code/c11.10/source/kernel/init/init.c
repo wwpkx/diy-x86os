@@ -15,9 +15,6 @@
 #include "tools/list.h"
 #include "ipc/bfifo.h"
 #include "core/memory.h"
-#include "cpu/mmu.h"
-#include "tools/klib.h"
-#include "os_cfg.h"
 
 static boot_info_t * init_boot_info;        // 启动信息
 
