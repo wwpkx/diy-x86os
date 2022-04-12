@@ -9,9 +9,6 @@
 #include "cpu/mmu.h"
 #include "comm/cpu_instr.h"
 
-#define PDE_ENTRY_SIZE              1024        // PDE表项数量
-#define PTE_ENTRY_SIZE              1024        // PTE表项数量
-
 /**
  * @brief 重新加载整个页表
  * @param vaddr 页表的虚拟地址

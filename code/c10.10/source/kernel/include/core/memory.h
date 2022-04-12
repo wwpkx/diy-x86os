@@ -10,6 +10,7 @@
 
 #include "comm/boot_info.h"
 #include "tools/bitmap.h"
+#include "core/task.h"
 
 #define MEMORY_EBDA_START       0x00080000
 #define MEM_EXT_START           (1024*1024)
@@ -43,5 +44,8 @@ void memory_init (boot_info_t * boot_info);
 uint32_t memory_create_uvm (void);
 int memory_alloc_vaddr_page (uint32_t vaddr, uint32_t size, int perm);
 uint32_t memory_alloc_page (void);
+void memory_free_page (uint32_t addr);
+void memory_destroy_uvm (uint32_t page_dir);
+uint32_t memory_copy_uvm (uint32_t page_dir);
 
 #endif // MEMORY_H

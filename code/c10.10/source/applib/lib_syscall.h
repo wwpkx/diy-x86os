@@ -44,7 +44,7 @@
 /**
  * 执行系统调用
  */
-static int sys_call (int syscall_num, int arg0, int arg1, int arg2, int arg3) {
+static inline int sys_call (int syscall_num, int arg0, int arg1, int arg2, int arg3) {
 	const uint32_t sys_gate_addr[] = {0, SELECTOR_SYSCALL | 0};  // 使用特权级0
     uint32_t ret;
 

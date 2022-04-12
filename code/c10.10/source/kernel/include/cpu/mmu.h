@@ -103,6 +103,13 @@ static inline uint32_t pte_paddr (pte_t * pte) {
     return pte->phy_page_addr << 12;
 }
 
+/**
+ * @brief 获取pte中的权限位
+ */
+static inline uint32_t get_pte_perm (pte_t * pte) {
+    return (pte->v & 0x3FF);
+}
+
 void mmu_set_page_dir (uint32_t paddr);
 
 #endif // MMU_H

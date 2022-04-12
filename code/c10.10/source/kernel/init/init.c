@@ -55,10 +55,10 @@ void move_to_first_task(uint32_t entry) {
         // 不过这里并不直接进入到进程的入口，而是先设置好段寄存器，再跳过去
         "push %0\n\t"			// SS
         "push %1\n\t"			// ESP
-        "pushfl\n\t"			// EFLAGS
-        "push %2\n\t"			// CS
-        "push %3\n\t"		    // ip
-        "iret\n\t"::"r"(tss->ss), "r"(tss->esp), "r"(tss->cs), "r"(entry));
+        "push %2\n\t"           // EFLAGS
+        "push %3\n\t"			// CS
+        "push %4\n\t"		    // ip
+        "iret\n\t"::"r"(tss->ss),  "r"(tss->esp), "r"(tss->eflags),"r"(tss->cs), "r"(entry));
 }
 
 void init_task_entry (void);

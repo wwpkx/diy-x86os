@@ -12,6 +12,7 @@
 #include "os_cfg.h"
 #include "core/memory.h"
 #include "cpu/mmu.h"
+#include "core/syscall.h"
 
 // 任务各表项的LDT索引值
 static task_manager_t task_manager;     // 任务管理器
@@ -370,22 +371,41 @@ int sys_fork (void) {
     // 分配任务结构
     task_t * child_task = alloc_task();
     if (child_task == (task_t *)0) {
-        return fork_failed;
+        goto fork_failed;
     }
 
+    syscall_frame_t * frame = (syscall_frame_t *)(parent_task->tss.esp0 - sizeof(syscall_frame_t));
+
     // 对子进程进行初始化，并对必要的字段进行调整
-    tss_t * parent_tss = &parent_task->tss;
-    int err = task_init(child_task,  parent_task->name, 0, parent_tss->eip, parent_tss->esp);
+    // 其中esp要减去系统调用的总参数字节大小，因为其是通过正常的ret返回, 而没有走系统调用处理的ret(参数个数返回)
+    int err = task_init(child_task,  parent_task->name, 0, frame->eip, 
+                frame->esp + sizeof(uint32_t)*SYSCALL_PARAM_COUNT);
     if (err < 0) {
         goto fork_failed;
     }
 
-    // 子进程的pid返回值为0
-    child_task->tss.eax = 0;
+    // 从父进程的栈中取部分状态，然后写入tss。
+    // 注意检查esp, eip等是否在用户空间范围内，不然会造成page_fault
+    tss_t * tss = &child_task->tss;
+    tss->eax = child_task->pid;                       // 子进程返回值pid = 自己的id
+    tss->ebx = frame->ebx;
+    tss->ecx = frame->ecx;
+    tss->edx = frame->edx;
+    tss->esi = frame->esi;
+    tss->edi = frame->edi;
+    tss->ebp = frame->ebp;
+
+    tss->cs = frame->cs;
+    tss->ds = frame->ds;
+    tss->es = frame->es;        
+    tss->fs = frame->fs;
+    tss->gs = frame->gs;
+    tss->eflags = frame->eflags;
+
     child_task->parent = parent_task;
 
     // 复制父进程的内存空间到子进程
-    if (memory_copy_task(child_task, parent_task) < 0) {
+    if ((child_task->tss.cr3 = memory_copy_uvm(parent_task->tss.cr3)) < 0) {
         goto fork_failed;
     } 
 

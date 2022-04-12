@@ -25,6 +25,6 @@
 #define SELECTOR_SYSCALL     	(3 << 3)	// 调用门的选择子
 #define OS_VERSION_NUM          0x1001      // OS版本号
 
-#define TASK_NR             1024            // 进程的数量
+#define TASK_NR             128            // 进程的数量
 
 #endif //OS_OS_CFG_H

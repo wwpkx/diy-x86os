@@ -123,43 +123,33 @@ excetpion_handler timer, 0x20, 0
     .extern do_handler_syscall
 excetpion_handler_syscall:
     // 保存可能被C程序修改的寄存器
-    // %eax不需要保存，因为do_handler_syscall的返回值保存在eax中
-    // 且会给调用者使用，所以下面对eax做了修改也没关系，只要保证在调用do_handler_syscall
-    // 之后，不更改eax即可
-	//push %eax
-	push %ecx
-	push %edx
-
-	// 这里还要切换至内核的数据段寄存器
+ 	pushal
 	pushl %ds
 	pushl %es
 	pushl %fs
 	pushl %gs
+	pushfl
 
+	// 使用内核段寄存器
 	mov $(KERNEL_SELECTOR_DS), %eax
 	mov %eax, %ds
 	mov %eax, %es
 	mov %eax, %fs
 	mov %eax, %gs
 
-    // 调整到syscall的参数传入位置, 6个此处压的寄存器
+    // 调用处理函数
     mov %esp, %eax
-    add $(4*6), %eax
     push %eax
 	call do_handler_syscall
 	add $4, %esp
 
     // 再切换回来
-    // 返回值保存在%eax中
+	popfl
 	pop %gs
 	pop %fs
 	pop %es
 	pop %ds
-	
-	// 恢复保存的寄存器
-	pop %edx
-	pop %ecx
-	//pop %eax
+	popal
 
 	// 5个参数，加上5*4，不加会导致返回时ss取不出来，最后返回出现问题
     retf $(5*4)
