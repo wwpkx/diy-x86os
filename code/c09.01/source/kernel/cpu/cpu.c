@@ -55,7 +55,7 @@ gdt_descriptor_t * gdt_alloc_desc (void) {
 /**
  * 分配一个GDT推荐表符
  */
-gdt_descriptor_t * gdt_alloc_segment (uint32_t base, uint32_t limit, uint16_t attr) {
+int gdt_alloc_segment (uint32_t base, uint32_t limit, uint16_t attr) {
     gdt_descriptor_t * desc = (gdt_descriptor_t *)0;
 
     irq_state_t state = irq_enter_protection();

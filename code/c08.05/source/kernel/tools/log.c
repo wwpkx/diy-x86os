@@ -57,7 +57,7 @@ void log_printf(const char * fmt, ...) {
         outb(COM1_PORT, *p++);
     }
 
-    outb(COM1_PORT, '\n');
+    outb(COM1_PORT, '\r\n');
 
     irq_leave_protection(state);
 #endif    

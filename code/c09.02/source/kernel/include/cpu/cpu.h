@@ -93,7 +93,7 @@ gdt_descriptor_t * gdt_alloc_desc (void);
 uint16_t desc_2_gdt_selector(gdt_descriptor_t * desc);
 void set_gate_desc(gate_descriptor_t *desc, uint16_t selector, uint32_t offset, uint16_t attr);
 void set_segment_desc(gdt_descriptor_t *desc, uint32_t base, uint32_t limit, uint16_t attr);
-gdt_descriptor_t * gdt_alloc_segment (uint32_t base, uint32_t limit, uint16_t attr);
+int gdt_alloc_segment (uint32_t base, uint32_t limit, uint16_t attr);
 
 void switch_to_tss (uint32_t tss_selector);
 
