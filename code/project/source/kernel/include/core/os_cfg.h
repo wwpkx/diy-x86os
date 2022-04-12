@@ -20,7 +20,7 @@
 #define INIT_SCREEN_HEIGHT      600
 #define INIT_SCREEN_BPP         32
 
-#define GDT_TABLE_SIZE      	8192		// GDT表项数量
+#define GDT_TABLE_SIZE      	256		// GDT表项数量
 #define KERNEL_SELECTOR_CS		(1 * 8)		// 内核代码段描述符
 #define KERNEL_SELECTOR_DS		(2 * 8)		// 内核数据段描述符
 
