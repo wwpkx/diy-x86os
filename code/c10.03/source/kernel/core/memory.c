@@ -31,7 +31,7 @@ uint32_t addr_alloc_page (addr_alloc_t * alloc, int page_count) {
     mutex_lock(&alloc->mutex);
 
     int page_index = bitmap_alloc_nbits(&alloc->bitmap, 0, page_count);
-    if (page_index > 0) {
+    if (page_index >= 0) {
         addr = alloc->start + page_index * alloc->page_size;
     }
 

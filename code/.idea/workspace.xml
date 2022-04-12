@@ -10,135 +10,18 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="503b7bda-5c1b-4288-a1ee-02d955517940" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/c11.01/source/kernel/init/init_task.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/c11.01/source/kernel/init/init_task_startup.asm" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c05.02/source/kernel/tools/log.c" beforeDir="false" afterPath="$PROJECT_DIR$/c05.02/source/kernel/tools/log.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c05.03/source/kernel/tools/log.c" beforeDir="false" afterPath="$PROJECT_DIR$/c05.03/source/kernel/tools/log.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c05.04/source/kernel/tools/log.c" beforeDir="false" afterPath="$PROJECT_DIR$/c05.04/source/kernel/tools/log.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c05.05/source/kernel/tools/log.c" beforeDir="false" afterPath="$PROJECT_DIR$/c05.05/source/kernel/tools/log.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c05.06/source/kernel/tools/log.c" beforeDir="false" afterPath="$PROJECT_DIR$/c05.06/source/kernel/tools/log.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c06.01/source/kernel/tools/log.c" beforeDir="false" afterPath="$PROJECT_DIR$/c06.01/source/kernel/tools/log.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c06.02/source/kernel/tools/log.c" beforeDir="false" afterPath="$PROJECT_DIR$/c06.02/source/kernel/tools/log.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c06.03/source/kernel/tools/log.c" beforeDir="false" afterPath="$PROJECT_DIR$/c06.03/source/kernel/tools/log.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c07.01/source/kernel/tools/log.c" beforeDir="false" afterPath="$PROJECT_DIR$/c07.01/source/kernel/tools/log.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c07.02/source/kernel/tools/log.c" beforeDir="false" afterPath="$PROJECT_DIR$/c07.02/source/kernel/tools/log.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c07.03/source/kernel/tools/log.c" beforeDir="false" afterPath="$PROJECT_DIR$/c07.03/source/kernel/tools/log.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c07.04/source/kernel/tools/log.c" beforeDir="false" afterPath="$PROJECT_DIR$/c07.04/source/kernel/tools/log.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c07.05/source/kernel/tools/log.c" beforeDir="false" afterPath="$PROJECT_DIR$/c07.05/source/kernel/tools/log.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c08.01/source/kernel/tools/log.c" beforeDir="false" afterPath="$PROJECT_DIR$/c08.01/source/kernel/tools/log.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c08.02/source/kernel/tools/log.c" beforeDir="false" afterPath="$PROJECT_DIR$/c08.02/source/kernel/tools/log.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c08.03/source/kernel/tools/log.c" beforeDir="false" afterPath="$PROJECT_DIR$/c08.03/source/kernel/tools/log.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c08.04/source/kernel/tools/log.c" beforeDir="false" afterPath="$PROJECT_DIR$/c08.04/source/kernel/tools/log.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c08.05/source/kernel/cpu/cpu.c" beforeDir="false" afterPath="$PROJECT_DIR$/c08.05/source/kernel/cpu/cpu.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c08.05/source/kernel/include/cpu/cpu.h" beforeDir="false" afterPath="$PROJECT_DIR$/c08.05/source/kernel/include/cpu/cpu.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c08.05/source/kernel/tools/log.c" beforeDir="false" afterPath="$PROJECT_DIR$/c08.05/source/kernel/tools/log.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c08.06/source/kernel/cpu/cpu.c" beforeDir="false" afterPath="$PROJECT_DIR$/c08.06/source/kernel/cpu/cpu.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c08.06/source/kernel/include/cpu/cpu.h" beforeDir="false" afterPath="$PROJECT_DIR$/c08.06/source/kernel/include/cpu/cpu.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c08.06/source/kernel/tools/log.c" beforeDir="false" afterPath="$PROJECT_DIR$/c08.06/source/kernel/tools/log.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c08.07/source/kernel/cpu/cpu.c" beforeDir="false" afterPath="$PROJECT_DIR$/c08.07/source/kernel/cpu/cpu.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c08.07/source/kernel/include/cpu/cpu.h" beforeDir="false" afterPath="$PROJECT_DIR$/c08.07/source/kernel/include/cpu/cpu.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c08.07/source/kernel/tools/log.c" beforeDir="false" afterPath="$PROJECT_DIR$/c08.07/source/kernel/tools/log.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c09.01/source/kernel/cpu/cpu.c" beforeDir="false" afterPath="$PROJECT_DIR$/c09.01/source/kernel/cpu/cpu.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c09.01/source/kernel/include/cpu/cpu.h" beforeDir="false" afterPath="$PROJECT_DIR$/c09.01/source/kernel/include/cpu/cpu.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c09.01/source/kernel/tools/log.c" beforeDir="false" afterPath="$PROJECT_DIR$/c09.01/source/kernel/tools/log.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c09.02/source/kernel/cpu/cpu.c" beforeDir="false" afterPath="$PROJECT_DIR$/c09.02/source/kernel/cpu/cpu.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c09.02/source/kernel/include/cpu/cpu.h" beforeDir="false" afterPath="$PROJECT_DIR$/c09.02/source/kernel/include/cpu/cpu.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c09.02/source/kernel/tools/log.c" beforeDir="false" afterPath="$PROJECT_DIR$/c09.02/source/kernel/tools/log.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c09.03/source/kernel/cpu/cpu.c" beforeDir="false" afterPath="$PROJECT_DIR$/c09.03/source/kernel/cpu/cpu.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c09.03/source/kernel/include/cpu/cpu.h" beforeDir="false" afterPath="$PROJECT_DIR$/c09.03/source/kernel/include/cpu/cpu.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c09.03/source/kernel/tools/log.c" beforeDir="false" afterPath="$PROJECT_DIR$/c09.03/source/kernel/tools/log.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c09.04/source/kernel/cpu/cpu.c" beforeDir="false" afterPath="$PROJECT_DIR$/c09.04/source/kernel/cpu/cpu.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c09.04/source/kernel/include/cpu/cpu.h" beforeDir="false" afterPath="$PROJECT_DIR$/c09.04/source/kernel/include/cpu/cpu.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c09.04/source/kernel/tools/log.c" beforeDir="false" afterPath="$PROJECT_DIR$/c09.04/source/kernel/tools/log.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c09.05/source/kernel/cpu/cpu.c" beforeDir="false" afterPath="$PROJECT_DIR$/c09.05/source/kernel/cpu/cpu.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c09.05/source/kernel/include/cpu/cpu.h" beforeDir="false" afterPath="$PROJECT_DIR$/c09.05/source/kernel/include/cpu/cpu.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c09.05/source/kernel/tools/log.c" beforeDir="false" afterPath="$PROJECT_DIR$/c09.05/source/kernel/tools/log.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c09.06/source/kernel/cpu/cpu.c" beforeDir="false" afterPath="$PROJECT_DIR$/c09.06/source/kernel/cpu/cpu.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c09.06/source/kernel/include/cpu/cpu.h" beforeDir="false" afterPath="$PROJECT_DIR$/c09.06/source/kernel/include/cpu/cpu.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c09.06/source/kernel/tools/log.c" beforeDir="false" afterPath="$PROJECT_DIR$/c09.06/source/kernel/tools/log.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c09.07/source/kernel/cpu/cpu.c" beforeDir="false" afterPath="$PROJECT_DIR$/c09.07/source/kernel/cpu/cpu.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c09.07/source/kernel/include/cpu/cpu.h" beforeDir="false" afterPath="$PROJECT_DIR$/c09.07/source/kernel/include/cpu/cpu.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c09.07/source/kernel/tools/log.c" beforeDir="false" afterPath="$PROJECT_DIR$/c09.07/source/kernel/tools/log.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c10.01/source/kernel/cpu/cpu.c" beforeDir="false" afterPath="$PROJECT_DIR$/c10.01/source/kernel/cpu/cpu.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c10.01/source/kernel/include/cpu/cpu.h" beforeDir="false" afterPath="$PROJECT_DIR$/c10.01/source/kernel/include/cpu/cpu.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c10.01/source/kernel/tools/log.c" beforeDir="false" afterPath="$PROJECT_DIR$/c10.01/source/kernel/tools/log.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c10.02/source/kernel/cpu/cpu.c" beforeDir="false" afterPath="$PROJECT_DIR$/c10.02/source/kernel/cpu/cpu.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c10.02/source/kernel/include/cpu/cpu.h" beforeDir="false" afterPath="$PROJECT_DIR$/c10.02/source/kernel/include/cpu/cpu.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c10.02/source/kernel/tools/log.c" beforeDir="false" afterPath="$PROJECT_DIR$/c10.02/source/kernel/tools/log.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c10.03/source/kernel/cpu/cpu.c" beforeDir="false" afterPath="$PROJECT_DIR$/c10.03/source/kernel/cpu/cpu.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c10.03/source/kernel/include/cpu/cpu.h" beforeDir="false" afterPath="$PROJECT_DIR$/c10.03/source/kernel/include/cpu/cpu.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c10.03/source/kernel/tools/log.c" beforeDir="false" afterPath="$PROJECT_DIR$/c10.03/source/kernel/tools/log.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c10.04/source/kernel/cpu/cpu.c" beforeDir="false" afterPath="$PROJECT_DIR$/c10.04/source/kernel/cpu/cpu.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c10.04/source/kernel/include/cpu/cpu.h" beforeDir="false" afterPath="$PROJECT_DIR$/c10.04/source/kernel/include/cpu/cpu.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c10.04/source/kernel/tools/log.c" beforeDir="false" afterPath="$PROJECT_DIR$/c10.04/source/kernel/tools/log.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c10.05/source/kernel/cpu/cpu.c" beforeDir="false" afterPath="$PROJECT_DIR$/c10.05/source/kernel/cpu/cpu.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c10.05/source/kernel/include/cpu/cpu.h" beforeDir="false" afterPath="$PROJECT_DIR$/c10.05/source/kernel/include/cpu/cpu.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c10.05/source/kernel/tools/log.c" beforeDir="false" afterPath="$PROJECT_DIR$/c10.05/source/kernel/tools/log.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c10.10/.vscode/c_cpp_properties.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/c10.10/.vscode/launch.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/c10.10/.vscode/settings.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/c10.10/.vscode/tasks.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/c10.10/CMakeLists.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/c10.10/script/img-write-osx.sh" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/c10.10/script/img-write-win.bat" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/c10.10/script/qemu-debug-osx.sh" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/c10.10/script/qemu-debug-win.bat" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/c10.10/script/qemu-run-win.bat" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/c10.10/source/applib/CMakeLists.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/c10.10/source/applib/crt_start.c" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/c10.10/source/applib/lib_syscall.c" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/c10.10/source/applib/lib_syscall.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/c10.10/source/boot/CMakeLists.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/c10.10/source/boot/boot.c" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/c10.10/source/boot/boot.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/c10.10/source/boot/start.asm" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/c10.10/source/comm/boot_info.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/c10.10/source/comm/cpu_instr.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/c10.10/source/comm/elf.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/c10.10/source/comm/types.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/c10.10/source/kernel/CMakeLists.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/c10.10/source/kernel/core/memory.c" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/c10.10/source/kernel/core/syscall.c" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/c10.10/source/kernel/core/task.c" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/c10.10/source/kernel/cpu/cpu.c" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/c10.10/source/kernel/cpu/irq.c" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/c10.10/source/kernel/cpu/mmu.c" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/c10.10/source/kernel/dev/timer.c" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/c10.10/source/kernel/include/core/memory.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/c10.10/source/kernel/include/core/syscall.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/c10.10/source/kernel/include/core/task.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/c10.10/source/kernel/include/cpu/cpu.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/c10.10/source/kernel/include/cpu/irq.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/c10.10/source/kernel/include/cpu/mmu.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/c10.10/source/kernel/include/dev/timer.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/c10.10/source/kernel/include/ipc/bfifo.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/c10.10/source/kernel/include/ipc/mutex.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/c10.10/source/kernel/include/ipc/sem.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/c10.10/source/kernel/include/os_cfg.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/c10.10/source/kernel/include/tools/bitmap.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/c10.10/source/kernel/include/tools/klib.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/c10.10/source/kernel/include/tools/list.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/c10.10/source/kernel/include/tools/log.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/c10.10/source/kernel/init/init.c" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/c10.10/source/kernel/init/init_task.c" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/c10.10/source/kernel/init/init_task_asm.asm" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/c10.10/source/kernel/init/kernel_asm.asm" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/c10.10/source/kernel/ipc/bfifo.c" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/c10.10/source/kernel/ipc/mutex.c" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/c10.10/source/kernel/ipc/sem.c" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/c10.10/source/kernel/kernel.lds" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/c10.10/source/kernel/tools/bitmap.c" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/c10.10/source/kernel/tools/klib.c" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/c10.10/source/kernel/tools/list.c" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/c10.10/source/kernel/tools/log.c" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/c10.10/source/loader/CMakeLists.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/c10.10/source/loader/loader.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/c10.10/source/loader/loader_16.c" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/c10.10/source/loader/loader_32.c" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/c10.10/source/loader/start.asm" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/c10.03/source/kernel/core/memory.c" beforeDir="false" afterPath="$PROJECT_DIR$/c10.03/source/kernel/core/memory.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c10.04/source/kernel/core/memory.c" beforeDir="false" afterPath="$PROJECT_DIR$/c10.04/source/kernel/core/memory.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c10.05/source/kernel/core/memory.c" beforeDir="false" afterPath="$PROJECT_DIR$/c10.05/source/kernel/core/memory.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c10.06/source/kernel/core/memory.c" beforeDir="false" afterPath="$PROJECT_DIR$/c10.06/source/kernel/core/memory.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c10.07/source/kernel/core/memory.c" beforeDir="false" afterPath="$PROJECT_DIR$/c10.07/source/kernel/core/memory.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c10.08/source/kernel/core/memory.c" beforeDir="false" afterPath="$PROJECT_DIR$/c10.08/source/kernel/core/memory.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c10.09/source/kernel/core/memory.c" beforeDir="false" afterPath="$PROJECT_DIR$/c10.09/source/kernel/core/memory.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c11.01/source/kernel/core/memory.c" beforeDir="false" afterPath="$PROJECT_DIR$/c11.01/source/kernel/core/memory.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c11.10/source/kernel/core/memory.c" beforeDir="false" afterPath="$PROJECT_DIR$/c11.10/source/kernel/core/memory.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c11.10/source/kernel/core/task.c" beforeDir="false" afterPath="$PROJECT_DIR$/c11.10/source/kernel/core/task.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c11.10/source/kernel/kernel.lds" beforeDir="false" afterPath="$PROJECT_DIR$/c11.10/source/kernel/kernel.lds" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/目录.txt" beforeDir="false" afterPath="$PROJECT_DIR$/目录.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../image/kernel.elf" beforeDir="false" afterPath="$PROJECT_DIR$/../image/kernel.elf" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -151,11 +34,29 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/c10.06/source/kernel/cpu/irq.c">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="196">
               <caret line="14" column="10" selection-start-line="14" selection-start-column="10" selection-end-line="14" selection-end-column="10" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/c11.10/source/kernel/kernel.lds">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="42">
+              <caret line="3" column="28" selection-start-line="3" selection-start-column="12" selection-end-line="3" selection-end-column="28" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/c11.10/source/kernel/core/memory.c">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="216">
+              <caret line="138" column="40" selection-start-line="138" selection-start-column="40" selection-end-line="138" selection-end-column="40" />
             </state>
           </provider>
         </entry>
@@ -187,6 +88,7 @@
       <find>memory_destroy_uvm</find>
       <find>gdt_descriptor_t * gdt_alloc_segment (uint32_t base, uint32_t limit, uint16_t attr)</find>
       <find>outb(COM1_PORT, '\n');</find>
+      <find>if (page_index &gt; 0) {</find>
     </findStrings>
     <replaceStrings>
       <replace>sched_yield</replace>
@@ -199,6 +101,7 @@
       <replace>#define GDT_TABLE_SIZE      	256</replace>
       <replace>int gdt_alloc_segment (uint32_t base, uint32_t limit, uint16_t attr)</replace>
       <replace>outb(COM1_PORT, '\r\n');</replace>
+      <replace>if (page_index &gt;= 0) {</replace>
     </replaceStrings>
     <dirStrings>
       <dir>$PROJECT_DIR$/</dir>
@@ -243,6 +146,10 @@
         <option value="$PROJECT_DIR$/c11.01/source/kernel/core/task.c" />
         <option value="$PROJECT_DIR$/c11.01/source/kernel/kernel.lds" />
         <option value="$PROJECT_DIR$/c11.01/source/kernel/init/init.c" />
+        <option value="$PROJECT_DIR$/c11.02/source/kernel/core/task.c" />
+        <option value="$PROJECT_DIR$/c11.02/source/kernel/core/memory.c" />
+        <option value="$PROJECT_DIR$/c11.02/source/kernel/include/core/memory.h" />
+        <option value="$PROJECT_DIR$/c11.10/source/kernel/core/memory.c" />
       </list>
     </option>
   </component>
@@ -269,23 +176,12 @@
             <path>
               <item name="code" type="b2602c69:ProjectViewProjectNode" />
               <item name="code" type="462c0819:PsiDirectoryNode" />
-              <item name="c10.09" type="462c0819:PsiDirectoryNode" />
+              <item name="c11.02" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="code" type="b2602c69:ProjectViewProjectNode" />
               <item name="code" type="462c0819:PsiDirectoryNode" />
-              <item name="c10.09" type="462c0819:PsiDirectoryNode" />
-              <item name="source" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="code" type="b2602c69:ProjectViewProjectNode" />
-              <item name="code" type="462c0819:PsiDirectoryNode" />
-              <item name="c11.01" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="code" type="b2602c69:ProjectViewProjectNode" />
-              <item name="code" type="462c0819:PsiDirectoryNode" />
-              <item name="c11.01" type="462c0819:PsiDirectoryNode" />
+              <item name="c11.02" type="462c0819:PsiDirectoryNode" />
               <item name="source" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -305,6 +201,14 @@
               <item name="c11.10" type="462c0819:PsiDirectoryNode" />
               <item name="source" type="462c0819:PsiDirectoryNode" />
               <item name="kernel" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="code" type="b2602c69:ProjectViewProjectNode" />
+              <item name="code" type="462c0819:PsiDirectoryNode" />
+              <item name="c11.10" type="462c0819:PsiDirectoryNode" />
+              <item name="source" type="462c0819:PsiDirectoryNode" />
+              <item name="kernel" type="462c0819:PsiDirectoryNode" />
+              <item name="core" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="code" type="b2602c69:ProjectViewProjectNode" />
@@ -373,12 +277,12 @@
       <workItem from="1649763385005" duration="1698000" />
       <workItem from="1649765189729" duration="1235000" />
       <workItem from="1649767001468" duration="1298000" />
-      <workItem from="1649768814334" duration="236000" />
+      <workItem from="1649768814334" duration="1251000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="11511000" />
+    <option name="totallyTimeSpent" value="12526000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1402" height="800" extended-state="0" />
@@ -531,6 +435,20 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="98">
           <caret line="7" column="5" selection-start-line="7" selection-start-column="5" selection-end-line="7" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/c11.10/source/kernel/kernel.lds">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="42">
+          <caret line="3" column="28" selection-start-line="3" selection-start-column="12" selection-end-line="3" selection-end-column="28" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/c11.10/source/kernel/core/memory.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="216">
+          <caret line="138" column="40" selection-start-line="138" selection-start-column="40" selection-end-line="138" selection-end-column="40" />
         </state>
       </provider>
     </entry>

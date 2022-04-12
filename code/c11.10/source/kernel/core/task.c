@@ -137,7 +137,7 @@ static void kernel_task_init (void) {
     extern uint8_t * init_load_size;
 
     uint32_t init_size = (uint32_t)&init_load_size;
-    uint32_t total_size = 2 * PAGE_SIZE;
+    uint32_t total_size = 10 * PAGE_SIZE;        // 可以设置的大一些, 如40KB
     ASSERT(init_size < PAGE_SIZE);
 
     // 第一个任务代码量小一些，好和栈放在1个页面呢
@@ -177,7 +177,7 @@ void task_manager_init (void) {
     list_init(&task_manager.sleep_list);
 
     kernel_task_init();
-    task_init(&task_manager.idle_task, 
+    task_init(&task_manager.idle_task,
                 "idle task", 
                 TASK_FLAG_SYSTEM,
                 (uint32_t)idle_task_entry, 
