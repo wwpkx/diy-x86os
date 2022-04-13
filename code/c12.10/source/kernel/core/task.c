@@ -12,18 +12,18 @@
 #include "cpu/mmu.h"
 #include "os_cfg.h"
 #include "core/memory.h"
+#include "ipc/mutex.h"
 #include "core/syscall.h"
 
 static task_manager_t task_manager;     // 任务管理器
-static task_t task_table[TASK_NR];      // 用户进程表
 static int task_incr_id;                // 任务自增id
+static task_t task_table[TASK_NR];      // 用户进程表
+static mutex_t task_table_mutex;        // 进程表互斥访问锁
 
 /**
  * @brief 初始化任务
  */
 int task_init (task_t *task, const char * name, int flag, uint32_t entry, uint32_t esp) {
-    kernel_memset(task, 0, sizeof(task_t));
-
     // 为TSS分配GDT
     int tss_sel = gdt_alloc_segment((uint32_t)&task->tss,
                                 sizeof(tss_t), GDT_SET_PRESENT | GDT_SEG_DPL0 | GDB_TSS_TYPE);
@@ -106,7 +106,7 @@ void task_uninit (task_t * task) {
     }
 
     if (task->tss.esp0) {
-        memory_free_page(task->tss.esp0 - PAGE_SIZE);
+        memory_free_page(task->tss.esp0 - MEM_PAGE_SIZE);
     }
 
     if (task->tss.cr3) {
@@ -158,6 +158,7 @@ static void kernel_task_init (void) {
  */
 void task_manager_init (void) {
     kernel_memset(task_table, 0, sizeof(task_table));
+    mutex_init(&task_table_mutex);
 
     //数据段和代码段，使用DPL3，所有应用共用同一个
     //为调试方便，暂时使用DPL0
@@ -323,21 +324,28 @@ void task_time_tick (void) {
  * @brief 分配一个任务结构
  */
 static task_t * alloc_task (void) {
+    task_t * task = (task_t *)0;
+
+    mutex_lock(&task_table_mutex);
     for (int i = 0; i < TASK_NR; i++) {
-        task_t * task = task_table + i;
-        if (task->name[0] == 0) {
-            return task;
+        task_t * curr = task_table + i;
+        if (curr->name[0] == 0) {
+            task = curr;
+            break;
         }
     }
+    mutex_unlock(&task_table_mutex);
 
-    return (task_t *)0;
+    return task;
 }
 
 /**
  * @brief 释放任务结构
  */
 static void free_task (task_t * task) {
+    mutex_lock(&task_table_mutex);
     task->name[0] = 0;
+    mutex_unlock(&task_table_mutex);
 }
 
 /**
@@ -379,8 +387,8 @@ int sys_fork (void) {
 
     // 对子进程进行初始化，并对必要的字段进行调整
     // 其中esp要减去系统调用的总参数字节大小，因为其是通过正常的ret返回, 而没有走系统调用处理的ret(参数个数返回)
-    int err = task_init(child_task,  parent_task->name, 0, frame->eip, 
-                frame->esp + sizeof(uint32_t)*SYSCALL_PARAM_COUNT);
+    int err = task_init(child_task,  parent_task->name, 0, frame->eip,
+                        frame->esp + sizeof(uint32_t)*SYSCALL_PARAM_COUNT);
     if (err < 0) {
         goto fork_failed;
     }
@@ -388,7 +396,7 @@ int sys_fork (void) {
     // 从父进程的栈中取部分状态，然后写入tss。
     // 注意检查esp, eip等是否在用户空间范围内，不然会造成page_fault
     tss_t * tss = &child_task->tss;
-    tss->eax = child_task->pid;                       // 子进程返回值pid = 自己的id
+    tss->eax = 0;                       // 子进程返回值pid = 自己的id
     tss->ebx = frame->ebx;
     tss->ecx = frame->ecx;
     tss->edx = frame->edx;
@@ -398,7 +406,7 @@ int sys_fork (void) {
 
     tss->cs = frame->cs;
     tss->ds = frame->ds;
-    tss->es = frame->es;        
+    tss->es = frame->es;
     tss->fs = frame->fs;
     tss->gs = frame->gs;
     tss->eflags = frame->eflags;
@@ -410,14 +418,14 @@ int sys_fork (void) {
         goto fork_failed;
     } 
 
-    // 父进程返回的pid为子进程的pid
+    // 创建成功，返回子进程的pid
     return child_task->pid;
 fork_failed:
     if (child_task) {
         task_uninit (child_task);
         free_task(child_task);
     }
-    return -1;    
+    return -1;
 }
 
 /**

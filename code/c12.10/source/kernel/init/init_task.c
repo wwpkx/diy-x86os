@@ -5,35 +5,33 @@
  * 作者：李述铜
  * 联系邮箱: 527676163@qq.com
  */
-#include "core/task.h"
 #include "applib/lib_syscall.h"
 
 int parent = 0, child = 0;
 
 int init_task_main (void) {
-    int pid;
+    int pid = getpid();
 
-    // for (;;) {
-    //     pid = getpid();
-    //     msleep(1000);
-    // }
+    sched_yield();
 
     pid = fork();
     if (pid < 0) {
-
+        for (;;) {
+            msleep(1000);
+        }
     } else if (pid == 0) {
         for (;;) {
-            // 自己
-            parent++;
+            // 子进程
+            child_var++;
             msleep(1000);
         }
     } else {
         for (;;) {
-            // 子进程
-            child++;
+            // 父进程
+            parent_var++;
             msleep(2000);
         }
     }
-    
+
     return 0;
 } 
