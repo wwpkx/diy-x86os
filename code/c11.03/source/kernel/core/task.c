@@ -107,7 +107,7 @@ static void kernel_task_init (void) {
     mmu_set_page_dir(task_manager.kernel_task.tss.cr3);
 
     // 分配一页内存供代码存放使用，然后将代码复制过去
-    memory_alloc_page(MEMORY_TASK_BASE,  total_size, PTE_P | PTE_W | PTE_U);
+    memory_alloc_page_for(MEMORY_TASK_BASE,  total_size, PTE_P | PTE_W);
     kernel_memcpy((void *)MEMORY_TASK_BASE, (void *)&init_load_addr, init_size);
 }
 

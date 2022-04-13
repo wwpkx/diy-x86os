@@ -42,7 +42,7 @@ int task_init (task_t *task, const char * name, uint32_t entry, uint32_t esp) {
     data_sel = task_manager.app_data_sel | GDT_RPL3;
 
     task->tss.eip = entry;
-    task->tss.esp = esp ? esp : kernel_stack + MEM_PAGE_SIZE;  // 未指定栈则用内核栈
+    task->tss.esp = esp ? esp : kernel_stack + MEM_PAGE_SIZE;  // 未指定栈则用内核栈，即运行在特权级0的进程
     task->tss.esp0 = kernel_stack + MEM_PAGE_SIZE;
     task->tss.ss0 = KERNEL_SELECTOR_DS;
     task->tss.eip = entry;
@@ -117,8 +117,8 @@ static void kernel_task_init (void) {
     // 更新页表地址为自己的
     mmu_set_page_dir(task_manager.kernel_task.tss.cr3);
 
-    // 分配一页内存供代码存放使用，然后将代码复制过去
-    memory_alloc_page(MEMORY_TASK_BASE,  total_size, PTE_P | PTE_W | PTE_U);
+    // 分配内存供代码存放使用，然后将代码复制过去
+    memory_alloc_page_for(MEMORY_TASK_BASE,  total_size, PTE_P | PTE_W | PTE_U);
     kernel_memcpy((void *)MEMORY_TASK_BASE, (void *)&init_load_addr, init_size);
 }
 

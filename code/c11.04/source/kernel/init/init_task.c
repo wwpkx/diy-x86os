@@ -9,7 +9,7 @@
 
 int init_task_main (void) {
     for (;;) {
-        sys_msleep(1000);
+        //sys_msleep(1000);
     }
 
     return 0;

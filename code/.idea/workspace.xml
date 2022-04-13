@@ -10,18 +10,85 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="503b7bda-5c1b-4288-a1ee-02d955517940" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/c10.03/source/kernel/core/memory.c" beforeDir="false" afterPath="$PROJECT_DIR$/c10.03/source/kernel/core/memory.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c10.04/source/kernel/core/memory.c" beforeDir="false" afterPath="$PROJECT_DIR$/c10.04/source/kernel/core/memory.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c10.05/source/kernel/core/memory.c" beforeDir="false" afterPath="$PROJECT_DIR$/c10.05/source/kernel/core/memory.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c10.06/source/kernel/core/memory.c" beforeDir="false" afterPath="$PROJECT_DIR$/c10.06/source/kernel/core/memory.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c10.07/source/kernel/core/memory.c" beforeDir="false" afterPath="$PROJECT_DIR$/c10.07/source/kernel/core/memory.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c10.08/source/kernel/core/memory.c" beforeDir="false" afterPath="$PROJECT_DIR$/c10.08/source/kernel/core/memory.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c10.09/source/kernel/core/memory.c" beforeDir="false" afterPath="$PROJECT_DIR$/c10.09/source/kernel/core/memory.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c11.01/source/kernel/core/memory.c" beforeDir="false" afterPath="$PROJECT_DIR$/c11.01/source/kernel/core/memory.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c11.10/source/kernel/core/memory.c" beforeDir="false" afterPath="$PROJECT_DIR$/c11.10/source/kernel/core/memory.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c11.10/source/kernel/core/task.c" beforeDir="false" afterPath="$PROJECT_DIR$/c11.10/source/kernel/core/task.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c11.10/source/kernel/kernel.lds" beforeDir="false" afterPath="$PROJECT_DIR$/c11.10/source/kernel/kernel.lds" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/c12.01/source/applib/lib_syscall.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/c12.01/source/kernel/include/core/syscall.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/c12.02/source/kernel/core/syscall.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c11.02/source/kernel/core/memory.c" beforeDir="false" afterPath="$PROJECT_DIR$/c11.02/source/kernel/core/memory.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c11.02/source/kernel/core/task.c" beforeDir="false" afterPath="$PROJECT_DIR$/c11.02/source/kernel/core/task.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c11.02/source/kernel/include/core/memory.h" beforeDir="false" afterPath="$PROJECT_DIR$/c11.02/source/kernel/include/core/memory.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c11.03/source/kernel/core/memory.c" beforeDir="false" afterPath="$PROJECT_DIR$/c11.03/source/kernel/core/memory.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c11.03/source/kernel/core/task.c" beforeDir="false" afterPath="$PROJECT_DIR$/c11.03/source/kernel/core/task.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c11.03/source/kernel/include/core/memory.h" beforeDir="false" afterPath="$PROJECT_DIR$/c11.03/source/kernel/include/core/memory.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c11.04/source/kernel/core/memory.c" beforeDir="false" afterPath="$PROJECT_DIR$/c11.04/source/kernel/core/memory.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c11.04/source/kernel/core/task.c" beforeDir="false" afterPath="$PROJECT_DIR$/c11.04/source/kernel/core/task.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c11.04/source/kernel/include/core/memory.h" beforeDir="false" afterPath="$PROJECT_DIR$/c11.04/source/kernel/include/core/memory.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c11.04/source/kernel/init/init_task.c" beforeDir="false" afterPath="$PROJECT_DIR$/c11.04/source/kernel/init/init_task.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c11.10/.vscode/c_cpp_properties.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/c11.10/.vscode/launch.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/c11.10/.vscode/settings.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/c11.10/.vscode/tasks.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/c11.10/CMakeLists.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/c11.10/script/img-write-osx.sh" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/c11.10/script/img-write-win.bat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/c11.10/script/qemu-debug-osx.sh" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/c11.10/script/qemu-debug-win.bat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/c11.10/script/qemu-run-win.bat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/c11.10/source/applib/CMakeLists.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/c11.10/source/applib/crt_start.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/c11.10/source/applib/lib_syscall.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/c11.10/source/applib/lib_syscall.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/c11.10/source/boot/CMakeLists.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/c11.10/source/boot/boot.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/c11.10/source/boot/boot.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/c11.10/source/boot/start.asm" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/c11.10/source/comm/boot_info.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/c11.10/source/comm/cpu_instr.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/c11.10/source/comm/elf.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/c11.10/source/comm/types.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/c11.10/source/kernel/CMakeLists.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/c11.10/source/kernel/core/memory.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/c11.10/source/kernel/core/syscall.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/c11.10/source/kernel/core/task.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/c11.10/source/kernel/cpu/cpu.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/c11.10/source/kernel/cpu/irq.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/c11.10/source/kernel/cpu/mmu.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/c11.10/source/kernel/dev/timer.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/c11.10/source/kernel/include/core/memory.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/c11.10/source/kernel/include/core/syscall.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/c11.10/source/kernel/include/core/task.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/c11.10/source/kernel/include/cpu/cpu.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/c11.10/source/kernel/include/cpu/irq.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/c11.10/source/kernel/include/cpu/mmu.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/c11.10/source/kernel/include/dev/timer.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/c11.10/source/kernel/include/ipc/bfifo.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/c11.10/source/kernel/include/ipc/mutex.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/c11.10/source/kernel/include/ipc/sem.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/c11.10/source/kernel/include/os_cfg.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/c11.10/source/kernel/include/tools/bitmap.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/c11.10/source/kernel/include/tools/klib.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/c11.10/source/kernel/include/tools/list.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/c11.10/source/kernel/include/tools/log.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/c11.10/source/kernel/init/init.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/c11.10/source/kernel/init/init_task.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/c11.10/source/kernel/init/init_task_asm.asm" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/c11.10/source/kernel/init/kernel_asm.asm" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/c11.10/source/kernel/ipc/bfifo.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/c11.10/source/kernel/ipc/mutex.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/c11.10/source/kernel/ipc/sem.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/c11.10/source/kernel/kernel.lds" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/c11.10/source/kernel/tools/bitmap.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/c11.10/source/kernel/tools/klib.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/c11.10/source/kernel/tools/list.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/c11.10/source/kernel/tools/log.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/c11.10/source/loader/CMakeLists.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/c11.10/source/loader/loader.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/c11.10/source/loader/loader_16.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/c11.10/source/loader/loader_32.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/c11.10/source/loader/start.asm" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/目录.txt" beforeDir="false" afterPath="$PROJECT_DIR$/目录.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../image/kernel.elf" beforeDir="false" afterPath="$PROJECT_DIR$/../image/kernel.elf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../image/loader.bin" beforeDir="false" afterPath="$PROJECT_DIR$/../image/loader.bin" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -35,39 +102,59 @@
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/c10.06/source/kernel/cpu/irq.c">
+        <entry file="file://$PROJECT_DIR$/c11.05/CMakeLists.txt">
+          <provider selected="true" editor-type-id="text-editor" />
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/c12.01/CMakeLists.txt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="196">
-              <caret line="14" column="10" selection-start-line="14" selection-start-column="10" selection-end-line="14" selection-end-column="10" />
+            <state relative-caret-position="406">
+              <caret line="29" selection-start-line="29" selection-end-line="29" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/c11.10/source/kernel/kernel.lds">
+        <entry file="file://$PROJECT_DIR$/c12.10/CMakeLists.txt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="42">
-              <caret line="3" column="28" selection-start-line="3" selection-start-column="12" selection-end-line="3" selection-end-column="28" />
+            <state relative-caret-position="322">
+              <caret line="23" column="33" selection-start-line="23" selection-end-line="24" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/c12.01/source/applib/lib_syscall.h">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="476">
+              <caret line="34" column="15" selection-start-line="34" selection-start-column="15" selection-end-line="34" selection-end-column="15" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/c12.01/source/kernel/cpu/cpu.c">
+          <provider selected="true" editor-type-id="text-editor" />
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/c12.02/source/kernel/core/syscall.c">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="532">
+              <caret line="38" selection-start-line="38" selection-end-line="38" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/c11.10/source/kernel/core/memory.c">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="216">
-              <caret line="138" column="40" selection-start-line="138" selection-start-column="40" selection-end-line="138" selection-end-column="40" />
-            </state>
-          </provider>
+        <entry file="file://$PROJECT_DIR$/c12.02/source/kernel/include/core/syscall.h">
+          <provider selected="true" editor-type-id="text-editor" />
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/c11.01/source/kernel/init/init_task_startup.asm">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="98">
-              <caret line="7" column="5" selection-start-line="7" selection-start-column="5" selection-end-line="7" selection-end-column="5" />
-            </state>
-          </provider>
+        <entry file="file://$PROJECT_DIR$/c12.01/source/kernel/include/core/syscall.h">
+          <provider selected="true" editor-type-id="text-editor" />
         </entry>
       </file>
     </leaf>
@@ -113,18 +200,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/c10.10/source/kernel/core/task.c" />
-        <option value="$PROJECT_DIR$/c09.07/source/kernel/core/task.c" />
-        <option value="$PROJECT_DIR$/c09.06/source/kernel/include/core/task.h" />
-        <option value="$PROJECT_DIR$/c09.06/source/kernel/core/task.c" />
-        <option value="$PROJECT_DIR$/c10.01/source/kernel/CMakeLists.txt" />
-        <option value="$PROJECT_DIR$/c10.01/script/qemu-debug-osx.sh" />
-        <option value="$PROJECT_DIR$/c10.10/.vscode/tasks.json" />
-        <option value="$PROJECT_DIR$/c10.01/source/kernel/init/init.c" />
-        <option value="$PROJECT_DIR$/c10.10/source/kernel/init/kernel_asm.asm" />
-        <option value="$PROJECT_DIR$/目录.txt" />
-        <option value="$PROJECT_DIR$/c10.02/source/kernel/include/tools/bitmap.h" />
-        <option value="$PROJECT_DIR$/c10.10/source/kernel/include/tools/bitmap.h" />
         <option value="$PROJECT_DIR$/c10.03/source/kernel/include/core/memory.h" />
         <option value="$PROJECT_DIR$/c10.03/source/kernel/core/memory.c" />
         <option value="$PROJECT_DIR$/c10.03/source/kernel/init/init.c" />
@@ -146,10 +221,36 @@
         <option value="$PROJECT_DIR$/c11.01/source/kernel/core/task.c" />
         <option value="$PROJECT_DIR$/c11.01/source/kernel/kernel.lds" />
         <option value="$PROJECT_DIR$/c11.01/source/kernel/init/init.c" />
-        <option value="$PROJECT_DIR$/c11.02/source/kernel/core/task.c" />
         <option value="$PROJECT_DIR$/c11.02/source/kernel/core/memory.c" />
         <option value="$PROJECT_DIR$/c11.02/source/kernel/include/core/memory.h" />
+        <option value="$PROJECT_DIR$/c11.02/source/kernel/core/task.c" />
+        <option value="$PROJECT_DIR$/c11.10/source/kernel/include/os_cfg.h" />
+        <option value="$PROJECT_DIR$/c11.04/source/kernel/include/core/memory.h" />
         <option value="$PROJECT_DIR$/c11.10/source/kernel/core/memory.c" />
+        <option value="$PROJECT_DIR$/c11.04/source/kernel/core/task.c" />
+        <option value="$PROJECT_DIR$/c11.10/source/kernel/core/task.c" />
+        <option value="$PROJECT_DIR$/c11.10/source/kernel/kernel.lds" />
+        <option value="$PROJECT_DIR$/c11.05/source/kernel/core/task.c" />
+        <option value="$PROJECT_DIR$/c11.04/source/kernel/init/init_task.c" />
+        <option value="$PROJECT_DIR$/c12.01/CMakeLists.txt" />
+        <option value="$PROJECT_DIR$/c12.01/source/applib/lib_syscall.h" />
+        <option value="$PROJECT_DIR$/c12.01/source/kernel/include/core/syscall.h" />
+        <option value="$PROJECT_DIR$/c12.01/source/kernel/cpu/cpu.c" />
+        <option value="$PROJECT_DIR$/c12.01/source/kernel/include/os_cfg.h" />
+        <option value="$PROJECT_DIR$/c12.10/source/kernel/include/os_cfg.h" />
+        <option value="$PROJECT_DIR$/c12.01/source/kernel/init/kernel_asm.asm" />
+        <option value="$PROJECT_DIR$/c12.01/source/applib/lib_syscall.c" />
+        <option value="$PROJECT_DIR$/c12.02/source/kernel/include/core/syscall.h" />
+        <option value="$PROJECT_DIR$/c12.10/source/kernel/include/core/syscall.h" />
+        <option value="$PROJECT_DIR$/c12.03/source/kernel/include/core/task.h" />
+        <option value="$PROJECT_DIR$/c12.10/source/kernel/include/core/task.h" />
+        <option value="$PROJECT_DIR$/c12.03/source/kernel/core/task.c" />
+        <option value="$PROJECT_DIR$/c12.03/source/kernel/core/syscall.c" />
+        <option value="$PROJECT_DIR$/c12.03/source/applib/lib_syscall.h" />
+        <option value="$PROJECT_DIR$/c12.02/source/kernel/core/syscall.c" />
+        <option value="$PROJECT_DIR$/c12.04/source/kernel/core/syscall.c" />
+        <option value="$PROJECT_DIR$/c12.10/source/kernel/core/syscall.c" />
+        <option value="$PROJECT_DIR$/c12.04/source/applib/lib_syscall.h" />
       </list>
     </option>
   </component>
@@ -166,6 +267,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -176,59 +278,23 @@
             <path>
               <item name="code" type="b2602c69:ProjectViewProjectNode" />
               <item name="code" type="462c0819:PsiDirectoryNode" />
-              <item name="c11.02" type="462c0819:PsiDirectoryNode" />
+              <item name="c12.04" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="code" type="b2602c69:ProjectViewProjectNode" />
               <item name="code" type="462c0819:PsiDirectoryNode" />
-              <item name="c11.02" type="462c0819:PsiDirectoryNode" />
-              <item name="source" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="code" type="b2602c69:ProjectViewProjectNode" />
-              <item name="code" type="462c0819:PsiDirectoryNode" />
-              <item name="c11.10" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="code" type="b2602c69:ProjectViewProjectNode" />
-              <item name="code" type="462c0819:PsiDirectoryNode" />
-              <item name="c11.10" type="462c0819:PsiDirectoryNode" />
-              <item name="source" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="code" type="b2602c69:ProjectViewProjectNode" />
-              <item name="code" type="462c0819:PsiDirectoryNode" />
-              <item name="c11.10" type="462c0819:PsiDirectoryNode" />
-              <item name="source" type="462c0819:PsiDirectoryNode" />
-              <item name="kernel" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="code" type="b2602c69:ProjectViewProjectNode" />
-              <item name="code" type="462c0819:PsiDirectoryNode" />
-              <item name="c11.10" type="462c0819:PsiDirectoryNode" />
-              <item name="source" type="462c0819:PsiDirectoryNode" />
-              <item name="kernel" type="462c0819:PsiDirectoryNode" />
-              <item name="core" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="code" type="b2602c69:ProjectViewProjectNode" />
-              <item name="code" type="462c0819:PsiDirectoryNode" />
-              <item name="c11.10" type="462c0819:PsiDirectoryNode" />
-              <item name="source" type="462c0819:PsiDirectoryNode" />
-              <item name="kernel" type="462c0819:PsiDirectoryNode" />
-              <item name="init" type="462c0819:PsiDirectoryNode" />
+              <item name="c12.10" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/c11.01/source/kernel/init" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/c12.02/source/kernel/core" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
     <property name="run.code.analysis.last.selected.profile" value="pProject Default" />
@@ -236,11 +302,11 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/c12.02/source/kernel/core" />
+      <recent name="$PROJECT_DIR$/c12.01/source/kernel/include/core" />
+      <recent name="$PROJECT_DIR$/c12.01/source/kernel/core" />
+      <recent name="$PROJECT_DIR$/c12.01/source" />
       <recent name="$PROJECT_DIR$/c11.01/source/kernel/init" />
-      <recent name="$PROJECT_DIR$/c10.06/source/kernel/cpu" />
-      <recent name="$PROJECT_DIR$/c10.03/source/kernel/core" />
-      <recent name="$PROJECT_DIR$/c10.03/source/kernel/include/core" />
-      <recent name="$PROJECT_DIR$/c10.01/source/kernel/tools" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/c10.06/source/kernel/include/cpu" />
@@ -278,16 +344,21 @@
       <workItem from="1649765189729" duration="1235000" />
       <workItem from="1649767001468" duration="1298000" />
       <workItem from="1649768814334" duration="1251000" />
+      <workItem from="1649815450168" duration="201000" />
+      <workItem from="1649815709320" duration="1350000" />
+      <workItem from="1649817660828" duration="1627000" />
+      <workItem from="1649822725722" duration="1607000" />
+      <workItem from="1649824544324" duration="87000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="12526000" />
+    <option name="totallyTimeSpent" value="17398000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1402" height="800" extended-state="0" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.27941176" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.22426471" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -424,13 +495,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/c10.06/source/kernel/cpu/irq.c">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="196">
-          <caret line="14" column="10" selection-start-line="14" selection-start-column="10" selection-end-line="14" selection-end-column="10" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/c11.10/source/kernel/core/memory.c" />
     <entry file="file://$PROJECT_DIR$/c11.01/source/kernel/init/init_task_startup.asm">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="98">
@@ -438,19 +503,82 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/c11.10/source/kernel/kernel.lds">
+    <entry file="file://$PROJECT_DIR$/c11.10/source/kernel/kernel.lds" />
+    <entry file="file://$PROJECT_DIR$/c11.04/source/kernel/core/task.c">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="42">
-          <caret line="3" column="28" selection-start-line="3" selection-start-column="12" selection-end-line="3" selection-end-column="28" />
+        <state relative-caret-position="-1699" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/c11.03/source/kernel/core/memory.c">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/c11.03/source/kernel/core/task.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1586" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/c11.02/source/kernel/core/task.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1472" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/c10.06/source/kernel/cpu/irq.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="196">
+          <caret line="14" column="10" selection-start-line="14" selection-start-column="10" selection-end-line="14" selection-end-column="10" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/c11.10/source/kernel/core/memory.c">
+    <entry file="file://$PROJECT_DIR$/c11.04/source/kernel/init/init_task.c">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="216">
-          <caret line="138" column="40" selection-start-line="138" selection-start-column="40" selection-end-line="138" selection-end-column="40" />
+        <state relative-caret-position="154">
+          <caret line="11" column="10" selection-start-line="11" selection-start-column="10" selection-end-line="11" selection-end-column="10" />
         </state>
       </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/c12.01/source/applib/CMakeLists.txt" />
+    <entry file="file://$PROJECT_DIR$/c12.01/source/applib/crt_start.c" />
+    <entry file="file://$PROJECT_DIR$/c12.01/source/applib/lib_syscall.c" />
+    <entry file="file://$PROJECT_DIR$/c12.01/source/kernel/core/syscall.c" />
+    <entry file="file://$PROJECT_DIR$/c11.05/CMakeLists.txt">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/c12.01/CMakeLists.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="406">
+          <caret line="29" selection-start-line="29" selection-end-line="29" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/c12.10/CMakeLists.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="322">
+          <caret line="23" column="33" selection-start-line="23" selection-end-line="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/c12.01/source/applib/lib_syscall.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="476">
+          <caret line="34" column="15" selection-start-line="34" selection-start-column="15" selection-end-line="34" selection-end-column="15" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/c12.01/source/kernel/cpu/cpu.c">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/c12.02/source/kernel/core/syscall.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="532">
+          <caret line="38" selection-start-line="38" selection-end-line="38" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/c12.01/source/kernel/include/core/syscall.h">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/c12.02/source/kernel/include/core/syscall.h">
+      <provider selected="true" editor-type-id="text-editor" />
     </entry>
   </component>
 </project>
