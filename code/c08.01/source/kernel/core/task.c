@@ -55,7 +55,7 @@ void task_manager_init (void) {
     list_init(&task_manager.task_list);
 
     // 初始化内核任务
-    task_t * first_task = &task_manager.kernel_task;
+    task_t * first_task = &task_manager.init_task;
     task_init(first_task, 0, 0);     // 里面的值不必要写
  
     // 写TR寄存器，指示当前运行的第一个任务

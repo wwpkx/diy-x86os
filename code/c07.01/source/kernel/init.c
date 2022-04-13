@@ -31,7 +31,7 @@ void kernel_init (boot_info_t * boot_info) {
 static uint32_t init_task_stack[1024];	// 空闲任务堆栈
 
 static task_t init_task;
-static task_t kernel_task;
+static task_t init_task;
 
 /**
  * 空闲任务代码
@@ -41,7 +41,7 @@ void init_task_entry(void *param) {
 
     for (;;) {
         log_printf("init task: %d", count++);
-        task_switch_to(&kernel_task);
+        task_switch_to(&init_task);
     }
 } 
 
@@ -67,8 +67,8 @@ void init_main(void) {
 
     // 初始化任务
     task_init(&init_task, (uint32_t)init_task_entry, (uint32_t)&init_task_stack[1024]);
-    task_init(&kernel_task, 0, 0);     // 里面的值不必要写
-    write_tr(kernel_task.tss_sel);
+    task_init(&init_task, 0, 0);     // 里面的值不必要写
+    write_tr(init_task.tss_sel);
 
     //int a = 3 / 0;
     int count = 0;

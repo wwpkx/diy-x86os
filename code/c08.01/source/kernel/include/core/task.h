@@ -30,7 +30,7 @@ typedef struct _task_manager_t {
 	list_t ready_list;			// 就绪队列
 	list_t task_list;			// 所有已创建任务的队列
 
-	task_t kernel_task;			// 内核任务
+	task_t init_task;			// 内核任务
 }task_manager_t;
 
 void task_manager_init (void);

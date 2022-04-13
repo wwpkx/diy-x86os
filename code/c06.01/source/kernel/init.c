@@ -34,7 +34,7 @@ void init_task_entry(void *param) {
 
     for (;;) {
         log_printf("init task: %d", count++);
-        //task_switch_to(&kernel_task);
+        //task_switch_to(&init_task);
     }
 } 
 

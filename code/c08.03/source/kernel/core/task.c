@@ -64,7 +64,7 @@ void task_manager_init (void) {
     list_init(&task_manager.task_list);
 
     // 初始化内核任务
-    task_t * first_task = &task_manager.kernel_task;
+    task_t * first_task = &task_manager.init_task;
     task_init(first_task, "kernel task", 0, 0);     // 里面的值不必要写
     task_manager.curr_task = first_task;
 

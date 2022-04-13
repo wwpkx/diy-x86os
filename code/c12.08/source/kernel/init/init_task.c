@@ -22,13 +22,13 @@ int init_task_main (void) {
     } else if (pid == 0) {
         for (;;) {
             // 子进程
-            child_var++;
+            child++;
             msleep(1000);
         }
     } else {
         for (;;) {
             // 父进程
-            parent_var++;
+            parent++;
             msleep(2000);
         }
     }

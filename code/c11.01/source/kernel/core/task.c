@@ -86,11 +86,11 @@ static void idle_task_entry (void) {
 static void kernel_task_init (void) {
     // 第一个任务代码量小一些，好和栈放在1个页面呢
     // 这样就不要立即考虑还要给栈分配空间的问题
-    task_init(&task_manager.kernel_task, "kernel task", 0, 0);     // 里面的值不必要写
-    task_manager.curr_task = (task_t *)&task_manager.kernel_task;
+    task_init(&task_manager.init_task, "kernel task", 0, 0);     // 里面的值不必要写
+    task_manager.curr_task = (task_t *)&task_manager.init_task;
 
     // 更新页表地址为自己的
-    mmu_set_page_dir(task_manager.kernel_task.tss.cr3);
+    mmu_set_page_dir(task_manager.init_task.tss.cr3);
 }
 
 /**
@@ -107,14 +107,14 @@ void task_manager_init (void) {
     kernel_task_init();
 
     // 初始化内核任务
-    task_t * first_task = &task_manager.kernel_task;
+    task_t * first_task = &task_manager.init_task;
     task_init(&task_manager.idle_task, 
                 "idle task", 
                 (uint32_t)idle_task_entry, 
                 (uint32_t)(idle_task_stack + IDLE_STACK_SIZE));     // 里面的值不必要写
 
     // 写TR寄存器，指示当前运行的第一个任务
-    write_tr(task_manager.kernel_task.tss_sel);
+    write_tr(task_manager.init_task.tss_sel);
 }
 
 /**
