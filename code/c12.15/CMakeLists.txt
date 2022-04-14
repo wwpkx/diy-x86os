@@ -30,13 +30,14 @@ include_directories(
 )
 
 # 底层的若干子项目
-add_subdirectory(./source/applib)   # 先生成库，以备初始任务和应用使用
-
 add_subdirectory(./source/boot)
 add_subdirectory(./source/loader)
 add_subdirectory(./source/kernel)
-
-# 注意，在编译时可能出错，估计是cmake并行编译，导致applib还未生成时，shell就已经在编译
-# 最终因为缺少libapp所以，出现错误。此时，再编译一次即可
+add_subdirectory(./source/applib)
 add_subdirectory(./source/shell)
+
+# 添加编译依赖，先生成app库，再生成kernel和shell
+# 不加则cmake则可能先编译shell和kernel，而缺少libapp，导致编译错误
+add_dependencies(kernel app)
+add_dependencies(shell app)
 
