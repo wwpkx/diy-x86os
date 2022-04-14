@@ -17,6 +17,12 @@
 
 #define TASK_FLAG_SYSTEM       	(1 << 0)		// 系统任务
 
+typedef struct _task_args_t {
+	uint32_t ret_addr;		// 返回地址，无用
+	uint32_t argc;
+	char **argv;
+}task_args_t;
+
 /**
  * @brief 任务控制块结构
  */

@@ -11,9 +11,28 @@
   <component name="ChangeListManager">
     <list default="true" id="503b7bda-5c1b-4288-a1ee-02d955517940" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c12.09/source/kernel/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/c12.09/source/kernel/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c12.09/source/kernel/kernel.lds" beforeDir="false" afterPath="$PROJECT_DIR$/c12.09/source/kernel/kernel.lds" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/目录.txt" beforeDir="false" afterPath="$PROJECT_DIR$/目录.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c11.02/source/kernel/core/memory.c" beforeDir="false" afterPath="$PROJECT_DIR$/c11.02/source/kernel/core/memory.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c11.03/source/kernel/core/memory.c" beforeDir="false" afterPath="$PROJECT_DIR$/c11.03/source/kernel/core/memory.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c11.04/source/kernel/core/memory.c" beforeDir="false" afterPath="$PROJECT_DIR$/c11.04/source/kernel/core/memory.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c11.05/source/kernel/core/memory.c" beforeDir="false" afterPath="$PROJECT_DIR$/c11.05/source/kernel/core/memory.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c12.01/source/kernel/core/memory.c" beforeDir="false" afterPath="$PROJECT_DIR$/c12.01/source/kernel/core/memory.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c12.02/source/kernel/core/memory.c" beforeDir="false" afterPath="$PROJECT_DIR$/c12.02/source/kernel/core/memory.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c12.03/source/kernel/core/memory.c" beforeDir="false" afterPath="$PROJECT_DIR$/c12.03/source/kernel/core/memory.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c12.04/source/kernel/core/memory.c" beforeDir="false" afterPath="$PROJECT_DIR$/c12.04/source/kernel/core/memory.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c12.05/source/kernel/core/memory.c" beforeDir="false" afterPath="$PROJECT_DIR$/c12.05/source/kernel/core/memory.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c12.06/source/kernel/core/memory.c" beforeDir="false" afterPath="$PROJECT_DIR$/c12.06/source/kernel/core/memory.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c12.07/source/kernel/core/memory.c" beforeDir="false" afterPath="$PROJECT_DIR$/c12.07/source/kernel/core/memory.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c12.08/source/kernel/core/memory.c" beforeDir="false" afterPath="$PROJECT_DIR$/c12.08/source/kernel/core/memory.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c12.09/source/kernel/core/memory.c" beforeDir="false" afterPath="$PROJECT_DIR$/c12.09/source/kernel/core/memory.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c12.10/source/kernel/core/memory.c" beforeDir="false" afterPath="$PROJECT_DIR$/c12.10/source/kernel/core/memory.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c12.15/script/img-write-osx.sh" beforeDir="false" afterPath="$PROJECT_DIR$/c12.15/script/img-write-osx.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c12.15/source/kernel/core/memory.c" beforeDir="false" afterPath="$PROJECT_DIR$/c12.15/source/kernel/core/memory.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c12.15/source/kernel/core/task.c" beforeDir="false" afterPath="$PROJECT_DIR$/c12.15/source/kernel/core/task.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c12.15/source/kernel/fs/file.c" beforeDir="false" afterPath="$PROJECT_DIR$/c12.15/source/kernel/fs/file.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c12.15/source/kernel/include/core/memory.h" beforeDir="false" afterPath="$PROJECT_DIR$/c12.15/source/kernel/include/core/memory.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c12.15/source/kernel/tools/klib.c" beforeDir="false" afterPath="$PROJECT_DIR$/c12.15/source/kernel/tools/klib.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c12.15/source/shell/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/c12.15/source/shell/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c13.01/source/kernel/core/memory.c" beforeDir="false" afterPath="$PROJECT_DIR$/c13.01/source/kernel/core/memory.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../image/kernel.elf" beforeDir="false" afterPath="$PROJECT_DIR$/../image/kernel.elf" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -39,7 +58,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/c13.01/source/kernel/core/memory.c">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="56">
+            <state relative-caret-position="2660">
               <caret line="190" column="23" selection-start-line="190" selection-start-column="5" selection-end-line="190" selection-end-column="23" />
             </state>
           </provider>
@@ -53,8 +72,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/c13.01/source/applib/lib_syscall.c">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="173">
-              <caret line="41" selection-start-line="41" selection-end-line="72" selection-end-column="21" />
+            <state relative-caret-position="33">
+              <caret line="31" column="11" selection-start-line="31" selection-start-column="11" selection-end-line="31" selection-end-column="11" />
             </state>
           </provider>
         </entry>
@@ -92,6 +111,7 @@
       <find>parent_var++;</find>
       <find>msleep</find>
       <find>kernel_task</find>
+      <find>int memory_alloc_page_for (uint32_t addr, uint32_t size, int perm) {</find>
     </findStrings>
     <replaceStrings>
       <replace>sched_yield</replace>
@@ -112,6 +132,8 @@
       <replace>child++;</replace>
       <replace>parent++;</replace>
       <replace>init_task</replace>
+      <replace>int memory_alloc_page_for (uint32_t * page_dir, uint32_t addr, uint32_t size, int perm);</replace>
+      <replace>int memory_alloc_page_for (uint32_t * page_dir, uint32_t addr, uint32_t size, int perm) {</replace>
     </replaceStrings>
     <dirStrings>
       <dir>$PROJECT_DIR$/</dir>
@@ -306,18 +328,19 @@
       <workItem from="1649881297898" duration="782000" />
       <workItem from="1649883747975" duration="896000" />
       <workItem from="1649890213789" duration="420000" />
-      <workItem from="1649894012744" duration="453000" />
+      <workItem from="1649894012744" duration="793000" />
+      <workItem from="1649902561987" duration="626000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="25464000" />
+    <option name="totallyTimeSpent" value="26430000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1402" height="800" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.22794117" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.23088235" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -544,12 +567,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/c12.09/source/kernel/init/init_task.c">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
     <entry file="file://$PROJECT_DIR$/c13.01/source/kernel/core/memory.c">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="56">
+        <state relative-caret-position="2660">
           <caret line="190" column="23" selection-start-line="190" selection-start-column="5" selection-end-line="190" selection-end-column="23" />
         </state>
       </provider>
@@ -557,10 +577,13 @@
     <entry file="file://$PROJECT_DIR$/c13.01/source/applib/lib_syscall.h">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
+    <entry file="file://$PROJECT_DIR$/c12.09/source/kernel/init/init_task.c">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
     <entry file="file://$PROJECT_DIR$/c13.01/source/applib/lib_syscall.c">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="173">
-          <caret line="41" selection-start-line="41" selection-end-line="72" selection-end-column="21" />
+        <state relative-caret-position="33">
+          <caret line="31" column="11" selection-start-line="31" selection-start-column="11" selection-end-line="31" selection-end-column="11" />
         </state>
       </provider>
     </entry>

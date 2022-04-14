@@ -5,7 +5,7 @@ project(shell LANGUAGES C)
 # 加入相应的库
 set(LIBS_FLAGS "-L ${CMAKE_BINARY_DIR}/source/applib/ -lapp")
 set(CMAKE_EXE_LINKER_FLAGS "-m elf_i386 -T ${PROJECT_SOURCE_DIR}/link.lds ${LIBS_FLAGS}")
-set(CMAKE_C_LINK_EXECUTABLE "${LINKER_TOOL} <OBJECTS> ${CMAKE_EXE_LINKER_FLAGS} -o ${PROJECT_NAME}.elf")
+set(CMAKE_C_LINK_EXECUTABLE "${LINKER_TOOL} <OBJECTS> ${CMAKE_EXE_LINKER_FLAGS} -o ${CMAKE_SOURCE_DIR}/../../image/${PROJECT_NAME}.elf")
 
 include_directories(
     ${PROJECT_SOURCE_DIR}/../applib/

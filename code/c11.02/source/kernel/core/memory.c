@@ -181,7 +181,7 @@ uint32_t memory_create_uvm (void) {
 /**
  * @brief 为指定的虚拟地址空间分配多页内存
  */
-int memory_alloc_page_for (uint32_t addr, uint32_t size, int perm) {
+int memory_alloc_page_for (uint32_t * page_dir, uint32_t addr, uint32_t size, int perm);
     uint32_t curr_vaddr = addr;
     int page_count = up_2bound(size, MEM_PAGE_SIZE) / MEM_PAGE_SIZE;
 

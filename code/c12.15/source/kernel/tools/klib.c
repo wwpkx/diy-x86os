@@ -7,6 +7,26 @@
 #include "comm/cpu_instr.h"
 #include "core/task.h"
 
+
+/**
+ * @brief 计算字符串的数量
+ */
+int strings_count (char ** start) {
+    int count = 0;
+    
+    while (*start++) {
+        count++;
+    }
+
+    return count;
+}
+
+void kernel_strcpy (char * dest, const char * src) {
+    while (*dest && *src) {
+        *dest++ = *src++;
+    }
+}
+
 void kernel_strncpy(char * dest, const char * src, int size) {
     char * d = dest;
     const char * s = src;
@@ -177,7 +197,7 @@ char * get_file_name (char * name) {
     while ((*s != '\\') && (*s != '/') && (s >= name)) {
         s--;
     }
-    return s;
+    return s + 1;
 }
 
 void panic_debug (const char * filename, int line, const char * func, const char * conditon) {

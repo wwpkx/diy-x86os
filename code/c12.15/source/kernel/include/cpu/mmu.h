@@ -114,4 +114,9 @@ static inline void mmu_set_page_dir (uint32_t paddr) {
     write_cr3(paddr);
 }
 
+/**
+ * @brief 获取指定虚拟地址的物理地址
+ */
+uint32_t mmu_to_paddr (uint32_t page_dir, uint32_t vaddr);
+
 #endif // MMU_H

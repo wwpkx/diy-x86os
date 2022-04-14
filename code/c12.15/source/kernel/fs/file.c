@@ -10,10 +10,10 @@
 #include "tools/klib.h"
 #include "fs/file.h"
 
-#define ADDR                    (8*1024*1024)      // 在8M处缓存原始
+#define ADDR                    (8*1024*1024)      // 在0x800000处缓存原始
 #define SYS_DISK_SECTOR_SIZE    512
 
-static uint8_t * pos = 0;       // 当前位置
+static uint8_t * pos;       // 当前位置
 
 static void read_disk(int sector, int sector_count, uint8_t * buf) {
 	outb(0x1F1, (uint8_t) 0);
@@ -50,6 +50,7 @@ int sys_open(const char *name, int flags, ...) {
 
     // 暂时直接从扇区1000上读取, 读取大概40KB，足够了
     read_disk(1000, 80, (uint8_t *)ADDR);
+    pos = (uint8_t *)ADDR;
     return file;
 }
 
@@ -59,7 +60,7 @@ int sys_open(const char *name, int flags, ...) {
 int sys_read(int file, char *ptr, int len) {
     kernel_memcpy(ptr, pos, len);
     pos += len;
-    return -1;
+    return len;
 }
 
 /**
@@ -73,8 +74,8 @@ int sys_write(int file, char *ptr, int len) {
  * 文件访问位置定位
  */
 int sys_lseek(int file, int ptr, int dir) {
-    pos = (uint8_t *)ptr;
-    return -1;
+    pos = (uint8_t *)(ptr + ADDR);
+    return 0;
 }
 
 /**

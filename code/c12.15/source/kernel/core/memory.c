@@ -190,7 +190,7 @@ uint32_t memory_create_uvm (void) {
  */
 void memory_destroy_uvm (uint32_t page_dir) {
     uint32_t user_pde_start = pde_index(MEMORY_TASK_BASE);
-    pde_t * pde = (pde_t *)page_dir;
+    pde_t * pde = (pde_t *)page_dir + user_pde_start;
 
     ASSERT(page_dir != 0);
 
@@ -210,7 +210,7 @@ void memory_destroy_uvm (uint32_t page_dir) {
             addr_free_page(&paddr_alloc, pte_paddr(pte), 1);
         }
 
-        addr_free_page(&paddr_alloc, (uint32_t)pte, 1);
+        addr_free_page(&paddr_alloc, (uint32_t)pde_paddr(pde), 1);
     }
 
     // 页目录表
@@ -271,6 +271,50 @@ copy_uvm_failed:
 }
 
 /**
+ * @brief 获取指定虚拟地址的物理地址
+ * 如果转换失败，返回0。
+ */
+uint32_t memory_get_paddr (uint32_t page_dir, uint32_t vaddr) {
+    pte_t * pte = find_pte((pde_t *)page_dir, vaddr, 0);
+    if (pte == (pte_t *)0) {
+        return 0;
+    }
+
+    return pte_paddr(pte) + (vaddr & (MEM_PAGE_SIZE - 1));
+}
+
+/**
+ * @brief 从指定的页表空间中复制一些数据
+ */
+int memory_copy_uvm_data(uint8_t * to, uint32_t page_dir, uint32_t from, uint32_t size) {
+  char *buf, *pa0;
+
+    while(size > 0){
+        // 转换得到物理地址
+        uint32_t aligned_from = down_2bound(from, MEM_PAGE_SIZE);
+        uint32_t paddr = memory_get_paddr(page_dir, aligned_from);  
+        if (paddr == 0) {
+            return -1;
+        }     
+
+        // 在当前页内可拷贝的数据量
+        uint32_t poffset = from - aligned_from;
+        uint32_t curr_size = MEM_PAGE_SIZE - poffset;
+        if (curr_size > size) {
+            curr_size = size;       // 如果比较大，超过页边界，则只拷贝此页内的
+        }
+
+        kernel_memcpy(to, (char *)paddr + poffset, curr_size);
+
+        size -= curr_size;
+        to += curr_size;
+        from += curr_size;
+  }
+
+  return 0;
+}
+
+/**
  * @brief 为指定的虚拟地址空间分配多页内存
  */
 int memory_alloc_page_for (uint32_t addr, uint32_t size, int perm) {
@@ -282,7 +326,6 @@ int memory_alloc_page_for (uint32_t addr, uint32_t size, int perm) {
         if (paddr == 0) {
             return 0;
         }
-        kernel_memset((void *)paddr, 0, MEM_PAGE_SIZE);
 
         pde_t * page_dir = (pde_t *)task_current()->tss.cr3;
         int err = memory_create_map(page_dir, curr_vaddr, paddr, 1, perm);
