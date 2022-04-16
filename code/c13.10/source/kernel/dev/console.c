@@ -215,6 +215,8 @@ static void erase_in_display(struct _tty_t * tty) {
 
 	int param = console.esc_param[0];
 	if (param == 2) {
+		// 擦除整个屏幕
+		erase_rows(tty, 0, console.display_rows);
 	}
 }
 
