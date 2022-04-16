@@ -8,6 +8,7 @@
 #include "core/memory.h"
 #include "tools/klib.h"
 #include "cpu/mmu.h"
+#include "dev/console.h"
 
 extern uint8_t mem_free_start[];        // 内核末端空闲ram
 
@@ -142,6 +143,7 @@ void create_kernel_table (void) {
         {kernel_base_addr,  text_start - 1,     0,                  PTE_W},        // 内核栈区
         {text_start,        text_end - 1,       text_start,         0},             // 代码区
         {data_start,        (void *)(MEM_EBDA_START - 1),   data_start,        PTE_W},      // 数据区
+        {(void *)CONSOLE_VIDEO_BASE, (void *)(CONSOLE_VIDEO_END - 1), (void *)CONSOLE_VIDEO_BASE, PTE_W},
 
         // // 扩展存储空间一一映射，方便直接操作
         {(void *)MEM_EXT_START, (void *)MEM_EXT_END,     (void *)MEM_EXT_START, PTE_W},
@@ -394,4 +396,51 @@ void memory_init (boot_info_t * boot_info) {
 
     // 先切换到当前页表
     mmu_set_page_dir((uint32_t)kernel_page_dir);
+}
+
+/**
+ * @brief 调整堆的内存分配，返回堆之前的指针
+ * 
+ * @param incr 
+ * @return char* 
+ */
+char * sys_sbrk(int incr) {
+    task_t * task = task_current();
+
+    if (incr == 0) {
+        return task->heap_top;
+    } else if (incr > 0) {
+        // 需要分配新内存，且要考虑是否跨页面
+        uint32_t end = task->heap_top + incr;
+        uint32_t start = task->heap_top;
+
+        int size_in_page = start % MEM_PAGE_SIZE;
+        if (size_in_page) {
+            // 不足一页，调整一下bss就可以了
+            if (size_in_page + incr < MEM_PAGE_SIZE) {
+                task->heap_top += incr;
+                return start;
+            } else {
+                // 超过一页，则调整本页内的, 接下来再调整后面页对齐的
+                uint32_t curr_size = MEM_PAGE_SIZE - size_in_page;
+                incr -= curr_size;
+                start += curr_size;
+            }
+        }
+
+        if (start % MEM_PAGE_SIZE == 0) {
+            // 刚好一页, 则分配新页
+            int err = memory_alloc_page_for(start, incr, PTE_P | PTE_U | PTE_W);
+            if (err < 0) {
+                return (char *)0;
+            }
+
+            // 实际分配得到的可能会比要求的多，因为页对齐
+            uint32_t pre_top = task->heap_top;
+            task->heap_top = start + up_2bound(incr, MEM_PAGE_SIZE);
+            return pre_top;
+        }
+    } else {
+
+    }
 }

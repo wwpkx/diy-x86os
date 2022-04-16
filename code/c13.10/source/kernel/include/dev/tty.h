@@ -27,7 +27,9 @@ typedef struct _tty_dev_t {
  * tty设备
  */
 typedef struct _tty_t {
+	int device_num;					// 所在的设备号
 	tty_dev_t * dev;				// 实际设备
+	void * dev_data;				// 设备参数
 
 	mutex_t mutex;					// 进程访问的互斥锁
 	char in_buf[TTY_IN_SIZE];

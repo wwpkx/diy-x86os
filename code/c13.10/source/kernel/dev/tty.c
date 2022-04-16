@@ -105,6 +105,8 @@ int tty_open (int dev) {
 	}
 
 	tty_dev_t * tty_deivce = tty->dev;
+	tty->device_num = dev;
+	tty->echo = 0;
 
 	// 初始化设备
 	if (tty_deivce->init) {
@@ -123,24 +125,18 @@ int tty_open (int dev) {
  */
 int tty_read (int tty, char * buffer, int size) {
 	tty_t * p_tty = to_tty(tty);
-	char * curr = buffer;
-	int total_size = 0;
 
 	mutex_lock(&p_tty->mutex);
-	while (size > 0) {
-		// 试着读一下，能读多少就读多少。如果没有，则等待
-		int read_size = bfifo_get(&p_tty->in_fifo, curr, size);
-		if (read_size <= 0) {
-			// 即使是等待，也不要等全部，也是有多少先读多少.
-			// 先等1个字节，然后下次循环时再重复读取
-			read_size = bfifo_read(&p_tty->in_fifo, curr, 1);
-		}
-
-		size -= read_size;
-		curr += read_size;
+	// 试着读一下，能读多少就读多少。如果没有，则等待
+	int read_size = bfifo_get(&p_tty->in_fifo, buffer, size);
+	if (read_size == 0) {
+		// 即使是等待，也不要等全部，也是有多少先读多少.
+		// 先等1个字节，然后下次循环时再重复读取
+		read_size = bfifo_read(&p_tty->in_fifo, buffer, 1);
 	}
+
 	mutex_unlock(&p_tty->mutex);
-	return total_size;
+	return read_size;
 }
 
 /**
@@ -148,7 +144,7 @@ int tty_read (int tty, char * buffer, int size) {
  */
 int tty_write (int tty, char * buffer, int size) {
 	tty_t * p_tty = to_tty(tty);
-	int total_size = 0;
+	int total_size = size;
 	char * curr = buffer;
 
 	// size可能比out_fifo的容量大，所以直接用size去写

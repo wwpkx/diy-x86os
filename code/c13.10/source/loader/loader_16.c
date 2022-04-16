@@ -184,7 +184,7 @@ static void  enter_protect_mode() {
 void loader_entry(void) {
     show_msg("....loading.....");
 	detect_memory();
-	switch_vga_mode(SYS_CFG_SCREEN_WIDTH, SYS_CFG_SCREEN_HEIGHT, SYS_CFG_SCREEN_BPP);
+	//switch_vga_mode(SYS_CFG_SCREEN_WIDTH, SYS_CFG_SCREEN_HEIGHT, SYS_CFG_SCREEN_BPP);
     enter_protect_mode();
     for(;;) {}
 }

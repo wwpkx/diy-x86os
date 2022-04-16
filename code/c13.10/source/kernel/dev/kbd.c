@@ -135,10 +135,12 @@ static void write_key (void) {
 	int tty = tty_current();
 	if (tty >= 0) {
 		// 仅在当前有打开tty时才使用，否则数据将简单的丢掉
-		tty_in_data(tty, (char *)&key_data, sizeof(key_data));
+		int key_code = key_data.key_code;
+		tty_in_data(tty, (char *)&key_code, 1);
 	}
 
-	key_data.data = 0;
+	// 只发键值，功能键在抬起时才清空
+	key_data.key_code = 0;
 }
 
 /**

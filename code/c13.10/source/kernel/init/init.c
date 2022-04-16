@@ -27,10 +27,10 @@ static boot_info_t * init_boot_info;        // 启动信息
 void kernel_init (boot_info_t * boot_info) {
     init_boot_info = boot_info;
 
-    memory_init(init_boot_info);
-
     // 初始化CPU，再重新加载
     cpu_init();
+
+    memory_init(init_boot_info);
 
     irq_init();
 

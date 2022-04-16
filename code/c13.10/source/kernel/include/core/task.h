@@ -41,6 +41,7 @@ typedef struct _task_t {
 
     int pid;				// 进程的pid
     struct _task_t * parent;		// 父进程
+	uint32_t heap_top;		// 堆的顶层地址
 
     int sleep_ticks;		// 睡眠时间
 	int time_slice;			// 时间片

@@ -109,6 +109,6 @@ int isatty(int file) {
 }
 
 caddr_t sbrk(int incr) {
-	return (caddr_t)0;
+    return sys_call(SYS_sbrk, incr, 0, 0, 0);
 }
 

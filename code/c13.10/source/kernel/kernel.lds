@@ -11,6 +11,7 @@ SECTIONS
 	}
 	PROVIDE(init_load_addr = LOADADDR(.init_task));
 	PROVIDE(init_load_size = SIZEOF(.init_task));
+	PROVIDE(init_heap_top = .);
 
 	/* 重设LMA，并对齐的4KB */
 	. = 0x00010000 + init_load_size;

@@ -13,6 +13,7 @@
 #include "ipc/mutex.h"
 #include "tools/klib.h"
 #include "dev/dev.h"
+#include "dev/tty.h"
 
 #define ADDR                    (8*1024*1024)      // 在0x800000处缓存原始
 #define SYS_DISK_SECTOR_SIZE    512
@@ -113,6 +114,8 @@ const char * dir_path_next(const char * path) {
 	return path;
 }
 
+int tty;		// 当前的tty
+
 /**
  * 打开文件
  */
@@ -126,8 +129,12 @@ int sys_open(const char *name, int flags, ...) {
     }
 
 
-	int err = tty_open();
-	
+	tty = tty_open(make_device_num(0, 0));
+	if (tty < 0) {
+		return -1;
+	}
+
+
 	// // 必要的参数检查
 	// if ((name == (const char *)name) || (name[0] == '\0')) {
 	// 	return -1;
@@ -180,14 +187,20 @@ int sys_read(int file, char *ptr, int len) {
         pos += len;
         return len;
     }
-    return -1;
+
+
+    return tty_read(tty, ptr, len);
 }
 
 /**
  * 写文件
  */
 int sys_write(int file, char *ptr, int len) {
-    return -1;
+	if (file == 100) {
+		return -1;
+	}
+
+    return tty_write(tty, ptr, len);
 }
 
 /**
@@ -211,5 +224,9 @@ int sys_close(int file) {
  * 判断文件描述符与tty关联
  */
 int sys_isatty(int file) {
-    return -1;
+	if (file == 100) {
+		return 0;
+	}
+
+    return 1;
 }

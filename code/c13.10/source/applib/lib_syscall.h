@@ -34,6 +34,7 @@
 #define SYS_fstat               107
 #define SYS_stat                108
 #define SYS_isatty              109
+#define SYS_sbrk                110
 
 int msleep (int ms);
 int fork(void);

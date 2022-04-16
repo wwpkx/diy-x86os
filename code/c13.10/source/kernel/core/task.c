@@ -68,6 +68,8 @@ int task_init (task_t *task, const char * name, int flag, uint32_t entry, uint32
     task->tss.iomap = 0x40000000;
     task->tss_sel = tss_sel;
 
+    task->heap_top = 0;
+
     // 页表初始化
     uint32_t page_dir = memory_create_uvm();
     if (page_dir == 0) {
@@ -140,6 +142,7 @@ static void idle_task_entry (void) {
 static void kernel_task_init (void) {
     extern uint8_t * init_load_addr;
     extern uint8_t * init_load_size;
+    extern uint8_t * init_heap_top;
 
     uint32_t init_size = (uint32_t)&init_load_size;
     uint32_t total_size = 10 * MEM_PAGE_SIZE;        // 可以设置的大一些, 如40KB
@@ -149,6 +152,8 @@ static void kernel_task_init (void) {
     // 这样就不要立即考虑还要给栈分配空间的问题
     task_init(&task_manager.init_task, "kernel task", 0, 0, MEMORY_TASK_BASE + total_size);     // 里面的值不必要写
     task_manager.curr_task = (task_t *)&task_manager.init_task;
+
+    task_manager.init_task.heap_top = (uint32_t)&init_heap_top;
 
     // 更新页表地址为自己的
     mmu_set_page_dir(task_manager.init_task.tss.cr3);
@@ -438,7 +443,7 @@ fork_failed:
  */
 static int load_phdr(int file, Elf32_Phdr * phdr) {
     uint32_t vaddr = down_2bound(phdr->p_vaddr, MEM_PAGE_SIZE);  // 地址对齐
-    uint32_t size = phdr->p_filesz + phdr->p_vaddr - vaddr;  // 转换成实际大小
+    uint32_t size = phdr->p_memsz + phdr->p_vaddr - vaddr;  // 转换成实际大小
 
     // 为段分配所有的内存空间.后续操作如果失败，将在上层释放
     // 简单起见，设置成可写模式，也许可考虑根据phdr->flags设置成只读
@@ -465,7 +470,7 @@ static int load_phdr(int file, Elf32_Phdr * phdr) {
 /**
  * @brief 加载elf文件到内存中
  */
-static uint32_t load_elf_file (const char * name) {
+static uint32_t load_elf_file (task_t * task, const char * name) {
     Elf32_Ehdr elf_hdr;
     Elf32_Phdr elf_phdr;
 
@@ -522,6 +527,10 @@ static uint32_t load_elf_file (const char * name) {
             goto load_failed;
         }
     }
+
+    // 简单起见，不检查了，以最后的地址为bss的地址
+    task->heap_top = elf_phdr.p_vaddr + elf_phdr.p_memsz;
+
     sys_close(file);
     return elf_hdr.e_entry;
 
@@ -588,7 +597,7 @@ int sys_execve(char *name, char **argv, char **env) {
     mmu_set_page_dir(new_page_dir);   // 切换至新的页表。由于不用访问原栈及数据，所以并无问题
 
     // 加载elf文件到内存中。要放在开启新页表之后，这样才能对相应的内存区域写
-    uint32_t entry = load_elf_file(name);
+    uint32_t entry = load_elf_file(task, name);
     if (entry == 0) {
         goto exec_failed;
     }
