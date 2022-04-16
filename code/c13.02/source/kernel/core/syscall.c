@@ -10,7 +10,7 @@
 #include "applib/lib_syscall.h"
 #include "core/task.h"
 #include "tools/log.h"
-#include "fs/file.h"
+#include "fs/fs.h"
 
 // 系统调用处理函数类型
 typedef int (*syscall_handler_t)(uint32_t arg0, uint32_t arg1, uint32_t arg2, uint32_t arg3);

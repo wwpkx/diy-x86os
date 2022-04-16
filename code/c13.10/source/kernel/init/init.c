@@ -16,6 +16,8 @@
 #include "ipc/bfifo.h"
 #include "os_cfg.h"
 #include "core/memory.h"
+#include "fs/fs.h"
+#include "dev/tty.h"
 
 static boot_info_t * init_boot_info;        // 启动信息
 
@@ -34,6 +36,7 @@ void kernel_init (boot_info_t * boot_info) {
 
     timer_init();
     log_init();
+    tty_init();
 }
 
 /**

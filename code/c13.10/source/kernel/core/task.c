@@ -15,7 +15,7 @@
 #include "ipc/mutex.h"
 #include "core/syscall.h"
 #include "comm/elf.h"
-#include "fs/file.h"
+#include "fs/fs.h"
 
 static task_manager_t task_manager;     // 任务管理器
 static int task_incr_id;                // 任务自增id
@@ -35,6 +35,9 @@ int task_init (task_t *task, const char * name, int flag, uint32_t entry, uint32
 
     // tss段初始化
     kernel_memset(&task->tss, 0, sizeof(tss_t));
+
+    // 文件相关
+    kernel_memset(task->file_table, 0, sizeof(task->file_table));
 
     // 分配内核栈
     uint32_t kernel_stack = memory_alloc_page();

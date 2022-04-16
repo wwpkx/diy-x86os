@@ -92,7 +92,7 @@ int kernel_memcmp (void * d1, void * d2, int size) {
 	return 0;
 }
 
-static void kernel_itoa(char * buf, int num, int base) {
+void kernel_itoa(char * buf, int num, int base) {
     // 转换字符索引[-15, -14, ...-1, 0, 1, ...., 14, 15]
     static const char * num2ch = {"FEDCBA9876543210123456789ABCDEF"};
     char * p = buf;

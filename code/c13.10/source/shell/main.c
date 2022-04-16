@@ -9,8 +9,12 @@
 #include <stdio.h>
 
 int main (int argc, char **argv) {
-    int count = 0;
+    char c;
+    while ((c = getchar()) != '\n') {
+        putchar(c);
+    }
 
+    int count = 0;
     for (;;) {
         printf("arg[0]: hello %d\n", count++);
         msleep(1000);

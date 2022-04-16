@@ -8,7 +8,7 @@
 #include "core/task.h"
 #include "comm/cpu_instr.h"
 #include "tools/klib.h"
-#include "fs/file.h"
+#include "fs/fs.h"
 
 #define ADDR                    (8*1024*1024)      // 在0x800000处缓存原始
 #define SYS_DISK_SECTOR_SIZE    512

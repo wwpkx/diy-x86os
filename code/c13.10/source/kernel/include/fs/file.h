@@ -1,5 +1,5 @@
 /**
- * 文件系统相关接口的实现
+ * 文件管理
  *
  * 创建时间：2021年8月5日
  * 作者：李述铜
@@ -8,23 +8,27 @@
 #ifndef FILE_H
 #define FILE_H
 
-#include "applib/lib_syscall.h"
+#define FILE_TABLE_SIZE         2048        // 可打开的文件数量
 
-int sys_open(const char *name, int flags, ...);
-int sys_read(int file, char *ptr, int len);
-int sys_write(int file, char *ptr, int len);
-int sys_lseek(int file, int ptr, int dir);
-int sys_close(int file);
-int sys_open(const char *name, int flags, ...);
-int sys_read(int file, char *ptr, int len);
-int sys_write(int file, char *ptr, int len);
-int sys_close(int file);
-int sys_lseek(int file, int ptr, int dir);
-int sys_unlink(char *name);
-int sys_link(char *old, char *new);
-int sys_fstat(int file, struct stat *st);
-int sys_stat(const char *file, struct stat *st);
-int sys_isatty(int file);
+/**
+ * 文件类型
+ */
+typedef enum _file_type_t {
+    FILE_NONE = 0,
+    FILE_FILE,
+	FILE_TTY,
+} file_type_t;
+
+/**
+ * 文件描述符
+ */
+typedef struct _xfile_t {
+    file_type_t type;           // 文件类型
+    int dev;                    // 文件所属的设备号
+
+    int pos;                   	// 当前位置
+    int mode;					// 读写模式
+    int ref;                    // 被引用的次数
+} file_t;
 
 #endif // FILE_H
-

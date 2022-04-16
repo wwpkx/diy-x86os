@@ -15,7 +15,7 @@
 #include "ipc/mutex.h"
 #include "core/syscall.h"
 #include "comm/elf.h"
-#include "fs/file.h"
+#include "fs/fs.h"
 
 static task_manager_t task_manager;     // 任务管理器
 static int task_incr_id;                // 任务自增id

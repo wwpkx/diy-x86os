@@ -10,7 +10,7 @@
 #include "applib/lib_syscall.h"
 #include "core/task.h"
 #include "tools/log.h"
-#include "fs/file.h"
+#include "fs/fs.h"
 
 // 系统调用处理函数类型
 typedef int (*syscall_handler_t)(uint32_t arg0, uint32_t arg1, uint32_t arg2, uint32_t arg3);
@@ -28,10 +28,6 @@ static syscall_handler_t sys_table[] = {
 	[SYS_write] = (syscall_handler_t)sys_write,
 	[SYS_close] = (syscall_handler_t)sys_close,
 	[SYS_lseek] = (syscall_handler_t)sys_lseek,
-	[SYS_unlink] = (syscall_handler_t)sys_unlink,
-	[SYS_link] = (syscall_handler_t)sys_link,
-	[SYS_fstat] = (syscall_handler_t)sys_fstat,
-	[SYS_stat] = (syscall_handler_t)sys_stat,
 	[SYS_isatty] = (syscall_handler_t)sys_isatty,
 };
 

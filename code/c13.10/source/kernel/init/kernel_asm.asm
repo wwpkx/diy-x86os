@@ -118,6 +118,7 @@ excetpion_handler virtual_exception, 20, 0
 
 // 硬件中断
 excetpion_handler timer, 0x20, 0
+excetpion_handler keyboard, 0x21, 0
 
      .global excetpion_handler_syscall
     .extern do_handler_syscall
