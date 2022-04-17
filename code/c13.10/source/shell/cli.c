@@ -16,6 +16,7 @@
  */
 static void show_promot(cli_t * cli) {
     printf("%s", cli->promot);
+	fflush(stdout);
 }
 
 /**
@@ -78,8 +79,8 @@ static void do_tab_key (cli_t * cli) {
 
 	// 先将所有右侧的字符移动，如果有越界，则不移动。从末端开始移动，直到当前光标处
 	int move_count = cli->curr_count - cli->curr_cursor;
-	if (move_count + cli->curr_count >= CLI_CURRENT_INPUT_MAX_SIZE) {
-		move_count = CLI_CURRENT_INPUT_MAX_SIZE - cli->curr_count;
+	if (move_count + cli->curr_count >= CLI_INPUT_SIZE) {
+		move_count = CLI_INPUT_SIZE - cli->curr_count;
 	}
 	if (move_count) {
 		memmove(cli->curr_input + cli->curr_cursor + tab_count,
@@ -95,12 +96,12 @@ static void do_tab_key (cli_t * cli) {
 	}
 
 	cli->curr_count += tab_count;
-	if (cli->curr_count > CLI_CURRENT_INPUT_MAX_SIZE) {
-		cli->curr_count = CLI_CURRENT_INPUT_MAX_SIZE;
+	if (cli->curr_count > CLI_INPUT_SIZE) {
+		cli->curr_count = CLI_INPUT_SIZE;
 	}
 
-	if (cli->curr_cursor > CLI_CURRENT_INPUT_MAX_SIZE) {
-		cli->curr_cursor = CLI_CURRENT_INPUT_MAX_SIZE;
+	if (cli->curr_cursor > CLI_INPUT_SIZE) {
+		cli->curr_cursor = CLI_INPUT_SIZE;
 	}
 
 	// 添加末尾的0值，保险起见
@@ -117,7 +118,7 @@ static void do_tab_key (cli_t * cli) {
  * 显示普通字符
  */
 static void show_char(cli_t * cli, char key) {
-	if (cli->curr_count >= CLI_CURRENT_INPUT_MAX_SIZE) {
+	if (cli->curr_count >= CLI_INPUT_SIZE) {
 		return;
 	}
 
@@ -131,8 +132,8 @@ static void show_char(cli_t * cli, char key) {
 	} else {
 		// 先将所有右侧的字符移动，如果有越界，则不移动。从末端开始移动，直到当前光标处
 		int move_count = cli->curr_count - cli->curr_cursor;
-		if (move_count + cli->curr_count >= CLI_CURRENT_INPUT_MAX_SIZE) {
-			move_count = CLI_CURRENT_INPUT_MAX_SIZE - cli->curr_count;
+		if (move_count + cli->curr_count >= CLI_INPUT_SIZE) {
+			move_count = CLI_INPUT_SIZE - cli->curr_count;
 		}
 
 		// 右移一个单元，用于插入新字符
@@ -159,8 +160,8 @@ static void do_enter_key (cli_t * cli) {
 	putchar('\n');
 
 	// 对命令行进行预处理，形成字符串
-	if (cli->curr_cursor >= CLI_CURRENT_INPUT_MAX_SIZE) {
-		cli->curr_cursor = CLI_CURRENT_INPUT_MAX_SIZE - 1;
+	if (cli->curr_cursor >= CLI_INPUT_SIZE) {
+		cli->curr_cursor = CLI_INPUT_SIZE - 1;
 	}
 	cli->curr_input[cli->curr_cursor] = '\0';
 
@@ -208,7 +209,7 @@ static void do_enter_key (cli_t * cli) {
 	cli->curr_cursor = 0;
 	cli->curr_count = 0;
     show_promot(cli);
-    memset(cli->curr_input, 0, CLI_CURRENT_INPUT_MAX_SIZE);
+    memset(cli->curr_input, 0, CLI_INPUT_SIZE);
 }
 
 /**
@@ -241,7 +242,7 @@ void cli_init(cli_t * cli, const char * promot, const cli_cmd_t * cmd_list) {
     cli->promot_len = strlen(cli->promot);
 
     // 清空输入
-    memset(cli->curr_input, 0, CLI_CURRENT_INPUT_MAX_SIZE);
+    memset(cli->curr_input, 0, CLI_INPUT_SIZE);
     cli->curr_cursor = cli->curr_count = 0;
 
     // 初始化命令表

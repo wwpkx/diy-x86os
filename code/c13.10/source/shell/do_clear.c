@@ -14,8 +14,6 @@
  */
 int do_clear (int argc, char ** argv) {
 	printf(ESC_CLEAR_SCREEN);
-	printf(ESC_MOVE_CURSOR(0, 0));
-
-	// 回到屏幕原点
+	printf(ESC_MOVE_CURSOR(0, 0));		// 回到屏幕原点
 	return 0;
 }

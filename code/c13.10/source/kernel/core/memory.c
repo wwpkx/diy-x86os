@@ -408,7 +408,7 @@ char * sys_sbrk(int incr) {
     task_t * task = task_current();
 
     if (incr == 0) {
-        return task->heap_top;
+        return (char * )task->heap_top;
     } else if (incr > 0) {
         // 需要分配新内存，且要考虑是否跨页面
         uint32_t end = task->heap_top + incr;
@@ -419,7 +419,7 @@ char * sys_sbrk(int incr) {
             // 不足一页，调整一下bss就可以了
             if (size_in_page + incr < MEM_PAGE_SIZE) {
                 task->heap_top += incr;
-                return start;
+                return (char * )start;
             } else {
                 // 超过一页，则调整本页内的, 接下来再调整后面页对齐的
                 uint32_t curr_size = MEM_PAGE_SIZE - size_in_page;
@@ -438,7 +438,7 @@ char * sys_sbrk(int incr) {
             // 实际分配得到的可能会比要求的多，因为页对齐
             uint32_t pre_top = task->heap_top;
             task->heap_top = start + up_2bound(incr, MEM_PAGE_SIZE);
-            return pre_top;
+            return (char * )pre_top;
         }
     } else {
 

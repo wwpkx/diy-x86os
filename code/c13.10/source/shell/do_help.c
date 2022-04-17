@@ -13,6 +13,8 @@
  * help命令
  */
 int do_help(int argc, char **argv) {
+	puts("Builtin command list: ");
+
 	const cli_cmd_t * start = cli.cmd_start;
 	while (start < cli.cmd_end) {
 		printf("%s\t\t%s\n",  start->name, start->useage);

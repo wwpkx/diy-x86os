@@ -43,20 +43,15 @@ int main (int argc, char **argv) {
 	// 设置c标准输入输出为实时写入，不要采用缓存的方式
 	// 这样按下的键能够立即显示在屏幕上。在printf时会逐个字符立即输出
     // 不过，这样的显示速率很慢
-	setvbuf(stdout, (char *)0, _IONBF, 0);
+	// setvbuf(stdout, (char *)0, _IONBF, 0);
 
+	// 初始化命令行
    	cli_init(&cli, "sh >>", cmd_list);
 	for (;;) {
+		// 读取字符，然后处理？
 		int c = getchar();
 		if (c != EOF) {
 			cli_in(&cli, c);
 		}
 	}
-
-
-    // int count = 0;
-    // for (;;) {
-    //     // printf("arg[0]: hello %d\n", count++);
-    //     msleep(1000);
-    // }
 }
