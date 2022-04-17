@@ -48,8 +48,16 @@ int sched_yield (void) {
 }
 
 char **environ;     // 当前的环境变量
-int execve(char *name, char **argv, char **env) {
+int execve(const char *name, char * const *argv, char * const *env) {
     return sys_call(SYS_execve, (int)name, (int)argv, (int)env, 0);
+}
+
+int wait(int* status) {
+    return -1;
+}
+
+void exit(int status) {
+    return -1;
 }
 
 int open(const char *name, int flags, ...) {
@@ -57,11 +65,11 @@ int open(const char *name, int flags, ...) {
     return sys_call(SYS_open, (int)name, (int)flags, 0, 0);
 }
 
-int read(int file, char *ptr, int len) {
+int read(int file, void *ptr, size_t len) {
     return sys_call(SYS_read, (int)file, (int)ptr, (int)len, 0);
 }
 
-int write(int file, char *ptr, int len) {
+int write(int file, const void *ptr, size_t len) {
     return sys_call(SYS_write, (int)file, (int)ptr, (int)len, 0);
 }
 
@@ -69,21 +77,21 @@ int close(int file) {
     return sys_call(SYS_close, file, 0, 0, 0);
 }
 
-int lseek(int file, int ptr, int dir) {
+off_t lseek(int file, off_t ptr, int dir) {
     return -1;
 }
 
 /**
  * 删除文件
  */
-int unlink(char *name) {
+int unlink(const char *name) {
     return sys_call(SYS_unlink, (int)name, 0, 0, 0);
 }
 
 /**
  * 建立硬连接
  */
-int link(char *old, char *new) {
+int link(const char *old, const char *new) {
     return sys_call(SYS_link, (int)old, (int)new, 0, 0);
 }
 
@@ -108,7 +116,7 @@ int isatty(int file) {
     return sys_call(SYS_isatty, file, 0, 0, 0);
 }
 
-caddr_t sbrk(int incr) {
-    return sys_call(SYS_sbrk, incr, 0, 0, 0);
+void * sbrk(ptrdiff_t incr) {
+    return (caddr_t)sys_call(SYS_sbrk, incr, 0, 0, 0);
 }
 

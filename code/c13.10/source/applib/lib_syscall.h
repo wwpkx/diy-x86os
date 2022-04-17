@@ -22,7 +22,9 @@
 #define SYS_getpid              1
 #define SYS_sched_yield         3
 #define SYS_fork                4
-#define SYS_execve               5
+#define SYS_execve              5
+#define SYS_wait                6
+#define SYS_exit                7
 
 #define SYS_open                100
 #define SYS_read                101
@@ -40,19 +42,21 @@ int msleep (int ms);
 int fork(void);
 int getpid(void);
 int sched_yield (void);
-int execve(char *name, char **argv, char **env);
+int execve(const char *name, char * const *argv, char * const *env);
+int wait(int* status);
+void exit(int status);
 
 int open(const char *name, int flags, ...);
-int read(int file, char *ptr, int len);
-int write(int file, char *ptr, int len);
+int read(int file, void *ptr, size_t len);
+int write(int file, const void *ptr, size_t len);
 int close(int file);
-int lseek(int file, int ptr, int dir);
-int unlink(char *name);
-int link(char *old, char *new);
+off_t lseek(int file, off_t ptr, int dir);
+int unlink(const char *name);
+int link(const char *old, const char *new);
 int fstat(int file, struct stat *st);
 int stat(const char *file, struct stat *st);
 int isatty(int file);
 
-caddr_t sbrk(int incr);
+void * sbrk(ptrdiff_t incr);
 
 #endif //LIB_SYSCALL_H

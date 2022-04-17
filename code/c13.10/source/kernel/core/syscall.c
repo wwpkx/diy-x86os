@@ -49,6 +49,7 @@ void do_handler_syscall (syscall_frame_t * frame) {
 	}
 
 	// 不支持的系统调用，打印出错信息
+	frame->eax = -1;
 	task_t * task = task_current();
 	log_printf("pid: %d, %s, Unknown syscall: %d", task->pid, task->name,  frame->func_id);
 }

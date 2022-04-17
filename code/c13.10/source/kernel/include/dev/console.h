@@ -59,6 +59,8 @@ typedef union {
  * 终端显示部件
  */
 typedef struct _console_t {
+	disp_char_t * disp_base;	// 显示基地址
+
 	enum {
 		TTY_RECV_NORMAL,			// 普通模式
 		TTY_RECV_ESC,				// 转议序列械

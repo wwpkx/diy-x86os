@@ -7,7 +7,8 @@
         "cpu_instr.h": "c",
         "syscall.h": "c",
         "task.h": "c",
-        "lib_syscall.h": "c"
+        "lib_syscall.h": "c",
+        "stat.h": "c"
     },
     "cmake.sourceDirectory": "${workspaceFolder}/."
 }

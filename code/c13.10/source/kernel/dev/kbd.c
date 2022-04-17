@@ -136,6 +136,8 @@ static void write_key (void) {
 	if (tty >= 0) {
 		// 仅在当前有打开tty时才使用，否则数据将简单的丢掉
 		int key_code = key_data.key_code;
+
+		// todo: 暂时只支持单个简单键的按下
 		tty_in_data(tty, (char *)&key_code, 1);
 	}
 

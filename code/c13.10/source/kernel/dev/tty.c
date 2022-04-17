@@ -18,6 +18,14 @@ static tty_t tty_list[TTY_MAX_COUNT];
 static mutex_t tty_list_mutex;
 static int curr_tty;					// 当前的tty设备
 
+/**
+ * @brief 当前的tty控制
+ * @return int 
+ */
+int tty_current(void) {
+	return curr_tty;
+}
+
 // tty设备列表
 static tty_dev_t tty_dev_list[] = {
 	{
@@ -106,7 +114,7 @@ int tty_open (int dev) {
 
 	tty_dev_t * tty_deivce = tty->dev;
 	tty->device_num = dev;
-	tty->echo = 0;
+	tty->echo = 1;			// 默认开启回显
 
 	// 初始化设备
 	if (tty_deivce->init) {
@@ -193,17 +201,11 @@ void tty_in_data(int tty, char * data, int size) {
 	// 在这里要处理一些控制字符的问题
 	bfifo_put(&p_tty->in_fifo, data, size);
 	if (p_tty->echo) {
+		// 并非所有字符都需要回显
 		tty_write(tty, data, size);
 	}
 	
 	mutex_unlock(&p_tty->mutex);
 }
 
-/**
- * @brief 当前的tty控制
- * @return int 
- */
-int tty_current(void) {
-	return curr_tty;
-}
 
