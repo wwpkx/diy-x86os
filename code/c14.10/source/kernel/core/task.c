@@ -144,30 +144,39 @@ static void idle_task_entry (void) {
  * 没有采用从磁盘加载的方式，因为需要用到文件系统，并且最好是和kernel绑在一定，这样好加载
  * 当然，也可以采用将init的源文件和kernel的一起编译。此里要调整好kernel.lds，在其中
  * 将init加载地址设置成和内核一起的，运行地址设置成用户进程运行的高处。
+ * 不过，考虑到init可能用到newlib库，如果与kernel合并编译，在lds中很难控制将newlib的
+ * 代码与init进程的放在一起，有可能与kernel放在了一起。
+ * 综上，最好是分离。
  */
 static void kernel_task_init (void) {
-    // 可以将下代码全注释，然后用objdump -a查看kernel.elf文件，可找到相应以下的符号信息
-    extern uint8_t * _binary_init_bin_end, * _binary_init_bin_start;
+    // 以下获得的是bin文件在内存中的物理地址
+    extern uint8_t init_bin_end[], init_bin_start[];
 
-    uint32_t init_start = MEMORY_TASK_BASE + (uint32_t)&_binary_init_bin_start;
-    uint32_t init_end = MEMORY_TASK_BASE + (uint32_t)&_binary_init_bin_end;
-    uint32_t init_size = (uint32_t)(&_binary_init_bin_end - &_binary_init_bin_start);
+    uint32_t init_size = (uint32_t)(init_bin_end - init_bin_start);
     uint32_t total_size = 10 * MEM_PAGE_SIZE;        // 可以设置的大一些, 如40KB
     ASSERT(init_size < total_size);
 
-    // 第一个任务代码量小一些，好和栈放在1个页面呢
-    // 这样就不要立即考虑还要给栈分配空间的问题
-    task_init(&task_manager.init_task, "kernel task", 0, (uint32_t)&_binary_init_bin_start, MEMORY_TASK_BASE + total_size);     // 里面的值不必要写
+    // 初始进程也是要求传递参数的，只不过传递的参数为空，所以加上下面的设置
+    task_args_t * task_args = (task_args_t *)(MEMORY_TASK_BASE + total_size - sizeof(task_args_t));
+    task_init(&task_manager.init_task, "kernel task", 0, 
+                MEMORY_TASK_BASE, // init进程从进程空间起点处运行
+                (uint32_t)task_args);     // 里面的值不必要写
     task_manager.curr_task = (task_t *)&task_manager.init_task;
 
-    task_manager.init_task.heap_top = (uint32_t)&_binary_init_bin_end;
+    // 这里不正确，bin结尾是bss区。。。。
+    task_manager.init_task.heap_top = MEMORY_TASK_BASE + init_size;  // 这里不对
 
     // 更新页表地址为自己的
     mmu_set_page_dir(task_manager.init_task.tss.cr3);
 
     // 分配内存供代码存放使用，然后将代码复制过去
     memory_alloc_page_for(MEMORY_TASK_BASE,  total_size, PTE_P | PTE_W | PTE_U);
-    kernel_memcpy((void *)MEMORY_TASK_BASE, (void *)&_binary_init_bin_start, init_size);
+    kernel_memcpy((void *)MEMORY_TASK_BASE, (void *)init_bin_start, init_size);
+
+    // 设置参数，虽然初始进程不用
+    task_args->argc = 0;
+    task_args->argv = 0;
+    task_args->ret_addr = 0;
 }
 
 /**
@@ -506,36 +515,49 @@ fork_failed:
 /**
  * @brief 加载一个程序表头的数据到内存中
  */
-static int load_phdr(int file, Elf32_Phdr * phdr) {
+static int load_phdr(int file, Elf32_Phdr * phdr, uint32_t page_dir) {
     uint32_t vaddr = down_2bound(phdr->p_vaddr, MEM_PAGE_SIZE);  // 地址对齐
     uint32_t size = phdr->p_memsz + phdr->p_vaddr - vaddr;  // 转换成实际大小
 
-    // 为段分配所有的内存空间.后续操作如果失败，将在上层释放
-    // 简单起见，设置成可写模式，也许可考虑根据phdr->flags设置成只读
-    // 因为没有找到该值的详细定义，所以没有加上
-    int err = memory_alloc_page_for(vaddr, size, PTE_P | PTE_W | PTE_U);
-    if (err < 0) {
-        return -1;
-    }
-
-    // 将数据读取到指定的位置处，以及清空最后一部分区域
+    // 调整当前的读写位置
     if (sys_lseek(file, phdr->p_offset, 0) < 0) {
         return -1;
     }
 
-    // 注意，这里用的页表仍然是当前的
-    if (sys_read(file, (char *)phdr->p_vaddr, phdr->p_filesz) <  phdr->p_filesz) {
+    // 生成的ELF文件要求是页边界对齐的
+    ASSERT((phdr->p_vaddr & (MEM_PAGE_SIZE - 1)) == 0);
+
+    // 分配空间
+    int err = memory_alloc_for_page_dir(page_dir, vaddr, phdr->p_memsz, PTE_P | PTE_U | PTE_W);
+    if (err < 0) {
         return -1;
     }
-    kernel_memset((void *)(phdr->p_vaddr + phdr->p_filesz), 0, phdr->p_memsz - phdr->p_filesz);
 
+    // 为段分配所有的内存空间.后续操作如果失败，将在上层释放
+    // 简单起见，设置成可写模式，也许可考虑根据phdr->flags设置成只读
+    // 因为没有找到该值的详细定义，所以没有加上
+    while (size > 0) {
+        int curr_size = (size > MEM_PAGE_SIZE) ? MEM_PAGE_SIZE : size;
+
+        uint32_t paddr = memory_get_paddr(page_dir, vaddr);
+        
+        // 注意，这里用的页表仍然是当前的
+        if (sys_read(file, (char *)paddr, curr_size) <  curr_size) {
+            return -1;
+        }
+
+        size -= curr_size;
+        vaddr += curr_size;
+    }
+
+    // bss区考虑由crt0和cstart自行清0，这样更简单一些
     return 0;
 }
 
 /**
  * @brief 加载elf文件到内存中
  */
-static uint32_t load_elf_file (task_t * task, const char * name) {
+static uint32_t load_elf_file (task_t * task, const char * name, uint32_t page_dir) {
     Elf32_Ehdr elf_hdr;
     Elf32_Phdr elf_phdr;
 
@@ -574,7 +596,7 @@ static uint32_t load_elf_file (task_t * task, const char * name) {
             goto load_failed;
         }
 
-        // 读取程序头后解析
+        // 读取程序头后解析，这里不用读取到新进程的页表中，因为只是临时使用下
         cnt = sys_read(file, (char *)&elf_phdr, sizeof(Elf32_Phdr));
         if (cnt < sizeof(Elf32_Phdr)) {
             goto load_failed;
@@ -587,7 +609,7 @@ static uint32_t load_elf_file (task_t * task, const char * name) {
         }
 
         // 加载当前程序头
-        int err = load_phdr(file, &elf_phdr);
+        int err = load_phdr(file, &elf_phdr, page_dir);
         if (err < 0) {
             goto load_failed;
         }
@@ -611,45 +633,45 @@ load_failed:
  * @brief 复制进程参数到栈中。注意argv和env指向的空间在另一个页表里
  */
 static int copy_args (char * to, uint32_t page_dir, int argc, char **argv) {
-   // 在stack_top中依次写入argc, argv指针，参数字符串
-    task_args_t * task_args = (task_args_t *)to;
-    task_args->argc = argc;
-    task_args->argv = (char **)(to + sizeof(task_args_t));
+    // 在stack_top中依次写入argc, argv指针，参数字符串
+    task_args_t task_args;
+    task_args.argc = argc;
+    task_args.argv = (char **)(to + sizeof(task_args_t));
 
-    char * dest = (char *)(task_args->argv + task_args->argc + 1);        // 留出参数表以及结束符0
+    // 复制各项参数, 跳过task_args和参数表
+    char * dest_arg = to + sizeof(task_args_t) + sizeof(char *) * (argc + 1);   // 留出结束符
+    char ** dest_argv_tb = (char **)memory_get_paddr(page_dir, (uint32_t)(to + sizeof(task_args_t)));
 
-    // 以下复制，简单起见，不做详细的检查，例如是否超过边界，是否传来的进程参数不合法等情况
-    // 在调试窗口中，可使用-exec x /80cb 地址观察to处的拷贝情况
-    for (int i = 0; i < task_args->argc; i++) {
-        char * from = *(char **)memory_get_paddr(page_dir, (uint32_t)(argv + i));
-        int len = kernel_strlen(from) + 1;
+    for (int i = 0; i < argc; i++) {
+        char * from = argv[i];
 
         // 不能用kernel_strcpy，因为to和argv不在一个页表里
-        // kernel_strcpy(arg_dest, src);
-        int err = memory_copy_uvm_data((uint8_t *)dest, page_dir, (uint32_t)from, len);
+        int len = kernel_strlen(from) + 1;
+        int err = memory_copy_uvm_data((uint32_t)dest_arg, page_dir, (uint32_t)from, len);
         if (err < 0) {
             return -1;
         }
+        dest_argv_tb[i] = dest_arg;
 
         // 记录下位置后，复制的位置前移
-        task_args->argv[i] = dest;
-        dest += len;
+        dest_arg += len;
     }
+    dest_argv_tb[argc] = '\0';
 
-    // 设置参数结束符
-    task_args->argv[task_args->argc] = 0;
-    return 0;
+     // 写入task_args
+    return memory_copy_uvm_data((uint32_t)to, page_dir, (uint32_t)&task_args, sizeof(task_args_t));
 }
 
 /**
  * @brief 加载一个进程
+ * 这个比较复杂，argv/name/env都是原进程空间中的数据，execve中涉及到页表的切换
+ * 在对argv和name进行处理时，会涉及到不同进程空间中数据的传递。
  */
 int sys_execve(char *name, char **argv, char **env) {
     task_t * task = task_current();
 
-    // 后面会切换页表，所以先处理需要从进程空间取数据的情况
+    // 复制名称
     kernel_strncpy(task->name, get_file_name(name), TASK_NAME_SIZE);
-    int argc = strings_count(argv);
 
     // 现在开始加载了，先准备应用页表，由于所有操作均在内核区中进行，所以可以直接先切换到新页表
     uint32_t old_page_dir = task->tss.cr3;
@@ -658,18 +680,16 @@ int sys_execve(char *name, char **argv, char **env) {
         goto exec_failed;
     }
 
-    task->tss.cr3 = new_page_dir;
-    mmu_set_page_dir(new_page_dir);   // 切换至新的页表。由于不用访问原栈及数据，所以并无问题
-
     // 加载elf文件到内存中。要放在开启新页表之后，这样才能对相应的内存区域写
-    uint32_t entry = load_elf_file(task, name);
+    uint32_t entry = load_elf_file(task, name, new_page_dir);    // 暂时置用task->name表示
     if (entry == 0) {
         goto exec_failed;
     }
 
     // 准备用户栈空间，预留环境环境及参数的空间
     uint32_t stack_top = MEM_TASK_STACK_TOP - MEM_TASK_ARG_SIZE;    // 预留一部分参数空间
-    int err = memory_alloc_page_for(MEM_TASK_STACK_TOP - MEM_TASK_STACK_SIZE, 
+    int err = memory_alloc_for_page_dir(new_page_dir,
+                            MEM_TASK_STACK_TOP - MEM_TASK_STACK_SIZE, 
                             MEM_TASK_STACK_SIZE, PTE_P | PTE_U | PTE_W);
     if (err < 0) {
         goto exec_failed;
@@ -677,7 +697,8 @@ int sys_execve(char *name, char **argv, char **env) {
 
     // 复制参数。这里涉及到从一个进程空间拷数据到另一个进程空间
     // 所以均需要转换成其物理地址，从而顺利进行拷贝？？？？
-    err = copy_args((char *)stack_top, old_page_dir, argc, argv);
+    int argc = strings_count(argv);
+    err = copy_args((char *)stack_top, new_page_dir, argc, argv);
     if (err < 0) {
         goto exec_failed;
     }
@@ -692,6 +713,10 @@ int sys_execve(char *name, char **argv, char **env) {
     // 内核栈不用设置，保持不变，但用户栈需要更改
     // 同样要加上调用门的参数压栈空间
     frame->esp = stack_top - sizeof(uint32_t)*SYSCALL_PARAM_COUNT;
+
+    // 切换到新的页表
+    task->tss.cr3 = new_page_dir;
+    mmu_set_page_dir(new_page_dir);   // 切换至新的页表。由于不用访问原栈及数据，所以并无问题
 
     // 调整页表，切换成新的，同时释放掉之前的
     // 当前使用的是内核栈，而内核栈并未映射到进程地址空间中，所以下面的释放没有问题

@@ -11,7 +11,8 @@ SECTIONS
 	/* 代码区 */
 	PROVIDE(text_start = .);
 	.text : {
-		*(.text .rodata)
+		*(.text)
+		*(.rodata)
 	}
 	PROVIDE(text_end = .);	
 
@@ -19,7 +20,8 @@ SECTIONS
 	. = ALIGN(4096);
 	PROVIDE(data_start = .);
 	.data : {
-		*(.data .bss)
+		*(.data)
+		*(.bss)
 	}
 	PROVIDE(data_end = .);
 

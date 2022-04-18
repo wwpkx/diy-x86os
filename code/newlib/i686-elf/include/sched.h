@@ -86,7 +86,7 @@ int sched_rr_get_interval(
 /*
  *  XBD 13 - Yield Processor, P1003.1b-2008, p. 1807
  */
-int sys_sched_yield( void );
+int sched_yield( void );
 
 #endif /* _POSIX_THREADS or _POSIX_PRIORITY_SCHEDULING */
 

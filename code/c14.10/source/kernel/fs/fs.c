@@ -159,11 +159,9 @@ int sys_open(const char *path, int flags, ...) {
 		file->type = FILE_NORMAL;
 
         // 以下临时使用，后续将替换掉
-        if (path[0] == '/') {
-            // 暂时直接从扇区1000上读取, 读取大概40KB，足够了
-            read_disk(1000, 80, (uint8_t *)ADDR);
-            pos = (uint8_t *)ADDR;
-        }
+		// 暂时直接从扇区5000上读取, 读取大概400KB，足够了
+		read_disk(5000, 800, (uint8_t *)ADDR);
+		pos = (uint8_t *)ADDR;
 	}
 
 	return fd;

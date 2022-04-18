@@ -10,7 +10,8 @@
         "lib_syscall.h": "c",
         "stat.h": "c",
         "tty.h": "c",
-        "os_cfg.h": "c"
+        "os_cfg.h": "c",
+        "mmu.h": "c"
     },
     "cmake.sourceDirectory": "${workspaceFolder}/."
 }

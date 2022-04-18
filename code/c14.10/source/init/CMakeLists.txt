@@ -20,3 +20,4 @@ add_executable(${PROJECT_NAME} ${C_LIST})
 add_custom_command(TARGET ${PROJECT_NAME}
                    POST_BUILD
                    COMMAND ${OBJCOPY_TOOL} -O binary ${PROJECT_NAME}.elf ../kernel/${PROJECT_NAME}.bin)
+                   

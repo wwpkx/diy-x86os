@@ -17,7 +17,7 @@
 typedef int (*syscall_handler_t)(uint32_t arg0, uint32_t arg1, uint32_t arg2, uint32_t arg3);
 
 // 系统调用表
-static syscall_handler_t sys_table[] = {
+static const syscall_handler_t sys_table[] = {
 	[SYS_msleep] = (syscall_handler_t)sys_msleep,
     [SYS_getpid] =(syscall_handler_t)sys_getpid,
     [SYS_sched_yield] = (syscall_handler_t)sys_sched_yield,

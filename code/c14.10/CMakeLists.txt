@@ -41,4 +41,4 @@ add_subdirectory(./source/init)
 # 不加则cmake则可能先编译shell和kernel，而缺少libapp，导致编译错误
 add_dependencies(init app)       
 add_dependencies(shell app)
-
+add_dependencies(kernel init)

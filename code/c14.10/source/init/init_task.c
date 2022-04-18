@@ -7,7 +7,7 @@
  */
 #include "applib/lib_syscall.h"
 
-int main (void) {
+int main (int argc, char **argv) {
  	// 打开标准输入输出设备，临时用
 	open("tty0", 0);
     dup(0);     // 标准输出

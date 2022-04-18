@@ -122,8 +122,9 @@ void enable_page_mode (void) {
  * 从磁盘上加载内核
  */
 void load_kernel(void) {
-	// 临时使用，加载kernel，从第100个扇区开始，到400KB起始地址处
-	read_disk(100, 100, (uint8_t *)SYS_KERNEL_LOAD_ADDR);
+	// 读取的扇区数一定要大一些，保不准kernel.elf大小会变得很大
+	// 我就吃过亏，只读了100个扇区，结果运行后发现kernel的一些初始化的变量值为空，程序也会跑飞
+	read_disk(100, 1000, (uint8_t *)SYS_KERNEL_LOAD_ADDR);
 
      // 解析ELF文件，并通过调用的方式，进入到内核中去执行，同时传递boot参数
 	 // 临时将elf文件先读到SYS_KERNEL_LOAD_ADDR处，再进行解析

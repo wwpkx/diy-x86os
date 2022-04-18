@@ -286,27 +286,27 @@ uint32_t memory_get_paddr (uint32_t page_dir, uint32_t vaddr) {
 }
 
 /**
- * @brief 从指定的页表空间中复制一些数据
+ * @brief 在不同的进程空间中拷贝字符串
+ * page_dir为目标页表，当前仍为老页表
  */
-int memory_copy_uvm_data(uint8_t * to, uint32_t page_dir, uint32_t from, uint32_t size) {
-  char *buf, *pa0;
+int memory_copy_uvm_data(uint32_t to, uint32_t page_dir, uint32_t from, uint32_t size) {
+    char *buf, *pa0;
 
     while(size > 0){
-        // 转换得到物理地址
-        uint32_t aligned_from = down_2bound(from, MEM_PAGE_SIZE);
-        uint32_t paddr = memory_get_paddr(page_dir, aligned_from);  
-        if (paddr == 0) {
+        // 获取目标的物理地址, 也即其另一个虚拟地址
+        uint32_t to_paddr = memory_get_paddr(page_dir, to);  
+        if (to_paddr == 0) {
             return -1;
-        }     
+        }    
 
-        // 在当前页内可拷贝的数据量
-        uint32_t poffset = from - aligned_from;
-        uint32_t curr_size = MEM_PAGE_SIZE - poffset;
+        // 计算当前可拷贝的大小
+        uint32_t offset_in_page = to_paddr & (MEM_PAGE_SIZE - 1);
+        uint32_t curr_size = MEM_PAGE_SIZE - offset_in_page;
         if (curr_size > size) {
             curr_size = size;       // 如果比较大，超过页边界，则只拷贝此页内的
         }
 
-        kernel_memcpy(to, (char *)paddr + poffset, curr_size);
+        kernel_memcpy((void *)to_paddr, (void *)from, curr_size);
 
         size -= curr_size;
         to += curr_size;
@@ -316,11 +316,8 @@ int memory_copy_uvm_data(uint8_t * to, uint32_t page_dir, uint32_t from, uint32_
   return 0;
 }
 
-/**
- * @brief 为指定的虚拟地址空间分配多页内存
- */
-int memory_alloc_page_for (uint32_t addr, uint32_t size, int perm) {
-    uint32_t curr_vaddr = addr;
+uint32_t memory_alloc_for_page_dir (uint32_t page_dir, uint32_t vaddr, uint32_t size, int perm) {
+    uint32_t curr_vaddr = vaddr;
     int page_count = up_2bound(size, MEM_PAGE_SIZE) / MEM_PAGE_SIZE;
 
     for (int i = 0; i < page_count; i++) {
@@ -329,10 +326,9 @@ int memory_alloc_page_for (uint32_t addr, uint32_t size, int perm) {
             return 0;
         }
 
-        pde_t * page_dir = (pde_t *)task_current()->tss.cr3;
-        int err = memory_create_map(page_dir, curr_vaddr, paddr, 1, perm);
+        int err = memory_create_map((pde_t *)page_dir, curr_vaddr, paddr, 1, perm);
         if (err < 0) {
-            addr_free_page(&paddr_alloc, addr, i + 1);
+            addr_free_page(&paddr_alloc, vaddr, i + 1);
             return -1;
         }
 
@@ -340,6 +336,13 @@ int memory_alloc_page_for (uint32_t addr, uint32_t size, int perm) {
     }
 
     return 0;
+}
+
+/**
+ * @brief 为指定的虚拟地址空间分配多页内存
+ */
+int memory_alloc_page_for (uint32_t addr, uint32_t size, int perm) {
+    return memory_alloc_for_page_dir(task_current()->tss.cr3, addr, size, perm);
 }
 
 
