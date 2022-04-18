@@ -12,6 +12,6 @@
 #ifndef BOOT_H
 #define BOOT_H
 
-#include "comm/types.h"
+#include "os_cfg.h"
 
 #endif

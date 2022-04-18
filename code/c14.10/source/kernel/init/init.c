@@ -37,6 +37,7 @@ void kernel_init (boot_info_t * boot_info) {
     timer_init();
     log_init();
     tty_init();
+    fs_init();
 }
 
 /**

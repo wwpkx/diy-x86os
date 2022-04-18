@@ -54,10 +54,3 @@ void do_handler_syscall (syscall_frame_t * frame) {
 	task_t * task = task_current();
 	log_printf("pid: %d, %s, Unknown syscall: %d", task->pid, task->name,  frame->func_id);
 }
-
-/**
- * 初始化系统调用
- */
-void init_syscall (void) {
-
-}

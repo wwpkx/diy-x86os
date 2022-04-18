@@ -88,7 +88,6 @@ static uint32_t reload_elf_file (uint8_t * file_buffer) {
     return elf_hdr->e_entry;
 }
 
-
 /**
  * @brief 开启分页机制
  * 将0-4M空间映射到0-4M和SYS_KERNEL_BASE_ADDR~+4MB空间
@@ -138,5 +137,4 @@ void load_kernel(void) {
 
 	// 转换为函数指针，然后跳进内核
     ((void (*)(boot_info_t *))kernel_entry)(&boot_info);
-    for (;;) {}
 }

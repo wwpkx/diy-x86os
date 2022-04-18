@@ -14,7 +14,6 @@
 #include "tools/klib.h"
 #include "dev/dev.h"
 #include "dev/tty.h"
-#include "fs/fpath.h"
 
 #define ADDR                    (8*1024*1024)      // 在0x800000处缓存原始
 #define SYS_DISK_SECTOR_SIZE    512
@@ -50,87 +49,6 @@ static void read_disk(int sector, int sector_count, uint8_t * buf) {
 
 static file_t file_table[FILE_TABLE_SIZE];      // 系统中可打开的文件表
 static mutex_t fs_mutex;                // 访问file_table的互斥信号量
-
-static mount_point_t mount_list[MOUNT_LIST_CNT];	// 挂载列表
-
-/**
- * 分配挂载点结构
- */
-static mount_point_t * alloc_mount_point (const char * name, int dev) {
-	mount_point_t * mp = (mount_point_t *)0;
-
-	// 遍历找到一个空闲的挂载点，分配并设置dev
-	mutex_lock(&fs_mutex);
-	for (int i = 0; i < MOUNT_LIST_CNT; i++) {
-		mount_point_t * p = mount_list + i;
-		if (p->name[0] == '\0') {
-			kernel_memset(p, 0, sizeof(mount_point_t));
-			p->dev = dev;
-			kernel_strncpy(p->name, name, MOUNT_NAME_SIZE);
-			mp = p;
-			break;
-		}
-	}
-	mutex_unlock(&fs_mutex);
-	return mp;
-}
-
-/**
- * 释放挂载结构
- */
-static void free_mount_point (mount_point_t * p) {
-	mutex_lock(&fs_mutex);
-	p->name[0] = '\0';
-	mutex_unlock(&fs_mutex);
-}
-
-/**
- * 根据名称找匹配的挂载点
- */
-mount_point_t * mount_find_name(const char * path) {
-	mount_point_t * mp = (mount_point_t *)0;
-
-	// 跳过开头的分隔符
-	while (*path == '/') {
-		path++;
-	}
-
-	mutex_lock(&fs_mutex);
-	for (int i = 0; i < MOUNT_LIST_CNT; i++) {
-		mount_point_t * p = mount_list + i;
-		if (kernel_strncmp(p->name, path, MOUNT_NAME_SIZE) == 0) {
-			mp = p;
-			break;
-		}
-	}
-	mutex_unlock(&fs_mutex);
-	return mp;
-}
-
-/**
- * 添加xfat到链表中
- */
-int fs_mount (const char * name, int dev) {
-	mount_point_t * mp = alloc_mount_point(name, dev);
-	if (!mp) {
-		return -1;
-	}
-
-	// 根据设备类型，执行不同的挂载。主要处理磁盘
-	switch (device_major(dev)) {
-	case DEV_DISK: {
-		break;
-	}
-	case DEV_TTY:			// TTY设备
-		mp->type = DEV_TTY;	// 设备将在打开时初始化
-		return 0;
-	default:
-		break;
-	}
-
-	free_mount_point(mp);
-	return -1;
-}
 
 /**
  * @brief 分配一个文件描述符
@@ -178,7 +96,6 @@ void fs_add_ref (file_t * file) {
 void fs_init (void) {
 	// 文件描述符表初始化
 	kernel_memset(&file_table, 0, sizeof(file_table));
-	kernel_memset(mount_list, 0, sizeof(mount_list));
 	mutex_init(&fs_mutex);
 }
 

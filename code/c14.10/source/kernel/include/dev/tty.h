@@ -14,8 +14,6 @@
 #define TTY_IN_SIZE					512		// tty输入缓存大小
 #define TTY_OUT_SIZE				512		// tty输出缓存大小
 
-#define TTY_DEV_CONSOLE				0		// 控制台设备
-
 struct _tty_t;
 typedef struct _tty_dev_t {
 	int (*init) (struct _tty_t * tty);

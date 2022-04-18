@@ -15,10 +15,8 @@
 // https://wiki.osdev.org/Printing_To_Screen
 #define CONSOLE_VIDEO_BASE			0xb8000		// 控制台显存起始地址,共32KB
 #define CONSOLE_VIDEO_END			(0xb8000 + 32*1024)	// 显存的结束地址
-#define CONSOLE_MAX					8			// 最大控制台数量，每页80*25,最多可装8页
 #define CONSOLE_ROW_MAX				25			// 行数
 #define CONSOLE_COL_MAX				80			// 最大列数
-#define CONSOLE_BPC					2			// 每字符占用的显示字节数
 
 #define	ESC_PARAM_MAX				10			// 最多支持的ESC [ 参数数量
 

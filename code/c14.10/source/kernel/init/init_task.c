@@ -7,8 +7,6 @@
  */
 #include "applib/lib_syscall.h"
 
-int parent = 0, child = 0;
-
 int init_task_main (void) {
  	// 打开标准输入输出设备，临时用
 	open("tty0", 0);

@@ -1,17 +1,19 @@
+# 顶层cmakelist文件，以下的设置将被子工程所继承使用
 cmake_minimum_required(VERSION 3.0.0)
 
 # 保存一些通用的配置
-set(CMAKE_VERBOSE_MAKEFILE on)
+set(CMAKE_VERBOSE_MAKEFILE on)   # 开启输出编译详细过程的提示
 
-# gcc编译器与参数配置
+# C编译器与参数配置
 set(CMAKE_C_COMPILER "i686-elf-gcc") 
 set(CMAKE_C_FLAGS "-g -c -O0 -m32 -fno-pie -fno-asynchronous-unwind-tables")
 
 # 汇编器与参数配置
-set(CMAKE_ASM_COMPILER "i686-elf-as")
-set(CMAKE_ASM_FLAGS "--32 -g")
+set(CMAKE_ASM_COMPILER "i686-elf-gcc")
+set(CMAKE_ASM_FLAGS "-m32 -g")
 set(CMAKE_ASM_SOURCE_FILE_EXTENSIONS "asm")
 
+# 链接器工具
 set(LINKER_TOOL "i686-elf-ld")
 
 # 其它工具
@@ -21,20 +23,17 @@ set(OBJCOPY_TOOL "i686-elf-objcopy")
 project(os LANGUAGES C)  
 enable_language(ASM)
 
-# 保存一些通用的配置
-set(CMAKE_VERBOSE_MAKEFILE on)  # 显示编译中的一些信息
-
+# 头文件搜索路径
 include_directories(
     ${PROJECT_SOURCE_DIR}/source
     ${PROJECT_SOURCE_DIR}/source/kernel/include
-    ${PROJECT_SOURCE_DIR}/../newlib/i686-elf/include
-)
+    ${PROJECT_SOURCE_DIR}/../newlib/i686-elf/include)
 
-# 底层的若干子项目
+# 底层的若干子项目：含内核及应用程序
 add_subdirectory(./source/boot)
 add_subdirectory(./source/loader)
 add_subdirectory(./source/kernel)
-add_subdirectory(./source/applib) 
+add_subdirectory(./source/applib)
 add_subdirectory(./source/shell)
 
 # 添加编译依赖，先生成app库，再生成kernel和shell

@@ -25,13 +25,6 @@ void do_handler_timer (exception_frame_t *frame) {
 }
 
 /**
- * 获取系统启动后的时钟节拍
- */
-uint32_t timer_get_sys_tick (void) {
-	return sys_tick;
-}
-
-/**
  * 初始化硬件定时器
  */
 static void init_pit (void) {

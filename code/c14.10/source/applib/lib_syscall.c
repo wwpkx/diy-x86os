@@ -57,7 +57,6 @@ int wait(int* status) {
 }
 
 void exit(int status) {
-    return -1;
 }
 
 int open(const char *name, int flags, ...) {

@@ -39,20 +39,6 @@ void set_gate_desc(gate_descriptor_t *desc, uint16_t selector, uint32_t offset, 
 	desc->offset31_16 = (offset >> 16) & 0xffff;
 }
 
-/**
- * 分配一个GDT推荐表符
- */
-gdt_descriptor_t * gdt_alloc_desc (void) {
-    for (int i = 1; i < GDT_TABLE_SIZE; i++) {
-        gdt_descriptor_t * desc = gdt_table + i;
-        if ((desc->attr & (0xF)) == 0) {
-            return desc;
-        }
-    }
-
-    return (gdt_descriptor_t *)0;
-}
-
 void gdt_free_sel (int sel) {
     gdt_table[sel / sizeof(gdt_descriptor_t)].attr = 0;
 }
@@ -85,14 +71,6 @@ int gdt_alloc_segment (uint32_t base, uint32_t limit, uint16_t attr) {
     irq_leave_protection(state);
     return i >= GDT_TABLE_SIZE ? -1 : i * sizeof(gdt_descriptor_t);
 }
-
-/**
- * GDT描述符转换为索引
- */
-uint16_t desc_2_gdt_selector(gdt_descriptor_t * desc) {
-    return (desc - gdt_table) * sizeof(gdt_descriptor_t);
-}
-
 
 /**
  * 初始化GDT

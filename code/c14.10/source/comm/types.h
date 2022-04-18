@@ -1,3 +1,10 @@
+/**
+ * 基本数据类型
+ *
+ * 创建时间：2021年8月5日
+ * 作者：李述铜
+ * 联系邮箱: 527676163@qq.com
+ */
 #ifndef TYPES_H
 #define TYPES_H
 
@@ -5,11 +12,6 @@
 typedef unsigned char uint8_t;
 typedef unsigned short uint16_t;
 typedef unsigned long uint32_t;
-typedef signed char int8_t;
-typedef signed short int16_t;
-typedef signed long int32_t;
-
-typedef void (*jump_func_t)();			// 跳转函数类型
 
 #endif
 
