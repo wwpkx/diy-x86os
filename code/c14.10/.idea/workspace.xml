@@ -7,6 +7,7 @@
       <config projectName="os" targetName="loader" />
       <config projectName="os" targetName="shell" />
       <config projectName="os" targetName="app" />
+      <config projectName="os" targetName="init" />
     </generated>
   </component>
   <component name="CMakeSettings">
@@ -16,28 +17,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2195688e-9d68-44e4-996a-15f2b47c1b62" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/../.idea/code.iml" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/code.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/comm/boot_info.h" beforeDir="false" afterPath="$PROJECT_DIR$/source/comm/boot_info.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/comm/types.h" beforeDir="false" afterPath="$PROJECT_DIR$/source/comm/types.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/kernel/core/syscall.c" beforeDir="false" afterPath="$PROJECT_DIR$/source/kernel/core/syscall.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/kernel/cpu/cpu.c" beforeDir="false" afterPath="$PROJECT_DIR$/source/kernel/cpu/cpu.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/kernel/dev/timer.c" beforeDir="false" afterPath="$PROJECT_DIR$/source/kernel/dev/timer.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/kernel/fs/file.c" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/kernel/fs/fpath.c" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/kernel/fs/fs.c" beforeDir="false" afterPath="$PROJECT_DIR$/source/kernel/fs/fs.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/kernel/include/cpu/cpu.h" beforeDir="false" afterPath="$PROJECT_DIR$/source/kernel/include/cpu/cpu.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/kernel/include/dev/console.h" beforeDir="false" afterPath="$PROJECT_DIR$/source/kernel/include/dev/console.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/kernel/include/dev/tty.h" beforeDir="false" afterPath="$PROJECT_DIR$/source/kernel/include/dev/tty.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/kernel/include/fs/fpath.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/kernel/include/fs/fs.h" beforeDir="false" afterPath="$PROJECT_DIR$/source/kernel/include/fs/fs.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/kernel/include/os_cfg.h" beforeDir="false" afterPath="$PROJECT_DIR$/source/kernel/include/os_cfg.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/kernel/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/source/kernel/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/kernel/core/task.c" beforeDir="false" afterPath="$PROJECT_DIR$/source/kernel/core/task.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/source/kernel/init/init.c" beforeDir="false" afterPath="$PROJECT_DIR$/source/kernel/init/init.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/kernel/init/init_task.c" beforeDir="false" afterPath="$PROJECT_DIR$/source/kernel/init/init_task.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/loader/loader.h" beforeDir="false" afterPath="$PROJECT_DIR$/source/loader/loader.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/loader/loader_16.c" beforeDir="false" afterPath="$PROJECT_DIR$/source/loader/loader_16.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../目录.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../目录.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/kernel/init/init_task.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/kernel/init/init_task_entry.S" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/kernel/kernel.lds" beforeDir="false" afterPath="$PROJECT_DIR$/source/kernel/kernel.lds" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../image/kernel.elf" beforeDir="false" afterPath="$PROJECT_DIR$/../../image/kernel.elf" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/cmake-build-debug/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -51,7 +39,7 @@
   </component>
   <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug" />
   <component name="FileEditorManager">
-    <leaf>
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/source/kernel/ipc/bfifo.c">
           <provider selected="true" editor-type-id="text-editor" />
@@ -66,7 +54,7 @@
         <entry file="file://$PROJECT_DIR$/source/kernel/ipc/sem.c">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="98">
-              <caret line="7" column="9" lean-forward="true" selection-start-line="7" selection-start-column="9" selection-end-line="7" selection-end-column="9" />
+              <caret line="7" column="9" selection-start-line="7" selection-start-column="9" selection-end-line="7" selection-end-column="9" />
               <folding>
                 <element signature="e#74#94#0" expanded="true" />
               </folding>
@@ -81,23 +69,17 @@
       </file>
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/source/kernel/tools/klib.c">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-2414" />
-          </provider>
+          <provider selected="true" editor-type-id="text-editor" />
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/source/kernel/tools/list.c">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1154" />
-          </provider>
+          <provider selected="true" editor-type-id="text-editor" />
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/source/kernel/tools/log.c">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-314" />
-          </provider>
+          <provider selected="true" editor-type-id="text-editor" />
         </entry>
       </file>
       <file pinned="false" current-in-tab="true">
@@ -112,7 +94,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/source/loader/loader_32.c">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1191">
+            <state relative-caret-position="140">
               <caret line="10" column="9" selection-start-line="10" selection-start-column="9" selection-end-line="10" selection-end-column="9" />
               <folding>
                 <element signature="e#132#155#0" expanded="true" />
@@ -124,7 +106,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/source/loader/loader_16.c">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="69">
+            <state relative-caret-position="532">
               <caret line="38" column="27" selection-start-line="38" selection-start-column="27" selection-end-line="38" selection-end-column="27" />
               <folding>
                 <element signature="e#190#217#0" expanded="true" />
@@ -181,6 +163,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -199,109 +182,14 @@
               <item name="source" type="462c0819:PsiDirectoryNode" />
               <item name="kernel" type="462c0819:PsiDirectoryNode" />
             </path>
-            <path>
-              <item name="os" type="b2602c69:ProjectViewProjectNode" />
-              <item name="c14.10" type="462c0819:PsiDirectoryNode" />
-              <item name="source" type="462c0819:PsiDirectoryNode" />
-              <item name="kernel" type="462c0819:PsiDirectoryNode" />
-              <item name="core" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="os" type="b2602c69:ProjectViewProjectNode" />
-              <item name="c14.10" type="462c0819:PsiDirectoryNode" />
-              <item name="source" type="462c0819:PsiDirectoryNode" />
-              <item name="kernel" type="462c0819:PsiDirectoryNode" />
-              <item name="cpu" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="os" type="b2602c69:ProjectViewProjectNode" />
-              <item name="c14.10" type="462c0819:PsiDirectoryNode" />
-              <item name="source" type="462c0819:PsiDirectoryNode" />
-              <item name="kernel" type="462c0819:PsiDirectoryNode" />
-              <item name="dev" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="os" type="b2602c69:ProjectViewProjectNode" />
-              <item name="c14.10" type="462c0819:PsiDirectoryNode" />
-              <item name="source" type="462c0819:PsiDirectoryNode" />
-              <item name="kernel" type="462c0819:PsiDirectoryNode" />
-              <item name="fs" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="os" type="b2602c69:ProjectViewProjectNode" />
-              <item name="c14.10" type="462c0819:PsiDirectoryNode" />
-              <item name="source" type="462c0819:PsiDirectoryNode" />
-              <item name="kernel" type="462c0819:PsiDirectoryNode" />
-              <item name="include" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="os" type="b2602c69:ProjectViewProjectNode" />
-              <item name="c14.10" type="462c0819:PsiDirectoryNode" />
-              <item name="source" type="462c0819:PsiDirectoryNode" />
-              <item name="kernel" type="462c0819:PsiDirectoryNode" />
-              <item name="include" type="462c0819:PsiDirectoryNode" />
-              <item name="core" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="os" type="b2602c69:ProjectViewProjectNode" />
-              <item name="c14.10" type="462c0819:PsiDirectoryNode" />
-              <item name="source" type="462c0819:PsiDirectoryNode" />
-              <item name="kernel" type="462c0819:PsiDirectoryNode" />
-              <item name="include" type="462c0819:PsiDirectoryNode" />
-              <item name="cpu" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="os" type="b2602c69:ProjectViewProjectNode" />
-              <item name="c14.10" type="462c0819:PsiDirectoryNode" />
-              <item name="source" type="462c0819:PsiDirectoryNode" />
-              <item name="kernel" type="462c0819:PsiDirectoryNode" />
-              <item name="include" type="462c0819:PsiDirectoryNode" />
-              <item name="dev" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="os" type="b2602c69:ProjectViewProjectNode" />
-              <item name="c14.10" type="462c0819:PsiDirectoryNode" />
-              <item name="source" type="462c0819:PsiDirectoryNode" />
-              <item name="kernel" type="462c0819:PsiDirectoryNode" />
-              <item name="include" type="462c0819:PsiDirectoryNode" />
-              <item name="fs" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="os" type="b2602c69:ProjectViewProjectNode" />
-              <item name="c14.10" type="462c0819:PsiDirectoryNode" />
-              <item name="source" type="462c0819:PsiDirectoryNode" />
-              <item name="kernel" type="462c0819:PsiDirectoryNode" />
-              <item name="include" type="462c0819:PsiDirectoryNode" />
-              <item name="tools" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="os" type="b2602c69:ProjectViewProjectNode" />
-              <item name="c14.10" type="462c0819:PsiDirectoryNode" />
-              <item name="source" type="462c0819:PsiDirectoryNode" />
-              <item name="kernel" type="462c0819:PsiDirectoryNode" />
-              <item name="ipc" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="os" type="b2602c69:ProjectViewProjectNode" />
-              <item name="c14.10" type="462c0819:PsiDirectoryNode" />
-              <item name="source" type="462c0819:PsiDirectoryNode" />
-              <item name="kernel" type="462c0819:PsiDirectoryNode" />
-              <item name="tools" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="os" type="b2602c69:ProjectViewProjectNode" />
-              <item name="c14.10" type="462c0819:PsiDirectoryNode" />
-              <item name="source" type="462c0819:PsiDirectoryNode" />
-              <item name="loader" type="462c0819:PsiDirectoryNode" />
-            </path>
           </expand>
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
@@ -331,6 +219,11 @@
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
+    <configuration name="init" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="os" TARGET_NAME="init" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="os" RUN_TARGET_NAME="init">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="kernel" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="os" TARGET_NAME="kernel" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="os" RUN_TARGET_NAME="kernel">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
@@ -349,6 +242,7 @@
     <list>
       <item itemvalue="CMake Application.app" />
       <item itemvalue="CMake Application.boot" />
+      <item itemvalue="CMake Application.init" />
       <item itemvalue="CMake Application.kernel" />
       <item itemvalue="CMake Application.loader" />
       <item itemvalue="CMake Application.shell" />
@@ -365,26 +259,19 @@
       <option name="presentableId" value="Default" />
       <updated>1650234163659</updated>
       <workItem from="1650234165732" duration="844000" />
+      <workItem from="1650251429959" duration="343000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="844000" />
+    <option name="totallyTimeSpent" value="1187000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1402" height="800" extended-state="0" />
-    <editor active="true" />
     <layout>
-      <window_info id="Favorites" side_tool="true" />
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.25" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.25367647" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info anchor="bottom" id="Serial Monitor" />
-      <window_info anchor="bottom" id="Arduino Support" />
-      <window_info anchor="bottom" id="Database Changes" />
-      <window_info anchor="bottom" id="Version Control" />
-      <window_info anchor="bottom" id="Terminal" />
-      <window_info anchor="bottom" id="Event Log" side_tool="true" />
-      <window_info anchor="bottom" id="CMake" />
+      <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
       <window_info anchor="bottom" id="Run" order="2" />
@@ -392,10 +279,17 @@
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="right" id="Database" />
+      <window_info anchor="bottom" id="Arduino Support" order="7" />
+      <window_info anchor="bottom" id="Serial Monitor" order="8" />
+      <window_info anchor="bottom" id="Database Changes" order="9" />
+      <window_info anchor="bottom" id="Terminal" order="10" />
+      <window_info anchor="bottom" id="Event Log" order="11" side_tool="true" />
+      <window_info anchor="bottom" id="Version Control" order="12" />
+      <window_info anchor="bottom" id="CMake" order="13" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="right" id="Database" order="3" />
     </layout>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -475,12 +369,8 @@
         <state relative-caret-position="-2302" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/source/kernel/fs/fpath.c">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/source/kernel/fs/file.c">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
+    <entry file="file://$PROJECT_DIR$/source/kernel/fs/fpath.c" />
+    <entry file="file://$PROJECT_DIR$/source/kernel/fs/file.c" />
     <entry file="file://$PROJECT_DIR$/source/kernel/fs/fs.c">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-2989">
@@ -547,9 +437,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/source/kernel/include/fs/fpath.h">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
+    <entry file="file://$PROJECT_DIR$/source/kernel/include/fs/fpath.h" />
     <entry file="file://$PROJECT_DIR$/source/kernel/include/fs/file.h">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -621,7 +509,7 @@
     <entry file="file://$PROJECT_DIR$/source/kernel/ipc/sem.c">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="98">
-          <caret line="7" column="9" lean-forward="true" selection-start-line="7" selection-start-column="9" selection-end-line="7" selection-end-column="9" />
+          <caret line="7" column="9" selection-start-line="7" selection-start-column="9" selection-end-line="7" selection-end-column="9" />
           <folding>
             <element signature="e#74#94#0" expanded="true" />
           </folding>
@@ -632,23 +520,17 @@
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/source/kernel/tools/klib.c">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-2414" />
-      </provider>
+      <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/source/kernel/tools/list.c">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1154" />
-      </provider>
+      <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/source/kernel/tools/log.c">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-314" />
-      </provider>
+      <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/source/loader/loader_32.c">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1191">
+        <state relative-caret-position="140">
           <caret line="10" column="9" selection-start-line="10" selection-start-column="9" selection-end-line="10" selection-end-column="9" />
           <folding>
             <element signature="e#132#155#0" expanded="true" />
@@ -658,7 +540,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/source/loader/loader_16.c">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="69">
+        <state relative-caret-position="532">
           <caret line="38" column="27" selection-start-line="38" selection-start-column="27" selection-end-line="38" selection-end-column="27" />
           <folding>
             <element signature="e#190#217#0" expanded="true" />

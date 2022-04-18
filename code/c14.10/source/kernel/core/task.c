@@ -139,28 +139,35 @@ static void idle_task_entry (void) {
     }
 }
 
+/**
+ * @brief 初始进程的初始化
+ * 没有采用从磁盘加载的方式，因为需要用到文件系统，并且最好是和kernel绑在一定，这样好加载
+ * 当然，也可以采用将init的源文件和kernel的一起编译。此里要调整好kernel.lds，在其中
+ * 将init加载地址设置成和内核一起的，运行地址设置成用户进程运行的高处。
+ */
 static void kernel_task_init (void) {
-    extern uint8_t * init_load_addr;
-    extern uint8_t * init_load_size;
-    extern uint8_t * init_heap_top;
+    // 可以将下代码全注释，然后用objdump -a查看kernel.elf文件，可找到相应以下的符号信息
+    extern uint8_t * _binary_init_bin_end, * _binary_init_bin_start;
 
-    uint32_t init_size = (uint32_t)&init_load_size;
+    uint32_t init_start = MEMORY_TASK_BASE + (uint32_t)&_binary_init_bin_start;
+    uint32_t init_end = MEMORY_TASK_BASE + (uint32_t)&_binary_init_bin_end;
+    uint32_t init_size = (uint32_t)(&_binary_init_bin_end - &_binary_init_bin_start);
     uint32_t total_size = 10 * MEM_PAGE_SIZE;        // 可以设置的大一些, 如40KB
-    ASSERT(init_size < MEM_PAGE_SIZE);
+    ASSERT(init_size < total_size);
 
     // 第一个任务代码量小一些，好和栈放在1个页面呢
     // 这样就不要立即考虑还要给栈分配空间的问题
-    task_init(&task_manager.init_task, "kernel task", 0, 0, MEMORY_TASK_BASE + total_size);     // 里面的值不必要写
+    task_init(&task_manager.init_task, "kernel task", 0, (uint32_t)&_binary_init_bin_start, MEMORY_TASK_BASE + total_size);     // 里面的值不必要写
     task_manager.curr_task = (task_t *)&task_manager.init_task;
 
-    task_manager.init_task.heap_top = (uint32_t)&init_heap_top;
+    task_manager.init_task.heap_top = (uint32_t)&_binary_init_bin_end;
 
     // 更新页表地址为自己的
     mmu_set_page_dir(task_manager.init_task.tss.cr3);
 
     // 分配内存供代码存放使用，然后将代码复制过去
     memory_alloc_page_for(MEMORY_TASK_BASE,  total_size, PTE_P | PTE_W | PTE_U);
-    kernel_memcpy((void *)MEMORY_TASK_BASE, (void *)&init_load_addr, init_size);
+    kernel_memcpy((void *)MEMORY_TASK_BASE, (void *)&_binary_init_bin_start, init_size);
 }
 
 /**

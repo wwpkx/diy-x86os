@@ -43,7 +43,7 @@ void kernel_init (boot_info_t * boot_info) {
 /**
  * @brief 移至第一个任务运行
  */
-void move_to_first_task(uint32_t entry) {
+void move_to_first_task(void) {
     // 不能直接用Jmp far进入，因为当前特权级0，不能跳到低特权级的代码
     // 下面的iret后，还需要手动加载ds, fs, es等寄存器值，iret不会自动加载
     // 注意，运行下面的代码可能会产生异常：段保护异常或页保护异常。
@@ -57,10 +57,8 @@ void move_to_first_task(uint32_t entry) {
         "push %2\n\t"           // EFLAGS
         "push %3\n\t"			// CS
         "push %4\n\t"		    // ip
-        "iret\n\t"::"r"(tss->ss),  "r"(tss->esp), "r"(tss->eflags),"r"(tss->cs), "r"(entry));
+        "iret\n\t"::"r"(tss->ss),  "r"(tss->esp), "r"(tss->eflags),"r"(tss->cs), "r"(tss->eip));
 }
-
-void init_task_entry (void);
 
 void init_main(void) {
     task_manager_init();
@@ -70,5 +68,5 @@ void init_main(void) {
     log_printf("print int: %d, %x", 1234, 0x1234);
 
     // 初始化任务
-    move_to_first_task((uint32_t)init_task_entry);
+    move_to_first_task();
 }

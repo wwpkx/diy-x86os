@@ -7,13 +7,14 @@
  */
 #include "applib/lib_syscall.h"
 
-int init_task_main (void) {
+int main (void) {
  	// 打开标准输入输出设备，临时用
 	open("tty0", 0);
     dup(0);     // 标准输出
     dup(0);     // 标准错误输出
 
-   for(;;){        
+    puts("init task is running");
+    for(;;){        
         // 创建进程
         int pid = fork();
         if(pid < 0){
