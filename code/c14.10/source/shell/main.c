@@ -230,10 +230,13 @@ static void run_exec_file (const char * path, int argc, char ** argv) {
 }
 
 int main (int argc, char **argv) {
-	// 设置c标准输入输出为实时写入，不要采用缓存的方式
-	// 这样按下的键能够立即显示在屏幕上。在printf时会逐个字符立即输出
-    // 不过，这样的显示速率很慢
-	//setvbuf(stdout, (char *)0, _IONBF, 0);	
+#if 1
+ 	// 打开标准输入输出设备，临时用,后续删除
+	open("tty0", 0);
+    dup(0);     // 标准输出
+    dup(0);     // 标准错误输出
+    ///////////////////////////////////
+#endif
 
    	cli_init(promot, cmd_list, sizeof(cmd_list) / sizeof(cli_cmd_t));
 	for (;;) {

@@ -39,12 +39,6 @@ gdt_reload:
 	// 栈和段等沿用之前的设置
 	jmp init_main
 
-	.section .rodata
-	.align 4
-	.global init_bin_start, init_bin_end
-init_bin_start: .incbin "init.bin"
-init_bin_end:
-
 	.data
 .comm stack, KERNEL_STACK_SIZE
 

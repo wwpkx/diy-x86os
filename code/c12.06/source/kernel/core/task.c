@@ -112,7 +112,7 @@ static void idle_task_entry (void) {
     }
 }
 
-static void kernel_task_init (void) {
+static void first_task_init (void) {
     extern uint8_t * init_load_addr;
     extern uint8_t * init_load_size;
 
@@ -158,7 +158,7 @@ void task_manager_init (void) {
     list_init(&task_manager.task_list);
     list_init(&task_manager.sleep_list);
 
-    kernel_task_init();
+    first_task_init();
     task_init(&task_manager.idle_task,
                 "idle task", 
                 TASK_FLAG_SYSTEM,

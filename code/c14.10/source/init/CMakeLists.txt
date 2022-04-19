@@ -16,8 +16,7 @@ include_directories(
 file(GLOB C_LIST "*.c" "*.h")
 add_executable(${PROJECT_NAME} ${C_LIST})
 
-# 生成bin文件，放在kernel的生成目录下，以便于kernel合并生成elf文件
+# 不带调试信息的elf生成，何种更小，写入到image目录下
 add_custom_command(TARGET ${PROJECT_NAME}
                    POST_BUILD
-                   COMMAND ${OBJCOPY_TOOL} -O binary ${PROJECT_NAME}.elf ../kernel/${PROJECT_NAME}.bin)
-                   
+                   COMMAND ${OBJCOPY_TOOL} -S ${PROJECT_NAME}.elf ${CMAKE_SOURCE_DIR}/../../image/${PROJECT_NAME}.elf)

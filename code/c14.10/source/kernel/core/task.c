@@ -84,15 +84,10 @@ int task_init (task_t *task, const char * name, int flag, uint32_t entry, uint32
     task->time_slice = TASK_TIME_SLICE_DEFAULT;
     task->slice_ticks = task->time_slice;
     task->parent = (task_t *)0;
+    task->pid = task_incr_id++;
     list_node_init(&task->all_node);
     list_node_init(&task->run_node);
     list_node_init(&task->wait_node);
-
-    // 插入就绪队列中'
-    irq_state_t state = irq_enter_protection();
-    task->pid = task_incr_id++;
-    task_set_ready(task);
-    irq_leave_protection(state);
     return 0;
 
 task_init_failed:
@@ -102,6 +97,15 @@ task_init_failed:
         memory_free_page(kernel_stack);
     }
     return -1;
+}
+
+/**
+ * @brief 启动任务
+ */
+void task_start(task_t * task) {
+    irq_state_t state = irq_enter_protection();
+    task_set_ready(task);
+    irq_leave_protection(state);
 }
 
 /**
@@ -148,11 +152,11 @@ static void idle_task_entry (void) {
  * 代码与init进程的放在一起，有可能与kernel放在了一起。
  * 综上，最好是分离。
  */
-static void kernel_task_init (void) {
+static void first_task_init (void) {
     // 以下获得的是bin文件在内存中的物理地址
-    extern uint8_t init_bin_end[], init_bin_start[];
+    extern uint8_t first_task_start, first_task_end;
 
-    uint32_t init_size = (uint32_t)(init_bin_end - init_bin_start);
+    uint32_t init_size = (uint32_t)(&first_task_end - &first_task_start);
     uint32_t total_size = 10 * MEM_PAGE_SIZE;        // 可以设置的大一些, 如40KB
     ASSERT(init_size < total_size);
 
@@ -164,19 +168,22 @@ static void kernel_task_init (void) {
     task_manager.curr_task = (task_t *)&task_manager.init_task;
 
     // 这里不正确，bin结尾是bss区。。。。
-    task_manager.init_task.heap_top = MEMORY_TASK_BASE + init_size;  // 这里不对
+    task_manager.init_task.heap_top = (uint32_t)&first_task_end;  // 这里不对
 
     // 更新页表地址为自己的
     mmu_set_page_dir(task_manager.init_task.tss.cr3);
 
     // 分配内存供代码存放使用，然后将代码复制过去
     memory_alloc_page_for(MEMORY_TASK_BASE,  total_size, PTE_P | PTE_W | PTE_U);
-    kernel_memcpy((void *)MEMORY_TASK_BASE, (void *)init_bin_start, init_size);
+    kernel_memcpy((void *)MEMORY_TASK_BASE, (void *)&first_task_start, init_size);
 
     // 设置参数，虽然初始进程不用
     task_args->argc = 0;
     task_args->argv = 0;
     task_args->ret_addr = 0;
+
+    // 启动进程
+    task_start(&task_manager.init_task);
 }
 
 /**
@@ -204,13 +211,14 @@ void task_manager_init (void) {
     list_init(&task_manager.task_list);
     list_init(&task_manager.sleep_list);
 
-    kernel_task_init();
+    first_task_init();
     task_init(&task_manager.idle_task,
                 "idle task", 
                 TASK_FLAG_SYSTEM,
                 (uint32_t)idle_task_entry,
                 0);     // 运行于内核模式，无需指定特权级3的栈
     task_manager.curr_task = &task_manager.init_task;
+    task_start(&task_manager.idle_task);
 
     // 写TR寄存器，指示当前运行的第一个任务
     write_tr(task_manager.init_task.tss_sel);
@@ -503,6 +511,7 @@ int sys_fork (void) {
     }
 
     // 创建成功，返回子进程的pid
+    task_start(child_task);
     return child_task->pid;
 fork_failed:
     if (child_task) {
@@ -551,6 +560,9 @@ static int load_phdr(int file, Elf32_Phdr * phdr, uint32_t page_dir) {
     }
 
     // bss区考虑由crt0和cstart自行清0，这样更简单一些
+    // 如果在上边进行处理，需要考虑到有可能的跨页表填充数据，懒得写代码
+    // 或者也可修改memory_alloc_for_page_dir，增加分配时清0页表，但这样开销较大
+    // 所以，直接放在cstart哐crt0中直接内存填0，比较简单
     return 0;
 }
 
@@ -656,7 +668,11 @@ static int copy_args (char * to, uint32_t page_dir, int argc, char **argv) {
         // 记录下位置后，复制的位置前移
         dest_arg += len;
     }
-    dest_argv_tb[argc] = '\0';
+
+    // 可能存在无参的情况，此时不需要写入
+    if (argc) {
+        dest_argv_tb[argc] = '\0';
+    }
 
      // 写入task_args
     return memory_copy_uvm_data((uint32_t)to, page_dir, (uint32_t)&task_args, sizeof(task_args_t));

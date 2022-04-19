@@ -11,8 +11,11 @@ SECTIONS
 	/* 代码区 */
 	PROVIDE(text_start = .);
 	.text : {
-		*(.text)
-		*(.rodata)
+		*(EXCLUDE_FILE(*first_task* *lib_syscall*) .text)
+	} 
+
+	.rodata : {
+		*(EXCLUDE_FILE(*first_task* *lib_syscall*) .rodata)
 	}
 	PROVIDE(text_end = .);	
 
@@ -20,12 +23,28 @@ SECTIONS
 	. = ALIGN(4096);
 	PROVIDE(data_start = .);
 	.data : {
-		*(.data)
-		*(.bss)
+		*(EXCLUDE_FILE(*first_task* *lib_syscall*) .data)
+	}
+	.bss : {
+		*(EXCLUDE_FILE(*first_task* *lib_syscall*) .bss)
 	}
 	PROVIDE(data_end = .);
 
+	/* 第一个任务，与内核一起编译链接，但是会被复制到用户空间中运行 */
+	PROVIDE(first_task_start = .);
+	PROVIDE(first_task_end = . + SIZEOF(.first_task));
+	.first_task 0x80000000: AT(first_task_start) {
+		/*不能将lib_syscall和init放一行，这样调试时将导致init中设置不了断点*/
+		*first_task*(.text)
+		*lib_syscall*(.text)
+	}
+
+	.first_task.data : {
+		*first_task*(.data .bss)
+		*lib_syscall*(.data .bss)
+	}
+
 	/* 空闲区 */
 	. = ALIGN(4096);
-	PROVIDE(mem_free_start = .);
+	PROVIDE(mem_free_start = . - 0x80000000);
 }

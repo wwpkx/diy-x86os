@@ -83,7 +83,7 @@ static void idle_task_entry (void) {
     }
 }
 
-static void kernel_task_init (void) {
+static void first_task_init (void) {
     // 第一个任务代码量小一些，好和栈放在1个页面呢
     // 这样就不要立即考虑还要给栈分配空间的问题
     task_init(&task_manager.init_task, "kernel task", 0, 0);     // 里面的值不必要写
@@ -104,7 +104,7 @@ void task_manager_init (void) {
     list_init(&task_manager.task_list);
     list_init(&task_manager.sleep_list);
 
-    kernel_task_init();
+    first_task_init();
 
     // 初始化内核任务
     task_t * first_task = &task_manager.init_task;
