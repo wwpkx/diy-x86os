@@ -11,9 +11,9 @@
 #include <core/types.h>
 #include <fs/fat.h>
 
-#define CLUSTER_INVALID                 0xF8          // 无效的簇号
-#define CLUSTER_FREE                    0x00                // 空闲的cluster
-#define FILE_DEFAULT_CLUSTER            0x00                // 文件的缺省簇号
+#define CLUSTER_INVALID          0xF8          // 无效的簇号
+#define CLUSTER_FREE             0x00           // 空闲的cluster
+#define CLUSTER_EMPTY            0x00                // 文件的缺省簇号
 
 typedef uint16_t cluster_t;			// 簇类型
 int is_cluster_valid(cluster_t cluster);
