@@ -29,7 +29,8 @@ int main (int argc, char **argv) {
         } else if(pid == 0){
             // 子进程，用sh替代
             char *argv[] = {"arg0", "arg1", "arg2", "arg3"};
-            // execve("/bin/sh", argv, (char **)0);
+
+            execve("shell.elf", argv, (char **)0);
 
             int cnt = 0;
             for (;;) {
@@ -39,7 +40,7 @@ int main (int argc, char **argv) {
         } else {
             int cnt = 0;
             for (;;) {
-                printf("this is parent task: %d\n", cnt++);
+                //printf("this is parent task: %d\n", cnt++);
                 msleep(2000);
             }
         }

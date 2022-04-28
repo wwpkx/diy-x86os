@@ -230,7 +230,7 @@ static void run_exec_file (const char * path, int argc, char ** argv) {
 }
 
 int main (int argc, char **argv) {
-#if 1
+#if 0
  	// 打开标准输入输出设备，临时用,后续删除
 	open("tty0", 0);
     dup(0);     // 标准输出

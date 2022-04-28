@@ -87,7 +87,7 @@ typedef struct _partinfo_t {
 
     enum {
         FS_INVALID = 0x00,      // 无效文件系统类型
-        FS_FAT16_0 = 0x04,      // FAT16文件系统类型
+        FS_FAT16_0 = 0x0E,      // FAT16文件系统类型
     }type;
 
     int device;                 // 设备号

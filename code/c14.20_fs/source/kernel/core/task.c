@@ -522,28 +522,28 @@ fork_failed:
 
 /**
  * @brief 加载一个程序表头的数据到内存中
+ * 参考：https://wiki.osdev.org/ELF
  */
 static int load_phdr(int file, Elf32_Phdr * phdr, uint32_t page_dir) {
-    uint32_t vaddr = down_2bound(phdr->p_vaddr, MEM_PAGE_SIZE);  // 地址对齐
-    uint32_t size = phdr->p_memsz + phdr->p_vaddr - vaddr;  // 转换成实际大小
+    // 生成的ELF文件要求是页边界对齐的
+    ASSERT((phdr->p_vaddr & (MEM_PAGE_SIZE - 1)) == 0);
+
+    // 分配空间
+    int err = memory_alloc_for_page_dir(page_dir, phdr->p_vaddr, phdr->p_memsz, PTE_P | PTE_U | PTE_W);
+    if (err < 0) {
+        return -1;
+    }
 
     // 调整当前的读写位置
     if (sys_lseek(file, phdr->p_offset, 0) < 0) {
         return -1;
     }
 
-    // 生成的ELF文件要求是页边界对齐的
-    ASSERT((phdr->p_vaddr & (MEM_PAGE_SIZE - 1)) == 0);
-
-    // 分配空间
-    int err = memory_alloc_for_page_dir(page_dir, vaddr, phdr->p_memsz, PTE_P | PTE_U | PTE_W);
-    if (err < 0) {
-        return -1;
-    }
-
     // 为段分配所有的内存空间.后续操作如果失败，将在上层释放
     // 简单起见，设置成可写模式，也许可考虑根据phdr->flags设置成只读
     // 因为没有找到该值的详细定义，所以没有加上
+    uint32_t vaddr = phdr->p_vaddr; 
+    uint32_t size = phdr->p_filesz;  
     while (size > 0) {
         int curr_size = (size > MEM_PAGE_SIZE) ? MEM_PAGE_SIZE : size;
 

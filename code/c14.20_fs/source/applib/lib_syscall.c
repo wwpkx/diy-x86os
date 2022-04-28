@@ -77,7 +77,7 @@ int close(int file) {
 }
 
 off_t lseek(int file, off_t ptr, int dir) {
-    return -1;
+    return sys_call(SYS_lseek, (int)file, (int)ptr, (int)len, 0);
 }
 
 /**

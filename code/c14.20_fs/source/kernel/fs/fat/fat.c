@@ -170,8 +170,8 @@ int fat_open (struct _fs_t * fs, const char * path, file_t * file) {
     // 遍历根目录的数据区，找到已经存在的匹配项
     int sector_cnt = fat->root_ent_cnt * sizeof(cluster_t) / SECTOR_SIZE;
     for (int i = 0; i < sector_cnt; i++) {
-        int err = disk_read_sector(fs->part_info->device, fat->fat_buffer, fat->root_start, 1);
-        if (err < 0) {
+        int cnt = disk_read_sector(fs->part_info->device, fat->fat_buffer, fat->root_start, 1);
+        if (cnt < 0) {
             return -1;
         }
     
@@ -245,27 +245,35 @@ int fat_read (char * buf, int size, struct _file_t * file) {
 		uint32_t cluster_offset = to_cluster_offset(fat, file->pos);
         uint32_t start_sector = fat->data_start + (file->curr_cluster - 2)* fat->sec_per_cluster;  // 从2开始
 
-        // 跨簇读取，先读取整簇，然后再从中拷贝部分数据
-        // 起点非簇边界对齐，或者读取的结尾量不超过一个簇
+        // 起点不在簇的开头，或者结尾不在簇的末尾，只先只读取本簇内的，并且读取后复制其呈 小部分
         if (cluster_offset || (cluster_offset + to_read < fat->cluster_byte_size)) {
             curr_read = to_read;
 
+            // 如果跨簇，只读第一个簇内的一部分
+            if (cluster_offset + curr_read > fat->cluster_byte_size) {
+                curr_read = fat->cluster_byte_size - cluster_offset;
+            }
+
             // 读取整个簇
-            int err = disk_read_sector(device, fat->fat_buffer, start_sector, fat->sec_per_cluster);
-            if (err < 0) {
+            int cnt = disk_read_sector(device, fat->fat_buffer, start_sector, fat->sec_per_cluster);
+            if (cnt < 0) {
                 return 0;
             }
 
-            // 拷贝一小部分数据
+            // 从中拷贝一小部分数据
             kernel_memcpy(buf, fat->fat_buffer + cluster_offset, curr_read);        
         } else {
-            uint32_t sector_count = to_read / fat->cluster_byte_size * fat->sec_per_cluster;
-            int err = disk_read_sector(device, buf, start_sector, sector_count);
-            if (err < 0) {
+            // 起始在簇开头以及末尾在簇末尾。此时，有可能刚好占用一个簇，也可能占用多个簇
+            uint32_t cluster_count = to_read / fat->cluster_byte_size;
+            if (cluster_count > 1) {
+                cluster_count = 1;          // 超过一个簇，只读一个
+            }
+            int cnt = disk_read_sector(device, buf, start_sector, cluster_count * fat->sec_per_cluster);
+            if (cnt < 0) {
                 return 0;
             }
 
-            curr_read = sector_count * SECTOR_SIZE;
+            curr_read = fat->cluster_byte_size;
         }
 
         buf += curr_read;
@@ -323,3 +331,4 @@ int fat_seek (file_t * file, uint32_t pos) {
     file->curr_cluster = curr_cluster;
     return 0;
 }
+

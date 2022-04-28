@@ -29,9 +29,7 @@
         },
         {
             "label": "调试准备",
-            "windows":{
-                "dependsOrder": "sequence",
-            },
+            "dependsOrder": "sequence",
             "dependsOn": [
                 "写映像文件",
                 "启动qemu"
