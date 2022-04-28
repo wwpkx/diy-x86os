@@ -152,7 +152,7 @@ static void idle_task_entry (void) {
  * 代码与init进程的放在一起，有可能与kernel放在了一起。
  * 综上，最好是分离。
  */
-static void first_task_init (void) {
+void task_first_init (void) {
     // 以下获得的是bin文件在内存中的物理地址
     extern uint8_t first_task_start, first_task_end;
 
@@ -165,10 +165,10 @@ static void first_task_init (void) {
     task_init(&task_manager.init_task, "kernel task", 0, 
                 MEMORY_TASK_BASE, // init进程从进程空间起点处运行
                 (uint32_t)task_args);     // 里面的值不必要写
-    task_manager.curr_task = (task_t *)&task_manager.init_task;
 
-    // 这里不正确，bin结尾是bss区。。。。
+    // todo: 这里不正确，bin结尾是bss区。。。。???
     task_manager.init_task.heap_top = (uint32_t)&first_task_end;  // 这里不对
+    task_manager.curr_task = &task_manager.init_task;
 
     // 更新页表地址为自己的
     mmu_set_page_dir(task_manager.init_task.tss.cr3);
@@ -184,6 +184,9 @@ static void first_task_init (void) {
 
     // 启动进程
     task_start(&task_manager.init_task);
+
+    // 写TR寄存器，指示当前运行的第一个任务
+    write_tr(task_manager.init_task.tss_sel);
 }
 
 /**
@@ -211,17 +214,13 @@ void task_manager_init (void) {
     list_init(&task_manager.task_list);
     list_init(&task_manager.sleep_list);
 
-    first_task_init();
     task_init(&task_manager.idle_task,
                 "idle task", 
                 TASK_FLAG_SYSTEM,
                 (uint32_t)idle_task_entry,
                 0);     // 运行于内核模式，无需指定特权级3的栈
-    task_manager.curr_task = &task_manager.init_task;
+    task_manager.curr_task = (task_t *)0;
     task_start(&task_manager.idle_task);
-
-    // 写TR寄存器，指示当前运行的第一个任务
-    write_tr(task_manager.init_task.tss_sel);
 }
 
 /**
@@ -246,7 +245,7 @@ void task_set_block (task_t *task) {
 /**
  * @brief 获取下一将要运行的任务
  */
-task_t * task_next_run (void) {
+static task_t * task_next_run (void) {
     // 如果没有任务，则运行空闲任务
     if (list_count(&task_manager.ready_list) == 0) {
         return &task_manager.idle_task;

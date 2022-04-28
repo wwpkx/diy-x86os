@@ -299,6 +299,7 @@ void do_handler_keyboard(exception_frame_t *frame) {
 	// 读取完成之后，就可以发EOI，方便后续继续响应键盘中断
 	// 否则,键值的处理过程可能略长，将导致中断响应延迟
     pic_send_eoi(IRQ1_KEYBOARD);
+	return;
 
     // 实测qemu下收不到E0和E1，估计是没有发出去
     // 方向键、HOME/END等键码和小键盘上发出来的完全一样。不清楚原因

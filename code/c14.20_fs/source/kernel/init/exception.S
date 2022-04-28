@@ -57,22 +57,23 @@ handler_\name:
 	// 压入异常号
 	push $\num
 
-	// 保存所有寄存器
-	// 寄存器调用：https://blog.csdn.net/w55100/article/details/89739484
-	// 压入可能被C处理程序改写的寄存器
-	// 没有必要将所有的寄存器都进行保存，太过于浪费时间了
-	push %eax
-	push %ecx
-	push %edx
-
+	pushal
 	push %ds
 	push %es
 	push %fs
 	push %gs
+	pushfl
 
 	// 调整esp指向异常号的位置，eax, ecx, edx对中断处理函数没什么用
 	// 跳转到统一的处理程序
 	push %esp
+
+	// 使用内核段寄存器
+	mov $(KERNEL_SELECTOR_DS), %eax
+	mov %eax, %ds
+	mov %eax, %es
+	mov %eax, %fs
+	mov %eax, %gs
 
 	// 调用中断处理函数
 	call do_handler_\name
@@ -80,15 +81,12 @@ handler_\name:
 	add $(1*4), %esp		// 丢掉esp
 
 	// 恢复保存的寄存器
+	popfl
 	pop %gs
 	pop %fs
 	pop %es
 	pop %ds
-	
-	// 恢复保存的寄存器
-	pop %edx
-	pop %ecx
-	pop %eax
+	popal
 
 	// 跳过压入的异常号和错误码
 	add $(2*4), %esp

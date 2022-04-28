@@ -13,7 +13,14 @@
         "os_cfg.h": "c",
         "mmu.h": "c",
         "disk.h": "c",
-        "log.h": "c"
+        "log.h": "c",
+        "klib.h": "c",
+        "memory.h": "c",
+        "cluster.h": "c",
+        "fat.h": "c",
+        "dir.h": "c",
+        "fs.h": "c"
     },
-    "cmake.sourceDirectory": "${workspaceFolder}/."
+    "cmake.sourceDirectory": "${workspaceFolder}/.",
+    "C_Cpp.errorSquiggles": "Disabled"
 }

@@ -9,4 +9,4 @@ dd if=kernel.elf of=disk1.vhd bs=512 conv=notrunc seek=100
 
 # 写应用程序init，临时使用
 #dd if=init.elf of=dis1.vhd bs=512 conv=notrunc seek=5000
-dd if=shell.elf of=disk1.vhd bs=512 conv=notrunc seek=5000
+#dd if=shell.elf of=disk1.vhd bs=512 conv=notrunc seek=5000

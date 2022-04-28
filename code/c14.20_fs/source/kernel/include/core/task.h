@@ -58,6 +58,7 @@ typedef struct _task_t {
 }task_t;
 
 int task_init (task_t *task, const char * name, int flag, uint32_t entry, uint32_t esp);
+void task_first_init (void);
 void task_start(task_t * task);
 void task_switch_to (task_t * task);
 void task_set_ready(task_t *task);

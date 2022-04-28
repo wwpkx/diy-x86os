@@ -11,6 +11,7 @@
 #include "ipc/mutex.h"
 #include "ipc/sem.h"
 
+#define PART_NAME_SIZE              32      // 分区名称
 #define DISK_NAME_SIZE              32      // 磁盘名称大小
 #define DISK_CNT                    4       // 磁盘的数量
 #define DISK_CNT_PER_CHANNEL        2       // 通道的数量
@@ -81,10 +82,12 @@ struct _disk_t;
  * @brief 分区类型
  */
 typedef struct _partinfo_t {
+    char name[PART_NAME_SIZE]; // 分区名称
     struct _disk_t * disk;      // 所属的磁盘
 
     enum {
         FS_INVALID = 0x00,      // 无效文件系统类型
+        FS_FAT16_0 = 0x04,      // FAT16文件系统类型
     }type;
 
     int device;                 // 设备号
@@ -110,17 +113,23 @@ typedef struct _disk_t {
     }drive;
 
     uint16_t port_base;             // 端口起始地址
+    int irq_num;                    // 中断序号
+
     uint32_t sector_cnt;            // 通道大小
     int sector_size;                // 块大小
 	partinfo_t partinfo[DISK_PRIMARY_PART_CNT];	// 分区表
 
     mutex_t * mutex;              // 访问该通知的互斥信号量
+
+    int task_on_op;                 // 是任务正在操纵磁盘
     sem_t * op_sem;               // 读写命令操作的同步信号量
 }disk_t;
 
 void disk_init (void);
 int disk_read_sector(int device, uint8_t *buffer, int start_sector, int count);
 int disk_write_sector(int device, uint8_t *buffer, int start_sector, int count);
+int part_to_device (disk_t * disk, int part_no);
+partinfo_t * device_to_part (int device);
 
 void handler_ide_primary (void);
 void handler_ide_secondary (void);

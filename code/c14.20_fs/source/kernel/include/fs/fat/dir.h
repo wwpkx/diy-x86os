@@ -5,11 +5,12 @@
  *      Author: mac
  */
 
-#ifndef SRC_INCLUDE_FS_DIR_H_
-#define SRC_INCLUDE_FS_DIR_H_
+#ifndef DIR_H
+#define DIR_H
 
-#include <core/types.h>
-#include <fs/cluster.h>
+#include "comm/types.h"
+#include "fs/fat/cluster.h"
+#include "fs/fat/fat.h"
 
 #define DIRITEM_NAME_FREE               0xE5                // 目录项空闲名标记
 #define DIRITEM_NAME_END                0x00                // 目录项结束名标记
@@ -29,6 +30,7 @@
 
 #define SFN_LEN                    	 	11              // sfn文件名长
 
+#pragma pack(1)
 
 /**
  * FAT目录项的日期类型
@@ -66,30 +68,21 @@ typedef struct _diritem_t {
     uint32_t DIR_FileSize;                 // 文件字节大小
 } diritem_t;
 
-const char * skip_sep (const char * path);
-const char * jmp_next_sep(const char * path);
-int to_sfn(char* dest_name, const char* my_name);
-int is_filename_match(const char *name_in_dir, const char *to_find_name);
+#pragma pack()
 
 /**
- * 获取diritem的文件起始簇号
+ * @brief 基于簇的位置信息
  */
-static inline uint32_t diritem_cluster (diritem_t * item) {
-    return (item->DIR_FstClusHI << 16) | item->DIR_FstClusL0;
-}
+typedef struct _cluster_pos_t {
+    uint32_t cluster;
+    uint32_t offset;
+}cluster_pos_t;
 
-/**
- * 设置diritem的cluster
- * @param item 目录diritem
- * @param cluster 簇号
- */
-static void inline set_diritem_cluster (diritem_t * item, cluster_t cluster) {
-    item->DIR_FstClusHI = (uint16_t )(cluster >> 16);
-    item->DIR_FstClusL0 = (uint16_t )(cluster & 0xFFFF);
-}
+uint32_t diritem_get_cluster (diritem_t * item);
+void diritem_set_cluster (diritem_t * item, cluster_t cluster);
+file_type_t diritem_get_type (diritem_t *diritem);
+diritem_t * diritem_from_path (fat_t * fat, cluster_t parent, const char * path);
 
-xfile_type_t diritem_file_type(const diritem_t *diritem);
-diritem_t * diritem_next(xfat_t* xfat, cluster_t curr_cluster, uint32_t curr_offset,
-		cluster_t* next_cluster, uint32_t* next_offset);
+void diritem_init (diritem_t * item);
 
-#endif /* SRC_INCLUDE_FS_DIR_H_ */
+#endif /* DIR_H */

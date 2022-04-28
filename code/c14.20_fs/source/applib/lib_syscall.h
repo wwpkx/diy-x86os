@@ -17,28 +17,6 @@
 #include <stdio.h>
 #include <stdarg.h>
 
-// 系统调用号
-#define SYS_msleep              0
-#define SYS_getpid              1
-#define SYS_sched_yield         3
-#define SYS_fork                4
-#define SYS_execve              5
-#define SYS_wait                6
-#define SYS_exit                7
-
-#define SYS_open                100
-#define SYS_read                101
-#define SYS_write               102
-#define SYS_close               103
-#define SYS_lseek               104
-#define SYS_unlink              105
-#define SYS_link                106
-#define SYS_fstat               107
-#define SYS_stat                108
-#define SYS_isatty              109
-#define SYS_sbrk                110
-#define SYS_dup                 111
-
 int msleep (int ms);
 int fork(void);
 int getpid(void);

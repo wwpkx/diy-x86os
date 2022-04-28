@@ -19,8 +19,12 @@ static pde_t kernel_page_dir[PDE_CNT] __attribute__((aligned(MEM_PAGE_SIZE))); /
 /**
  * @brief 获取当前页表地址
  */
-uint32_t current_page_dir (void) {
+uint32_t memory_current_page_dir (void) {
     return task_current()->tss.cr3;
+}
+
+uint32_t memory_kernel_page_dir (void) {
+    return (uint32_t)kernel_page_dir;
 }
 
 /**
@@ -364,7 +368,7 @@ void memory_free_page (uint32_t addr) {
         addr_free_page(&paddr_alloc, addr, 1);
     } else {
         // 进程空间，还要释放页表
-        pte_t * pte = find_pte((pde_t *)current_page_dir(), addr, 0);
+        pte_t * pte = find_pte((pde_t *)memory_current_page_dir(), addr, 0);
         ASSERT((pte == (pte_t *)0) && pte->present);
 
         // 释放内存页

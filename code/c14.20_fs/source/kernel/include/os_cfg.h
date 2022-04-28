@@ -21,7 +21,7 @@
 
 #define OS_VERSION              "0.0.1"     // OS版本号
 
-#define TASK_NR             128            // 进程的数量
-#define ROOT_DEV            1               // 根文件系统所在的设备
+#define TASK_NR                 128         // 进程的数量
+#define ROOT_DEV                0xc1        // 根文件系统所在的设备
 
 #endif //OS_OS_CFG_H

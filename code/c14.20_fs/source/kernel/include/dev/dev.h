@@ -34,7 +34,7 @@ static inline dev_major_t device_major (int device) {
  * 获取从设备号
  */
 static inline int device_minor (int device) {
-	return device & 0xF;
+	return device & 0xFF;
 }
 
 #endif /* DEV_H */

@@ -12,8 +12,8 @@
 #include "comm/cpu_instr.h"
 #include "cpu/irq.h"
 #include "core/memory.h"
+#include "core/task.h"
 
-static int total_disk;
 static disk_t disk_buf[DISK_CNT];  // 通道结构
 static mutex_t channel_mutex[DISK_CHANNEL_CNT];     // 通道信号量
 static sem_t channel_op_sem[DISK_CHANNEL_CNT];      // 通道操作的信号量
@@ -85,8 +85,9 @@ static void print_disk_info (disk_t * disk) {
     for (int i = 0; i < DISK_PRIMARY_PART_CNT; i++) {
         partinfo_t * part_info = disk->partinfo + i;
         if (part_info->type != FS_INVALID) {
-            log_printf("\t\ttype: %x, start sector: %d, count %d", 
-                    part_info->type, part_info->start_sector, part_info->total_sector);
+            log_printf("\t\t%s: type: %x, start sector: %d, count %d", 
+                    part_info->name, part_info->type, 
+                    part_info->start_sector, part_info->total_sector);
         }
     }
 }
@@ -94,30 +95,30 @@ static void print_disk_info (disk_t * disk) {
 /**
  * @brief 获取指定分区的设备号
  */
-static inline int part_to_device (disk_t * disk, int part_no) {
-    int minor = ((disk - disk_buf) << 8) | part_no;        // 每个磁盘最多支持256个分区
+int part_to_device (disk_t * disk, int part_no) {
+    int minor = ((disk - disk_buf + 0xa) << 4) | part_no;        // 每个磁盘最多支持256个分区
     return make_device_num(DEV_DISK, minor);
 }
 
 /**
  * @brief 根据设备号，获取分区信息
  */
-static partinfo_t * device_to_part (int device) {
+partinfo_t * device_to_part (int device) {
     int minor = device_minor(device);
 
     // 不能超过磁盘数量
-    int disk_idx = (minor >> 8) & 0xFF;
+    int disk_idx = ((minor >> 4) & 0xF) - 0xa;       // 每块硬盘从'a'开始
     if (disk_idx >= DISK_CNT) {
         return (partinfo_t *)0;
     }
 
     // 不能超过分区数量
-    int part_no = minor & 0xFF;
+    int part_no = minor & 0xF;
     if (part_no >= DISK_PRIMARY_PART_CNT) {
         return (partinfo_t *)0;
     }
 
-    return disk_buf[disk_idx].partinfo + part_no;
+    return disk_buf[disk_idx].partinfo + part_no - 1;       // 从1开始算起
 }
 
 /**
@@ -149,7 +150,8 @@ static int detect_part_info(disk_t * disk) {
             part_info->disk = (disk_t *)0;
         } else {
             // 在主分区中找到，复制信息
-            part_info->device = part_to_device(disk, i);
+            kernel_sprintf(part_info->name, "%s%d", disk->name, i + 1);
+            part_info->device = part_to_device(disk, i + 1);  // 从1开始计算
             part_info->start_sector = item->relative_sectors;
             part_info->total_sector = item->total_sectors;
             part_info->disk = disk;
@@ -199,6 +201,7 @@ static int identify_disk (disk_t * disk) {
  * @brief 磁盘模块初始化
  */
 void disk_init (void) {
+    
     // 通道端口地址
     static uint16_t port_base[] = {
         [ATA_CHANNEL_PRIMARY] = 0x1F0,
@@ -215,7 +218,6 @@ void disk_init (void) {
     kernel_memset(disk_buf, 0, sizeof(disk_buf));
 
     // 初始化通道结构
-    total_disk = 0;
     for (int i = ATA_CHANNEL_PRIMARY; i < ATA_CHANNEL_END; i++) {
         // 信号量和锁
         mutex_t * mutex = channel_mutex + i;
@@ -226,17 +228,20 @@ void disk_init (void) {
         // 检测各个硬盘, 读取硬件是否存在，有其相关信息
         int channel_disk_cnt = 0;
         for (int j = 0; j < DISK_CNT_PER_CHANNEL; j++) {
-            disk_t * disk = disk_buf + i;
+            int idx = i * DISK_CNT_PER_CHANNEL + j;
+            disk_t * disk = disk_buf + idx;
 
             // 先初始化各字段
-            kernel_sprintf(disk->name, "sd%c", i * DISK_CNT_PER_CHANNEL + j + 'a');
+            kernel_sprintf(disk->name, "sd%c", idx + 'a');
             disk->channel = i;
             disk->drive = (j == 0) ? ATA_DISK_MASTER : ATA_DISK_SLAVE;
             disk->port_base = port_base[disk->channel];
+            disk->irq_num = (j == 0) ? IRQ14_HARDDISK_PRIMARY : IRQ15_HARDDISK_SECOND;
             disk->mutex = mutex;
             disk->op_sem = sem;
             disk->sector_cnt = 0;
             disk->sector_size = 0;
+            disk->task_on_op = 0;
 
             // 识别磁盘，有错不处理，直接跳过
             int err = identify_disk(disk);
@@ -251,7 +256,6 @@ void disk_init (void) {
         if (channel_disk_cnt) {
             irq_install(IRQ14_HARDDISK_PRIMARY + i, i == 0 ? handler_ide_primary : handler_ide_secondary);
             irq_enable(IRQ14_HARDDISK_PRIMARY + i);
-            total_disk += channel_disk_cnt;
         }
     }
 }
@@ -273,30 +277,49 @@ int disk_read_sector(int device, uint8_t *buffer, int start_sector, int count) {
         return -1;
     }
 
-    // 锁定磁盘
-    mutex_lock(disk->mutex);
-
-    ata_send_cmd(disk, start_sector, count, ATA_CMD_READ);
-    
     int cnt;
-    for (cnt = 0; cnt < count; cnt++, buffer += disk->sector_size) {
-        // 利用信号量等待中断通知，然后再读取数据
-        sem_wait(disk->op_sem);
+    if (task_current() == (task_t *)0) {
+        // 关中断，避免中断发送信号量通知
+        irq_disable(disk->irq_num);
 
-        // 这里虽然有调用等待，但是由于已经是操作完毕，所以并不会等
-        int err = ata_wait_data(disk);
-        if (err < 0) {
-            log_printf("disk(%s) read error: start sect %d, count %d", disk->name, start_sector, count);
-            break;
+        ata_send_cmd(disk, start_sector, count, ATA_CMD_READ);
+        for (cnt = 0; cnt < count; cnt++, buffer += disk->sector_size) {
+            // 等待数据就绪
+            int err = ata_wait_data(disk);
+            if (err < 0) {
+                log_printf("disk(%s) read error: start sect %d, count %d", disk->name, start_sector, count);
+                break;
+            }
+
+            // 此处再读取数据
+            void * pbuffer = (void *)memory_get_paddr(memory_kernel_page_dir(), (uint32_t)buffer);
+            ata_read_data(disk, pbuffer, disk->sector_size);
         }
 
-        // 此处再读取数据
-        void * pbuffer = (void *)memory_get_paddr(current_page_dir(), (uint32_t)buffer);
-        ata_read_data(disk, pbuffer, start_sector * count);
+        irq_enable(disk->irq_num);
+    } else {
+        mutex_lock(disk->mutex);
+
+        disk->task_on_op = 1;
+        ata_send_cmd(disk, start_sector, count, ATA_CMD_READ);
+        for (cnt = 0; cnt < count; cnt++, buffer += disk->sector_size) {
+            // 利用信号量等待中断通知，然后再读取数据
+            sem_wait(disk->op_sem);
+
+            // 这里虽然有调用等待，但是由于已经是操作完毕，所以并不会等
+            int err = ata_wait_data(disk);
+            if (err < 0) {
+                log_printf("disk(%s) read error: start sect %d, count %d", disk->name, start_sector, count);
+                break;
+            }
+
+            // 此处再读取数据
+            void * pbuffer = (void *)memory_get_paddr(memory_current_page_dir(), (uint32_t)buffer);
+            ata_read_data(disk, pbuffer, disk->sector_size);
+        }
+    
+        mutex_unlock(disk->mutex);
     }
- 
-    // 解释磁盘
-    mutex_unlock(disk->mutex);
     return cnt;
 }
 
@@ -317,30 +340,48 @@ int disk_write_sector(int device, uint8_t *buffer, int start_sector, int count) 
         return -1;
     }
 
-    // 锁定磁盘
-    mutex_lock(disk->mutex);
-
-    ata_send_cmd(disk, start_sector, count, ATA_CMD_WRITE);
-    
     int cnt;
-    for (cnt = 0; cnt < count; cnt++, buffer += disk->sector_size) {
-        // 先写数据
-        void * pbuffer = (void *)memory_get_paddr(current_page_dir(), (uint32_t)buffer);
-        ata_write_data(disk, pbuffer, start_sector * count);
+    if (task_current() == (task_t *)0) {
+        irq_disable(disk->irq_num);
 
-        // 利用信号量等待中断通知，等待写完成
-        sem_wait(disk->op_sem);
+        ata_send_cmd(disk, start_sector, count, ATA_CMD_WRITE);
+        for (cnt = 0; cnt < count; cnt++, buffer += disk->sector_size) {
+            // 先写数据
+            void * pbuffer = (void *)memory_get_paddr(memory_kernel_page_dir(), (uint32_t)buffer);
+            ata_write_data(disk, pbuffer, disk->sector_size);
 
-        // 这里虽然有调用等待，但是由于已经是操作完毕，所以并不会等
-        int err = ata_wait_data(disk);
-        if (err < 0) {
-            log_printf("disk(%s) write error: start sect %d, count %d", disk->name, start_sector, count);
-            break;
+            // 等待写入完成
+            int err = ata_wait_data(disk);
+            if (err < 0) {
+                log_printf("disk(%s) write error: start sect %d, count %d", disk->name, start_sector, count);
+                break;
+            }
         }
+
+        irq_enable(disk->irq_num);
+    } else {
+        mutex_lock(disk->mutex);
+
+        disk->task_on_op = 1;
+        ata_send_cmd(disk, start_sector, count, ATA_CMD_WRITE);
+        for (cnt = 0; cnt < count; cnt++, buffer += disk->sector_size) {
+            // 先写数据
+            void * pbuffer = (void *)memory_get_paddr(memory_current_page_dir(), (uint32_t)buffer);
+            ata_write_data(disk, pbuffer, disk->sector_size);
+
+            // 利用信号量等待中断通知，等待写完成
+            sem_wait(disk->op_sem);
+
+            // 这里虽然有调用等待，但是由于已经是操作完毕，所以并不会等
+            int err = ata_wait_data(disk);
+            if (err < 0) {
+                log_printf("disk(%s) write error: start sect %d, count %d", disk->name, start_sector, count);
+                break;
+            }
+        }
+    
+        mutex_unlock(disk->mutex);
     }
- 
-    // 解释磁盘
-    mutex_unlock(disk->mutex);
     return cnt;
 }
 
@@ -351,9 +392,8 @@ void do_handler_ide_primary (exception_frame_t *frame)  {
     pic_send_eoi(IRQ14_HARDDISK_PRIMARY);
 
     // 通知主通道的信号量
-    sem_t * op_sem = disk_buf[0].op_sem;
-    if (sem_wait_count(op_sem)) {
-        sem_notify(op_sem);
+    if (disk_buf[0].task_on_op || disk_buf[1].task_on_op) {
+        sem_notify(channel_op_sem + 0);
     }
 }
 
@@ -364,9 +404,8 @@ void do_handler_ide_secondary (exception_frame_t *frame) {
     pic_send_eoi(IRQ15_HARDDISK_SECOND);
 
     // 通知从通道的信号量
-    sem_t * op_sem = disk_buf[DISK_CNT_PER_CHANNEL].op_sem;
-    if (sem_wait_count(op_sem)) {
-        sem_notify(op_sem);
+    if (disk_buf[2].task_on_op || disk_buf[3].task_on_op) {
+        sem_notify(channel_op_sem + 1);
     }
 }
 

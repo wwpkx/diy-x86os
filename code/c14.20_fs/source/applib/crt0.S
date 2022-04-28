@@ -9,9 +9,9 @@
     .global _start
     .extern cstart
 _start:
-    # 设置各数据段的选择子,主要用于init进程
-    # 其它进程为保险起见，也要设置一下
-    mov %ss, %eax
+    # 设置各数据段的选择子,由于应用任务都是用tss恢复的，所以
+    # 实际不必设置，但为安全起见，还是设置一下
+    mov %ss, %ax
     mov %ax, %ds
     mov %ax, %es
     mov %ax, %fs

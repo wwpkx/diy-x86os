@@ -229,17 +229,25 @@ char * get_file_name (char * name) {
     return s + 1;
 }
 
+/**
+ * 打印错误信息然后死机
+ **/
+void pannic (const char * string) {
+    log_printf("Error: %s", string);
+   
+    task_t * task = task_current();
+    log_printf("task: %s", task ? task->name : "none");
+    for (;;) {
+        hlt();
+    }    
+}
+
 void panic_debug (const char * filename, int line, const char * func, const char * conditon) {
     irq_disable_global();
 
     log_printf("assert failed! %s", conditon);
     log_printf("file: %s\nline %d\nfunc: %s\n", filename, line, func);
-
-    task_t * task = task_current();
-    log_printf("task: %s", task ? task->name : "none");
-    for (;;) {
-        hlt();
-    }
+    pannic("assert failed");
 }
 
 

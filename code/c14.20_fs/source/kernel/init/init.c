@@ -37,6 +37,8 @@ void kernel_init (boot_info_t * boot_info) {
     timer_init();
     log_init();
     tty_init();
+
+    task_manager_init();
     fs_init();
 }
 
@@ -61,12 +63,13 @@ void move_to_first_task(void) {
 }
 
 void init_main(void) {
-    task_manager_init();
-
     log_printf("Kernel is running....");
     log_printf("Version: %s", OS_VERSION);
     log_printf("print int: %d, %x", 1234, 0x1234);
 
+    fs_load_root(ROOT_DEV);
+
     // 初始化任务
+    task_first_init();
     move_to_first_task();
 }

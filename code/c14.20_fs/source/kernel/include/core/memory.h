@@ -55,7 +55,8 @@ void memory_destroy_uvm (uint32_t page_dir);
 uint32_t memory_copy_uvm (uint32_t page_dir);
 int memory_copy_uvm_data(uint32_t to, uint32_t page_dir, uint32_t from, uint32_t size);
 uint32_t memory_get_paddr (uint32_t page_dir, uint32_t vaddr);
-uint32_t current_page_dir (void);
+uint32_t memory_current_page_dir (void);
+uint32_t memory_kernel_page_dir (void);
 
 char * sys_sbrk(int incr);
 

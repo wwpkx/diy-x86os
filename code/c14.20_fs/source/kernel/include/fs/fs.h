@@ -8,11 +8,46 @@
 #ifndef FS_H
 #define FS_H
 
+#include "dev/disk.h"
+
+struct _fs_t;
+
+/**
+ * @brief 文件系统操作接口
+ */
+typedef struct _fs_op_t {
+	int (*mount) (struct _fs_t * fs, partinfo_t * part_info);
+    void (*unmount) (struct _fs_t * fs);
+    int (*open) (struct _fs_t * fs, const char * path, file_t * file);
+    int (*read) (char * buf, int size, struct _file_t * file);
+    int (*seek) (file_t * file, uint32_t pos);
+}fs_op_t;
+
+/**
+ * @brief 文件系统类型
+ */
+typedef struct _fs_t {
+    fs_op_t * op;              // 文件系统操作接口
+    void * op_data;            // 文件系统的操作数据
+    partinfo_t * part_info;     // 分区信息
+}fs_t;
+
 #define	O_RDONLY	0x000       // 读模式
 #define	O_WRONLY	0x001		// 写模式
 #define	O_RDWR		0x002		// 读写模式
 #define O_CREATE    0x200       // 创建文件
 
+/**
+ * 文件seek的定位类型
+ */ 
+enum {
+    FILE_SEEK_SET = 0,                    // 文件开头
+    FILE_SEEK_CUR = 1,                    // 当前位置
+    FILE_SEEK_END = 2,                    // 文件结尾
+};
+
+
+int fs_load_root (int root_device);
 void fs_init (void);
 void fs_add_ref (file_t * file);
 
@@ -23,6 +58,8 @@ int sys_lseek(int file, int ptr, int dir);
 int sys_close(int file);
 int sys_isatty(int file);
 int sys_dup (int file);
+
+int is_path_valid (const char * path);
 
 #endif // FS_H
 
