@@ -53,10 +53,10 @@ int execve(const char *name, char * const *argv, char * const *env) {
 }
 
 int wait(int* status) {
-    return -1;
+    return sys_call(SYS_wait, (int)status, 0, 0, 0);
 }
 
-void exit(int status) {
+void _exit(int status) {
 }
 
 int open(const char *name, int flags, ...) {
