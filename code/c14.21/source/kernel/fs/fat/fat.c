@@ -321,6 +321,84 @@ int fat_read (char * buf, int size, struct _file_t * file) {
 }
 
 /**
+ * @brief 写文件
+ */
+int fat_write (char * buf, int size, struct _file_t * file) {
+	// xfile_info_t * file_node = file->file_node;
+	// xfat_t * xfat = fs_mount_get_fat(file_node->device);
+	// xdisk_t * disk = xfat->disk;
+    // uint8_t * write_buffer = (uint8_t *)buffer;
+    // uint8_t disk_buf[DISK_SIZE_PER_SECTOR];
+
+    // // 字节为0，无需写，直接退出
+    // if (size == 0) {
+    //     return 0;
+    // }
+
+	// // 检查一下是否有足够的空间，如果没有，则分配一个新簇
+	// if (!is_cluster_valid(file->curr_cluster)) {
+	// 	file->curr_cluster = allocate_cluster(xfat, file->curr_cluster, 1, 0x0);
+	// }
+
+    // int write_size = 0;
+    // int sector_size = disk->disk_info->sector_size;
+	// while (size > 0) {
+	// 	int curr_write_bytes = 0;
+	// 	int sector_in_cluster = to_sector(disk, to_cluster_offset(xfat, file->pos));  // 簇中的扇区偏移
+	// 	int offset_in_sector = to_sector_offset(disk, file->pos);  // 扇区偏移位置
+	// 	int start_sector = cluster_first_sector(xfat, file->curr_cluster) + sector_in_cluster;
+
+    //     // 不超过一个扇区的写，起始偏移量非0，或者读取大小不超过一扇区
+    //     if ((offset_in_sector > 0) || (size < sector_size)) {
+    //         curr_write_bytes = size;
+
+    //         // 起始偏移非0，如果跨扇区，只写当前扇区
+    //         if (offset_in_sector != 0) {
+    //             if (offset_in_sector + size > sector_size) {
+    //                 curr_write_bytes = sector_size - offset_in_sector;
+    //             }
+    //         }
+
+    //         // 由于只是写一部分，所以需要先读，再回写
+    //         int err = xdisk_read_sector(disk, disk_buf, start_sector, 1);
+    //         if (err < 0) {
+    //             break;
+    //         }
+
+    //         k_memcpy(disk_buf + offset_in_sector, write_buffer, curr_write_bytes);
+    //         err = xdisk_write_sector(disk, disk_buf, start_sector, 1);
+    //         if (err < 0) {
+    //             break;
+    //         }
+    //     } else {
+    //         // 起始为0，且写量超过1个扇区，连续写多扇区
+    //         int sector_count = to_sector(disk, size);
+
+    //         // 如果超过一簇，则只写当前簇
+    //         if ((sector_in_cluster + sector_count) > xfat->sec_per_cluster) {
+    //             sector_count = xfat->sec_per_cluster - sector_in_cluster;
+    //         }
+
+    //         int err = xdisk_write_sector(disk, write_buffer, start_sector, sector_count);
+    //         if (err < 0) {
+    //             return 0;
+    //         }
+
+    //         curr_write_bytes = sector_count * sector_size;
+    //     }
+
+    //     write_buffer += curr_write_bytes;
+    //     size -= curr_write_bytes;
+    //     write_size += curr_write_bytes;
+
+    //     // 前移文件指针
+	// 	move_file_pos(file, xfat, curr_write_bytes, 1);
+    // }
+
+    return 0;
+}
+
+/**
  * @brief 文件位置调整
  */
 int fat_seek (file_t * file, uint32_t pos) {
@@ -362,3 +440,12 @@ int fat_seek (file_t * file, uint32_t pos) {
     return 0;
 }
 
+/**
+ * 关闭文件
+ */
+int fat_close (struct _file_t * file) {
+    fat_t * fat = (fat_t *)file->fs->op_data;
+
+    
+	return -1;
+}

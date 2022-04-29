@@ -78,6 +78,7 @@ static tty_t * alloc_tty (int dev) {
 		
 		tty->dev = tty_dev_list + minor_dev;
 		mutex_init(&tty->mutex);
+		tty->pre_in_size = 0;		// 预先没有数据量
 		bfifo_init(&tty->in_fifo, tty->in_buf, TTY_IN_SIZE);
 		bfifo_init(&tty->out_fifo, tty->out_buf, TTY_OUT_SIZE);
 	}
@@ -134,7 +135,6 @@ int tty_open (int dev) {
 int tty_read (int tty, char * buffer, int size) {
 	tty_t * p_tty = to_tty(tty);
 
-	mutex_lock(&p_tty->mutex);
 	// 试着读一下，能读多少就读多少。如果没有，则等待
 	int read_size = bfifo_get(&p_tty->in_fifo, buffer, size);
 	if (read_size == 0) {
@@ -143,7 +143,6 @@ int tty_read (int tty, char * buffer, int size) {
 		read_size = bfifo_read(&p_tty->in_fifo, buffer, 1);
 	}
 
-	mutex_unlock(&p_tty->mutex);
 	return read_size;
 }
 
@@ -157,7 +156,6 @@ int tty_write (int tty, char * buffer, int size) {
 
 	// size可能比out_fifo的容量大，所以直接用size去写
 	// 所以下面每次尽可能多写，能写多少是多少。写不了说明缓存满，等一下
-	mutex_lock(&p_tty->mutex);
 	while (size > 0) {
 		// 先尝试写入，看看实际能写多少。不能用write,如果size比fifo大，会卡死
 		int write_size = bfifo_put(&p_tty->out_fifo, curr, size);
@@ -171,9 +169,10 @@ int tty_write (int tty, char * buffer, int size) {
 		curr += write_size;
 
 		// 写入缓存中后，再由底层设备从设备中取出数据，完成数据的最终写入
+		mutex_lock(&p_tty->mutex);
 		p_tty->dev->write(p_tty);
+		mutex_unlock(&p_tty->mutex);
 	}
-	mutex_unlock(&p_tty->mutex);
 	return total_size;
 }
 
@@ -183,7 +182,9 @@ int tty_write (int tty, char * buffer, int size) {
 void tty_close (int tty) {
 	tty_t * p_tty = to_tty(tty);
 	if (p_tty && p_tty->dev->close) {
+		mutex_lock(&p_tty->mutex);
 		p_tty->dev->close(p_tty);
+		mutex_unlock(&p_tty->mutex);
 	}
 }
 
@@ -194,18 +195,36 @@ void tty_close (int tty) {
 void tty_in_data(int tty, char * data, int size) {
 	tty_t * p_tty = to_tty(tty);
 
-	// 该函数大概率是由中断调用，所以能写多少就写多少
-	// 而不能因缓存满而挂起，这将导致中断被挂起
-	mutex_lock(&p_tty->mutex);
-
 	// 在这里要处理一些控制字符的问题
-	bfifo_put(&p_tty->in_fifo, data, size);
-	if (p_tty->echo) {
-		// 并非所有字符都需要回显
-		tty_write(tty, data, size);
+	int commit = 0;
+	for (int i = 0; i < size; i++) {
+		switch (data[i]) {
+			case '\b':
+				if (data[i] == '\b') {
+					if (p_tty->pre_in_size) {
+						p_tty->pre_in_size--;
+					}
+				}			
+				break;
+			default: {
+				p_tty->pre_in_buf[p_tty->pre_in_size++] = data[i];
+				if ((data[i] == '\n') || p_tty->pre_in_size >= TTY_IN_SIZE) {\
+					commit = 1;
+				}
+				break;
+			}
+		}
 	}
-	
-	mutex_unlock(&p_tty->mutex);
+
+	if (p_tty->echo) {
+		tty_write(tty, data, size);
+	}	
+
+	// 先处理完所有数据，再提交给读进程
+	if (commit) {
+		bfifo_put(&p_tty->in_fifo, p_tty->pre_in_buf, p_tty->pre_in_size);
+		p_tty->pre_in_size = 0;
+	}
 }
 
 

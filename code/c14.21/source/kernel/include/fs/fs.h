@@ -21,6 +21,8 @@ typedef struct _fs_op_t {
     void (*unmount) (struct _fs_t * fs);
     int (*open) (struct _fs_t * fs, const char * path, file_t * file);
     int (*read) (char * buf, int size, struct _file_t * file);
+    int (*write) (char * buf, int size, struct _file_t * file);
+    int (*close) (struct _file_t * file);
     int (*seek) (file_t * file, uint32_t pos);
     int (*stat)(struct _fs_t * fs, const char *file, struct stat *st);
 }fs_op_t;
@@ -56,6 +58,7 @@ int sys_close(int file);
 int sys_isatty(int file);
 int sys_dup (int file);
 int sys_stat(const char *file, struct stat *st);
+int sys_fstat(int file, struct stat *st);
 
 int is_path_valid (const char * path);
 

@@ -29,6 +29,8 @@ typedef struct _tty_t {
 	tty_dev_t * dev;				// 实际设备
 	void * dev_data;				// 设备参数
 
+	int pre_in_size;				// 已有的数据量
+	char pre_in_buf[TTY_IN_SIZE];	// 预输入队列
 	mutex_t mutex;					// 进程访问的互斥锁
 	char in_buf[TTY_IN_SIZE];
 	bfifo_t in_fifo;				// 输入队列

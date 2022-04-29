@@ -13,6 +13,6 @@ int main (int argc, char **argv) {
         printf("loop count: %d\n", i);
     }
     
-    msleep(100000);
+    msleep(100000);     // 大的延时，测试用
     return 0;
 }

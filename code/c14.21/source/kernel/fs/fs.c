@@ -28,6 +28,8 @@ static fs_op_t fs_ops[] = {
 		.unmount = fat_unmount,
 		.open = fat_open,
 		.read = fat_read,
+		.write = fat_write,
+		.close = fat_close,
 		.seek = fat_seek,
 		.stat = fat_stat,
 	},
@@ -247,6 +249,30 @@ int sys_dup (int file) {
 }
 
 /**
+ * @brief 获取文件状态
+ */
+int sys_fstat(int file, struct stat *st) {
+	// 超出进程所能打开的全部，退出
+	if ((file < 0) && (file >= TASK_OFILE_NR)) {
+		return -1;
+	}
+
+	if (st == (struct stat *)0) {
+		return -1;
+	}
+
+	// 获取文件描述符，可能为空，如file不合法等
+	file_t * pfile = task_file(file);
+	if (pfile == (file_t *)0) {
+		return -1;
+	}
+
+	kernel_memset(st, 0, sizeof(struct stat));
+	st->st_size = pfile->size;
+	return 0;
+} 
+
+/**
  * @brief 获取文件的状态
  */
 int sys_stat(const char *file, struct stat *st) {
@@ -301,8 +327,6 @@ int sys_read(int file, char *ptr, int len) {
 			return root_fs.op->read(ptr, len, pfile);
 		}
 	}
-
-	return -1;
 }
 
 /**
@@ -337,12 +361,8 @@ int sys_write(int file, char *ptr, int len) {
 		return tty_write(tty, ptr, len);
 	}
 	default:			// 普通文件
-		kernel_memcpy(ptr, pos, len);
-		pos += len;
-		return len;
+		return root_fs.op->write(ptr, len, pfile);
 	}
-
-	return -1;
 }
 
 /**
@@ -418,6 +438,7 @@ int sys_close(int file) {
 			break;
 		}
 		default:
+			root_fs.op->close(pfile);
 			break;
 		}
 		file_free(pfile);

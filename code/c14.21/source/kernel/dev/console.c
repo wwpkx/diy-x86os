@@ -12,7 +12,7 @@
 #include "tools/klib.h"
 #include "comm/cpu_instr.h"
 
-static console_t i_console;			// 控制台结构，整个计算机只有一个
+static console_t console_buf[1];			// 控制台结构，整个计算机只有一个
 
 /**
  * @brief 更新鼠标的位置
@@ -246,7 +246,7 @@ int console_init (struct _tty_t * tty) {
 	}
 
 	// 目前只支持一个console的初始化
-	console_t * console = &i_console;
+	console_t * console = console_buf + 0;
 	console->disp_base = (disp_char_t *)CONSOLE_VIDEO_BASE;
 	console->cursor_row = console->cursor_col = 0;
 	console->display_cols = CONSOLE_COL_MAX;

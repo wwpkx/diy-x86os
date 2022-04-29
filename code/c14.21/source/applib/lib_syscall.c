@@ -98,7 +98,7 @@ int link(const char *old, const char *new) {
  * 获取文件的状态
  */
 int fstat(int file, struct stat *st) {
-    return -1;
+    return sys_call(SYS_fstat, (int)file, (int)st, 0, 0);
 }
 
 /**

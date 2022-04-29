@@ -72,6 +72,8 @@ void fat_unmount (struct _fs_t * fs);
 int fat_stat(struct _fs_t * fs, const char *file, struct stat *st);
 int fat_open (struct _fs_t * fs, const char * path, file_t * file);
 int fat_read (char * buf, int size, struct _file_t * file);
+int fat_write (char * buf, int size, struct _file_t * file);
+int fat_close (struct _file_t * file);
 int fat_seek (file_t * file, uint32_t pos);
 
 #endif // FAT_H
