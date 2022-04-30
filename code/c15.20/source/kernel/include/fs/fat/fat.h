@@ -67,6 +67,8 @@ typedef struct _fat_t {
     struct _disk_t * disk;                  // 所在的磁盘
 } fat_t;
 
+struct stat;
+
 int fat_mount (struct _fs_t * fs, partinfo_t * part_info);
 void fat_unmount (struct _fs_t * fs);
 int fat_stat(struct _fs_t * fs, const char *file, struct stat *st);

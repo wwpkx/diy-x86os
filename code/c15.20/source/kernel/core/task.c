@@ -797,7 +797,7 @@ int sys_wait(int* status) {
 void sys_exit(int status) {
     task_t * curr_task = task_current();
 
-    // 关闭所有已经打开的文件
+    // 关闭所有已经打开的文件, 标准输入输出库会由newlib自行关闭，但这里仍然再处理下
     for (int fd = 0; fd < TASK_OFILE_NR; fd++) {
         file_t * file = curr_task->file_table[fd];
         if (file) {

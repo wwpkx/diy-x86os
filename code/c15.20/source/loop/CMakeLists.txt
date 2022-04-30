@@ -16,7 +16,7 @@ include_directories(
 file(GLOB C_LIST "*.c" "*.h")
 add_executable(${PROJECT_NAME} ${C_LIST})
 
-# 不带调试信息的elf生成，何种更小，写入到image目录下
+# 不带调试信息的elf生成，何种更小，写入到image目录下，注意不带.elf后缀
 add_custom_command(TARGET ${PROJECT_NAME}
                    POST_BUILD
-                   COMMAND ${OBJCOPY_TOOL} -S ${PROJECT_NAME}.elf ${CMAKE_SOURCE_DIR}/../../image/${PROJECT_NAME}.elf)
+                   COMMAND ${OBJCOPY_TOOL} -S ${PROJECT_NAME}.elf ${CMAKE_SOURCE_DIR}/../../image/${PROJECT_NAME})

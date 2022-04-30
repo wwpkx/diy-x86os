@@ -33,6 +33,16 @@ static fs_op_t fs_ops[] = {
 		.seek = fat_seek,
 		.stat = fat_stat,
 	},
+	[FS_FAT16_1] = {
+		.mount = fat_mount,
+		.unmount = fat_unmount,
+		.open = fat_open,
+		.read = fat_read,
+		.write = fat_write,
+		.close = fat_close,
+		.seek = fat_seek,
+		.stat = fat_stat,
+	},
 };
 
 #define ADDR                    (8*1024*1024)      // 在0x800000处缓存原始
@@ -442,8 +452,9 @@ int sys_close(int file) {
 			break;
 		}
 		file_free(pfile);
-		task_remove_fd(file);
 	}
+	task_remove_fd(file);
+	
 	mutex_unlock(&fs_mutex);
 	return 0;
 }

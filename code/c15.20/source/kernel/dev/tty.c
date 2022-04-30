@@ -101,6 +101,7 @@ static void free_tty (tty_t * tty) {
 void tty_init (void) {
 	kernel_memset(tty_list, 0, sizeof(tty_list));
 	mutex_init(&tty_list_mutex);
+	curr_tty = -1;
 }
 
 /**
@@ -125,7 +126,11 @@ int tty_open (int dev) {
 		}
 	}
 
-	return to_index(tty);
+	int idx = to_index(tty);
+	if (curr_tty < 0) {
+		curr_tty = idx;
+	}
+	return idx;
 }
 
 /**
@@ -186,6 +191,10 @@ void tty_close (int tty) {
 		p_tty->dev->close(p_tty);
 		mutex_unlock(&p_tty->mutex);
 	}
+
+	if (tty == curr_tty) {
+		curr_tty = -1;
+	}
 }
 
 /**
@@ -193,6 +202,11 @@ void tty_close (int tty) {
  * 将从底层硬件接受到的数据写入tty的输入队列
  */
 void tty_in_data(int tty, char * data, int size) {
+	// 没有tty，数据丢掉
+	if ((tty > 0) && (tty >= TTY_MAX_COUNT)) {
+		return;
+	}
+
 	tty_t * p_tty = to_tty(tty);
 
 	// 在这里要处理一些控制字符的问题

@@ -85,9 +85,11 @@ typedef struct _partinfo_t {
     char name[PART_NAME_SIZE]; // 分区名称
     struct _disk_t * disk;      // 所属的磁盘
 
+    // https://www.win.tue.nl/~aeb/partitions/partition_types-1.html
     enum {
         FS_INVALID = 0x00,      // 无效文件系统类型
-        FS_FAT16_0 = 0x0E,      // FAT16文件系统类型
+        FS_FAT16_0 = 0x06,      // FAT16文件系统类型
+        FS_FAT16_1 = 0x0E,
     }type;
 
     int device;                 // 设备号

@@ -226,7 +226,7 @@ static void run_exec_file (const char * path, int argc, char ** argv) {
 		// 等待子进程执行完毕
         int status;
         int pid = wait(&status);
-        fprintf(stderr, "cmd %s result: %d, pid = %d", path, status, pid);
+        fprintf(stderr, "cmd %s result: %d, pid = %d\n", path, status, pid);
     }
 }
 

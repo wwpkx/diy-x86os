@@ -22,6 +22,7 @@ echo assign letter=%TARGET_PATH% >> a.txt
 diskpart /s a.txt
 del a.txt
 
+rem 复制应用程序
 copy /Y init.elf %TARGET_PATH%:\init.elf
 copy /Y shell.elf %TARGET_PATH%:\shell.elf
 copy /Y loop.elf %TARGET_PATH%:\loop.elf
