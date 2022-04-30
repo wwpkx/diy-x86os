@@ -19,6 +19,8 @@
 #include "dev/disk.h"
 #include "os_cfg.h"
 
+#include "applib/lib_syscall.h"
+
 static fs_t root_fs;		// 根文件系统
 
 // 文件系统操作接口

@@ -57,7 +57,7 @@ int wait(int* status) {
 }
 
 void _exit(int status) {
-    return sys_call(SYS_exit, (int)status, 0, 0, 0);
+    sys_call(SYS_exit, (int)status, 0, 0, 0);
 }
 
 int open(const char *name, int flags, ...) {

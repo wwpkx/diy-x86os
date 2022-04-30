@@ -9,7 +9,6 @@
 #define FS_H
 
 #include "dev/disk.h"
-#include "applib/lib_syscall.h"
 
 struct _fs_t;
 

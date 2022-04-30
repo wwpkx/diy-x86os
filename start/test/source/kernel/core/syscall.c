@@ -7,7 +7,6 @@
  */
 #include "core/syscall.h"
 #include "tools/klib.h"
-#include "applib/lib_syscall.h"
 #include "core/task.h"
 #include "tools/log.h"
 #include "fs/fs.h"

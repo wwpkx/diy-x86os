@@ -9,7 +9,7 @@ set(CMAKE_VERBOSE_MAKEFILE on)   # 开启输出编译详细过程的提示
 if (CMAKE_HOST_WIN32 OR CMAKE_HOST_APPLE)
     set(TOOL_PREFIX  "x86_64-elf-")
 elseif (CMAKE_HOST_WIN32)
-    set(TOOL_PREFIX  "")    # 待补充
+    set(TOOL_PREFIX  "x86_64-linux-gnu-")    # 待补充
 endif ()
 
 # set(TOOL_PREFIX  "x86_64-elf-")
@@ -17,7 +17,7 @@ endif ()
 
 # C编译器与参数配置
 set(CMAKE_C_COMPILER "${TOOL_PREFIX}gcc") 
-set(CMAKE_C_FLAGS "-g -c -O0 -m32 -fno-pie -fno-asynchronous-unwind-tables")
+set(CMAKE_C_FLAGS "-g -c -O0 -m32 -fno-pie -fno-stack-protector -fno-asynchronous-unwind-tables")
 
 # 汇编器与参数配置
 set(CMAKE_ASM_COMPILER "${TOOL_PREFIX}gcc")
