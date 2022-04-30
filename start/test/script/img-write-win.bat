@@ -25,7 +25,7 @@ del a.txt
 @REM 复制应用程序
 copy /Y init.elf %TARGET_PATH%:\init.elf
 copy /Y shell.elf %TARGET_PATH%:\shell.elf
-copy /Y loop.elf %TARGET_PATH%:\loop.elf
+copy /Y loop %TARGET_PATH%:\loop
 
 echo select vdisk file="%cd%\%DISK_NAME%" >a.txt
 echo detach vdisk >>a.txt
