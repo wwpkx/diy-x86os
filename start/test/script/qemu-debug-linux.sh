@@ -1,2 +1,2 @@
 # 适用于Linux
-qemu-system-i386  -m 128M -s -S -hda disk1.vhd -hdc disk2.vhd -d pcall,page,mmu,cpu_reset,guest_errors,page,trace:ps2_keyboard_set_translation
+qemu-system-i386  -m 128M -s -S  -drive file=disk1.img,index=0,media=disk,format=raw -drive file=disk2.img,index=2,media=disk,format=raw -d pcall,page,mmu,cpu_reset,guest_errors,page,trace:ps2_keyboard_set_translation
