@@ -617,7 +617,7 @@ static uint32_t load_elf_file (task_t * task, const char * name, uint32_t page_d
         // 简单做一些检查，如有必要，可自行加更多
         // 主要判断是否是可加载的类型，并且要求加载的地址必须是用户空间
         if ((elf_phdr.p_type != PT_LOAD) || (elf_phdr.p_vaddr < MEMORY_TASK_BASE)) {
-            goto load_failed;
+            continue;
         }
 
         // 加载当前程序头
@@ -625,10 +625,11 @@ static uint32_t load_elf_file (task_t * task, const char * name, uint32_t page_d
         if (err < 0) {
             goto load_failed;
         }
-    }
+        
+        // 简单起见，不检查了，以最后的地址为bss的地址
+        task->heap_top = elf_phdr.p_vaddr + elf_phdr.p_memsz;
+   }
 
-    // 简单起见，不检查了，以最后的地址为bss的地址
-    task->heap_top = elf_phdr.p_vaddr + elf_phdr.p_memsz;
 
     sys_close(file);
     return elf_hdr.e_entry;

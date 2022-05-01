@@ -10,6 +10,10 @@
 
 #include "dev/disk.h"
 
+#define uint32_t lib_uint32_t
+#include "applib/lib_syscall.h"
+#undef uint32_t
+
 struct _fs_t;
 
 /**

@@ -13,7 +13,7 @@ dd if=kernel.elf of=disk1.vhd bs=512 conv=notrunc seek=100
 
 # 写应用程序，使用系统的挂载命令
 export DISK_NAME=disk2.vhd
-export TARGET_PATH=$HOME/k
+export TARGET_PATH=mp
 rm $TARGET_PATH
 hdiutil attach $DISK_NAME -mountpoint $TARGET_PATH -verbose
 cp -v init.elf $TARGET_PATH
