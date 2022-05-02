@@ -1,46 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="CMakeRunConfigurationManager" shouldGenerate="true" shouldDeleteObsolete="true">
+  <component name="CMakeRunConfigurationManager">
     <generated />
   </component>
   <component name="CMakeSettings">
     <configurations>
-      <configuration PROFILE_NAME="Debug" CONFIG_NAME="Debug" />
+      <configuration PROFILE_NAME="Debug" ENABLED="true" CONFIG_NAME="Debug" />
     </configurations>
   </component>
   <component name="ChangeListManager">
     <list default="true" id="503b7bda-5c1b-4288-a1ee-02d955517940" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c14.20_fs/.vscode/settings.json" beforeDir="false" afterPath="$PROJECT_DIR$/c14.20_fs/.vscode/settings.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c14.20_fs/script/qemu-debug-osx.sh" beforeDir="false" afterPath="$PROJECT_DIR$/c14.20_fs/script/qemu-debug-osx.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c14.20_fs/source/applib/crt0.S" beforeDir="false" afterPath="$PROJECT_DIR$/c14.20_fs/source/applib/crt0.S" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c14.20_fs/source/applib/lib_syscall.h" beforeDir="false" afterPath="$PROJECT_DIR$/c14.20_fs/source/applib/lib_syscall.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c14.20_fs/source/kernel/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/c14.20_fs/source/kernel/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c14.20_fs/source/kernel/core/memory.c" beforeDir="false" afterPath="$PROJECT_DIR$/c14.20_fs/source/kernel/core/memory.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c14.20_fs/source/kernel/core/task.c" beforeDir="false" afterPath="$PROJECT_DIR$/c14.20_fs/source/kernel/core/task.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c14.20_fs/source/kernel/dev/disk.c" beforeDir="false" afterPath="$PROJECT_DIR$/c14.20_fs/source/kernel/dev/disk.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c14.20_fs/source/kernel/dev/kbd.c" beforeDir="false" afterPath="$PROJECT_DIR$/c14.20_fs/source/kernel/dev/kbd.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c14.20_fs/source/kernel/fs/fs.c" beforeDir="false" afterPath="$PROJECT_DIR$/c14.20_fs/source/kernel/fs/fs.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c14.20_fs/source/kernel/include/core/memory.h" beforeDir="false" afterPath="$PROJECT_DIR$/c14.20_fs/source/kernel/include/core/memory.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c14.20_fs/source/kernel/include/core/syscall.h" beforeDir="false" afterPath="$PROJECT_DIR$/c14.20_fs/source/kernel/include/core/syscall.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c14.20_fs/source/kernel/include/core/task.h" beforeDir="false" afterPath="$PROJECT_DIR$/c14.20_fs/source/kernel/include/core/task.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c14.20_fs/source/kernel/include/dev/dev.h" beforeDir="false" afterPath="$PROJECT_DIR$/c14.20_fs/source/kernel/include/dev/dev.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c14.20_fs/source/kernel/include/dev/disk.h" beforeDir="false" afterPath="$PROJECT_DIR$/c14.20_fs/source/kernel/include/dev/disk.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c14.20_fs/source/kernel/include/fs/fat/cluster.h" beforeDir="false" afterPath="$PROJECT_DIR$/c14.20_fs/source/kernel/include/fs/fat/cluster.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c14.20_fs/source/kernel/include/fs/fat/fat.h" beforeDir="false" afterPath="$PROJECT_DIR$/c14.20_fs/source/kernel/include/fs/fat/fat.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c14.20_fs/source/kernel/include/fs/file.h" beforeDir="false" afterPath="$PROJECT_DIR$/c14.20_fs/source/kernel/include/fs/file.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c14.20_fs/source/kernel/include/fs/fs.h" beforeDir="false" afterPath="$PROJECT_DIR$/c14.20_fs/source/kernel/include/fs/fs.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c14.20_fs/source/kernel/include/os_cfg.h" beforeDir="false" afterPath="$PROJECT_DIR$/c14.20_fs/source/kernel/include/os_cfg.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c14.20_fs/source/kernel/include/tools/klib.h" beforeDir="false" afterPath="$PROJECT_DIR$/c14.20_fs/source/kernel/include/tools/klib.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c14.20_fs/source/kernel/init/exception.S" beforeDir="false" afterPath="$PROJECT_DIR$/c14.20_fs/source/kernel/init/exception.S" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c14.20_fs/source/kernel/init/first_task.c" beforeDir="false" afterPath="$PROJECT_DIR$/c14.20_fs/source/kernel/init/first_task.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c14.20_fs/source/kernel/init/init.c" beforeDir="false" afterPath="$PROJECT_DIR$/c14.20_fs/source/kernel/init/init.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c14.20_fs/source/kernel/kernel.lds" beforeDir="false" afterPath="$PROJECT_DIR$/c14.20_fs/source/kernel/kernel.lds" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c14.20_fs/source/kernel/tools/klib.c" beforeDir="false" afterPath="$PROJECT_DIR$/c14.20_fs/source/kernel/tools/klib.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../image/kernel.elf" beforeDir="false" afterPath="$PROJECT_DIR$/../image/kernel.elf" afterDir="false" />
     </list>
-    <ignored path="$PROJECT_DIR$/c14.10/cmake-build-debug/" />
-    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -48,84 +19,6 @@
   </component>
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
-  </component>
-  <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/c20.00.00/kernel/src/include/fs/fs.h">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1022">
-              <caret line="73" column="14" selection-start-line="73" selection-start-column="4" selection-end-line="73" selection-end-column="14" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/c20.00.00/kernel/src/fs/fs.c">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2156">
-              <caret line="154" column="21" selection-start-line="154" selection-start-column="12" selection-end-line="154" selection-end-column="21" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/c20.00.00/kernel/src/fs/fat.c">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="186">
-              <caret line="240" column="47" selection-start-line="240" selection-start-column="47" selection-end-line="240" selection-end-column="47" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/c20.00.00/kernel/src/include/core/task.h">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="389">
-              <caret line="84" column="16" selection-start-line="84" selection-start-column="4" selection-end-line="84" selection-end-column="16" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/c20.00.00/kernel/src/dev/disk.c">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1204">
-              <caret line="86" column="2" selection-start-line="86" selection-start-column="2" selection-end-line="86" selection-end-column="2" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/c20.00.00/kernel/src/include/dev/disk.h">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1218">
-              <caret line="87" column="27" selection-start-line="87" selection-start-column="18" selection-end-line="87" selection-end-column="27" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/c20.00.00/kernel/src/fs/dir.c">
-          <provider selected="true" editor-type-id="text-editor" />
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/c20.00.00/kernel/src/fs/mount.c">
-          <provider selected="true" editor-type-id="text-editor" />
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/c20.00.00/kernel/src/include/fs/mount.h">
-          <provider selected="true" editor-type-id="text-editor" />
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/project/source/kernel/ui/tty_widget.c">
-          <provider selected="true" editor-type-id="text-editor" />
-        </entry>
-      </file>
-    </leaf>
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
@@ -254,6 +147,7 @@
     <option name="width" value="1402" />
     <option name="height" value="800" />
   </component>
+  <component name="ProjectId" id="28bvDb0cZQ3JfYf95Lr8hy3W9if" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <ConfirmationsSetting value="2" id="Add" />
   </component>
@@ -345,15 +239,21 @@
       </pane>
     </panes>
   </component>
-  <component name="PropertiesComponent">
-    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/c12.11/source/kernel/include" />
-    <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
-    <property name="nodejs_npm_path_reset_for_default_project" value="true" />
-    <property name="run.code.analysis.last.selected.profile" value="pProject Default" />
-    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
   </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "cf.first.check.clang-format": "false",
+    "cidr.known.project.marker": "true",
+    "cmake.loaded.for.project": "true"
+  }
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/c12.11/source/kernel/include" />
@@ -367,18 +267,14 @@
       <recent name="$PROJECT_DIR$/c10.01/source/kernel/init" />
     </key>
   </component>
-  <component name="RunDashboard">
-    <option name="ruleStates">
-      <list>
-        <RuleState>
-          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
-        </RuleState>
-        <RuleState>
-          <option name="name" value="StatusDashboardGroupingRule" />
-        </RuleState>
-      </list>
-    </option>
+  <component name="RunManager">
+    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
+      </method>
+    </configuration>
   </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="SvnConfiguration">
     <configuration />
   </component>
@@ -438,6 +334,7 @@
       <workItem from="1650594569651" duration="360000" />
       <workItem from="1650611380659" duration="429000" />
       <workItem from="1650616967356" duration="348000" />
+      <workItem from="1651497986751" duration="22000" />
     </task>
     <servers />
   </component>
@@ -470,9 +367,6 @@
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="right" id="Database" order="3" />
     </layout>
-  </component>
-  <component name="TypeScriptGeneratedFilesManager">
-    <option name="version" value="1" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/c13.10/source/kernel/include/dev/keyboard.h" />

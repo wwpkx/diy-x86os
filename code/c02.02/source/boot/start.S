@@ -9,16 +9,15 @@
  * 作者：李述铜
  * 联系邮箱: 527676163@qq.com
  */
+	#include "boot.h"
+
   	// 16位代码，务必加上
   	.code16
-
-  	// FAT的DBR区及最初始的代码区
  	.text
 	.global _start
 _start:
-	// 原地跳转
 	jmp .
-
+	
 	// 引导结束段
 	.section boot_end, "ax"
 boot_sig: .byte 0x55, 0xaa
