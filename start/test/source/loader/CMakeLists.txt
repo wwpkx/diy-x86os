@@ -3,7 +3,7 @@ project(loader LANGUAGES C)
 
 # 使用自定义的链接器
 set(CMAKE_EXE_LINKER_FLAGS "-m elf_i386 -Ttext=0x8000")
-set(CMAKE_C_LINK_EXECUTABLE "${LINKER_TOOL} <OBJECTS> ${CMAKE_EXE_LINKER_FLAGS} -o ${PROJECT_NAME}.elf")
+set(CMAKE_C_LINK_EXECUTABLE "${LINKER_TOOL} <OBJECTS> ${CMAKE_EXE_LINKER_FLAGS} -o ${PROJECT_BINARY_DIR}/${PROJECT_NAME}.elf")
 
 # 将所有的汇编、C文件加入工程
 # 注意保证start.asm在最前头
