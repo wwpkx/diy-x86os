@@ -29,6 +29,8 @@ set(LINKER_TOOL "${TOOL_PREFIX}ld")
 
 # 其它工具
 set(OBJCOPY_TOOL "${TOOL_PREFIX}objcopy")
+set(OBJDUMP_TOOL "${TOOL_PREFIX}objdump")
+set(READELF_TOOL "${TOOL_PREFIX}readelf")
 
 # 工程，启用C语言和汇编语言
 project(os LANGUAGES C)  
