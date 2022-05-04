@@ -19,7 +19,6 @@ static boot_info_t boot_info;			// 启动参数信息
 
 /**
  * BIOS下显示字符串
- * @param msg
  */
 static void show_msg (const char * msg) {
 	char c;
@@ -30,7 +29,6 @@ static void show_msg (const char * msg) {
 		__asm__ __volatile__(
 				"mov $0xe, %%ah\n\t"
 				"mov %0, %%al\n\t"
-				"mov $0x3, %%bx\n\t"
 				"int $0x10"::"r"(c));
 	}
 }
@@ -41,6 +39,8 @@ static void  detect_memory(void) {
 	uint32_t contID = 0;
 	smap_entry_t smap_entry;
 	int signature, bytes;
+
+    show_msg("try to detect memory.\r\n");
 
 	// 初次：EDX=0x534D4150,EAX=0xE820,ECX=24,INT 0x15, EBX=0（初次）
 	// 后续：EAX=0xE820,ECX=24,
@@ -53,6 +53,7 @@ static void  detect_memory(void) {
 			: "=a"(signature), "=c"(bytes), "=b"(contID)
 			: "a"(0xE820), "b"(contID), "c"(sizeof(smap_entry_t)), "d"(SMAP_MAGIC_NUMBER), "D"(entry));
 		if (signature != SMAP_MAGIC_NUMBER) {
+            show_msg("error detect memory\r\n");
 			return;
 		}
 
@@ -72,10 +73,11 @@ static void  detect_memory(void) {
 			boot_info.ram_region_count++;
 		}
 	}
+    show_msg("detect memory end.\r\n");
 }
 
 void loader_entry(void) {
-    show_msg("....loading.....");
+    show_msg("....loading.....\r\n");
 	detect_memory();
     for(;;) {}
 }

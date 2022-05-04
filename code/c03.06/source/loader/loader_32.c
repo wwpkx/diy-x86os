@@ -11,6 +11,7 @@
 #include "comm/types.h"
 #include "comm/cpu_instr.h"
 #include "comm/boot_info.h"
+#include "loader.h"
 
 /**
 * 使用LBA48位模式读取磁盘
@@ -46,5 +47,9 @@ static void read_disk(int sector, int sector_count, uint8_t * buf) {
  * 从磁盘上加载内核
  */
 void load_kernel(void) {
+	// 临时使用，加载kernel，从第100个扇区开始，到400KB起始地址处
+	read_disk(100, 800, (uint8_t *)SYS_KERNEL_LOAD_ADDR);
+
+    ((void (*)(boot_info_t *))SYS_KERNEL_LOAD_ADDR)(&boot_info);
     for (;;) {}
 }

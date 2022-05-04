@@ -10,7 +10,75 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="503b7bda-5c1b-4288-a1ee-02d955517940" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/c02.03/script/img-write-linux.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/c02.03/script/img-write-osx.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/c02.03/script/qemu-debug-linux.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/c02.03/script/qemu-debug-osx.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/c02.04/script/img-write-linux.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/c02.04/script/img-write-osx.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/c02.04/script/qemu-debug-linux.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/c02.04/script/qemu-debug-osx.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/c02.05/script/img-write-linux.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/c02.05/script/img-write-osx.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/c02.05/script/qemu-debug-linux.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/c02.05/script/qemu-debug-osx.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/c02.06/script/img-write-linux.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/c02.06/script/img-write-osx.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/c02.06/script/qemu-debug-linux.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/c02.06/script/qemu-debug-osx.sh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c02.02/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/c02.02/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c02.02/source/boot/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/c02.02/source/boot/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c02.03/.vscode/launch.json" beforeDir="false" afterPath="$PROJECT_DIR$/c02.03/.vscode/launch.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c02.03/.vscode/settings.json" beforeDir="false" afterPath="$PROJECT_DIR$/c02.03/.vscode/settings.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c02.03/.vscode/tasks.json" beforeDir="false" afterPath="$PROJECT_DIR$/c02.03/.vscode/tasks.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c02.03/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/c02.03/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c02.03/script/img-write-win.bat" beforeDir="false" afterPath="$PROJECT_DIR$/c02.03/script/img-write-win.bat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c02.03/script/qemu-debug-win.bat" beforeDir="false" afterPath="$PROJECT_DIR$/c02.03/script/qemu-debug-win.bat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c02.03/script/qemu-run-win.bat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/c02.03/source/boot/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/c02.03/source/boot/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c02.03/source/boot/boot.c" beforeDir="false" afterPath="$PROJECT_DIR$/c02.03/source/boot/boot.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c02.03/source/boot/boot.h" beforeDir="false" afterPath="$PROJECT_DIR$/c02.03/source/boot/boot.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c02.03/source/boot/start.asm" beforeDir="false" afterPath="$PROJECT_DIR$/c02.03/source/boot/start.S" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c02.04/.vscode/launch.json" beforeDir="false" afterPath="$PROJECT_DIR$/c02.04/.vscode/launch.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c02.04/.vscode/settings.json" beforeDir="false" afterPath="$PROJECT_DIR$/c02.04/.vscode/settings.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c02.04/.vscode/tasks.json" beforeDir="false" afterPath="$PROJECT_DIR$/c02.04/.vscode/tasks.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c02.04/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/c02.04/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c02.04/script/img-write-win.bat" beforeDir="false" afterPath="$PROJECT_DIR$/c02.04/script/img-write-win.bat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c02.04/script/qemu-debug-win.bat" beforeDir="false" afterPath="$PROJECT_DIR$/c02.04/script/qemu-debug-win.bat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c02.04/script/qemu-run-win.bat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/c02.04/source/boot/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/c02.04/source/boot/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c02.04/source/boot/boot.c" beforeDir="false" afterPath="$PROJECT_DIR$/c02.04/source/boot/boot.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c02.04/source/boot/boot.h" beforeDir="false" afterPath="$PROJECT_DIR$/c02.04/source/boot/boot.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c02.04/source/boot/start.asm" beforeDir="false" afterPath="$PROJECT_DIR$/c02.04/source/boot/start.S" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c02.05/.vscode/launch.json" beforeDir="false" afterPath="$PROJECT_DIR$/c02.05/.vscode/launch.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c02.05/.vscode/settings.json" beforeDir="false" afterPath="$PROJECT_DIR$/c02.05/.vscode/settings.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c02.05/.vscode/tasks.json" beforeDir="false" afterPath="$PROJECT_DIR$/c02.05/.vscode/tasks.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c02.05/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/c02.05/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c02.05/script/img-write-win.bat" beforeDir="false" afterPath="$PROJECT_DIR$/c02.05/script/img-write-win.bat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c02.05/script/qemu-debug-win.bat" beforeDir="false" afterPath="$PROJECT_DIR$/c02.05/script/qemu-debug-win.bat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c02.05/script/qemu-run-win.bat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/c02.05/source/boot/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/c02.05/source/boot/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c02.05/source/boot/boot.c" beforeDir="false" afterPath="$PROJECT_DIR$/c02.05/source/boot/boot.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c02.05/source/boot/boot.h" beforeDir="false" afterPath="$PROJECT_DIR$/c02.05/source/boot/boot.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c02.05/source/boot/start.asm" beforeDir="false" afterPath="$PROJECT_DIR$/c02.05/source/boot/start.S" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c02.06/.vscode/launch.json" beforeDir="false" afterPath="$PROJECT_DIR$/c02.06/.vscode/launch.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c02.06/.vscode/settings.json" beforeDir="false" afterPath="$PROJECT_DIR$/c02.06/.vscode/settings.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c02.06/.vscode/tasks.json" beforeDir="false" afterPath="$PROJECT_DIR$/c02.06/.vscode/tasks.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c02.06/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/c02.06/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c02.06/script/img-write-win.bat" beforeDir="false" afterPath="$PROJECT_DIR$/c02.06/script/img-write-win.bat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c02.06/script/qemu-debug-win.bat" beforeDir="false" afterPath="$PROJECT_DIR$/c02.06/script/qemu-debug-win.bat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c02.06/script/qemu-run-win.bat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/c02.06/source/boot/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/c02.06/source/boot/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c02.06/source/boot/boot.h" beforeDir="false" afterPath="$PROJECT_DIR$/c02.06/source/boot/boot.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c02.06/source/boot/start.asm" beforeDir="false" afterPath="$PROJECT_DIR$/c02.06/source/boot/start.S" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c02.06/source/comm/types.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/c02.06/source/loader/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/c02.06/source/loader/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c02.06/source/loader/loader.h" beforeDir="false" afterPath="$PROJECT_DIR$/c02.06/source/loader/loader.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c02.06/source/loader/loader_32.c" beforeDir="false" afterPath="$PROJECT_DIR$/c02.06/source/loader/loader_32.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c02.06/source/loader/start.asm" beforeDir="false" afterPath="$PROJECT_DIR$/c02.06/source/loader/start.S" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../image/boot.bin" beforeDir="false" afterPath="$PROJECT_DIR$/../image/boot.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../start/start/source/boot/start.S" beforeDir="false" afterPath="$PROJECT_DIR$/../start/start/source/boot/start.S" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -142,6 +210,9 @@
       </list>
     </option>
   </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
   <component name="OCFindUsagesOptions" text="true" ivars="false" properties="true" derivedClasses="false" />
   <component name="ProjectFrameBounds" extendedState="6">
     <option name="width" value="1402" />
@@ -251,16 +322,17 @@
     "WebServerToolWindowFactoryState": "false",
     "cf.first.check.clang-format": "false",
     "cidr.known.project.marker": "true",
-    "cmake.loaded.for.project": "true"
+    "cmake.loaded.for.project": "true",
+    "last_opened_file_path": "/Users/mac/Documents/diy-x86os/code/c02.06/script"
   }
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/c02.06/script" />
+      <recent name="$PROJECT_DIR$/c02.05/script" />
+      <recent name="$PROJECT_DIR$/c02.04/script" />
+      <recent name="$PROJECT_DIR$/c02.03/script" />
       <recent name="$PROJECT_DIR$/c12.11/source/kernel/include" />
-      <recent name="$PROJECT_DIR$/c12.11/source/kernel" />
-      <recent name="$PROJECT_DIR$/c12.09/source/applib" />
-      <recent name="$PROJECT_DIR$/c12.09/source/shell" />
-      <recent name="$PROJECT_DIR$/c12.02/source/kernel/core" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/c10.06/source/kernel/include/cpu" />
@@ -268,9 +340,9 @@
     </key>
   </component>
   <component name="RunManager">
-    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
+    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
       <method v="2">
-        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
   </component>
@@ -335,6 +407,7 @@
       <workItem from="1650611380659" duration="429000" />
       <workItem from="1650616967356" duration="348000" />
       <workItem from="1651497986751" duration="22000" />
+      <workItem from="1651560328549" duration="3524000" />
     </task>
     <servers />
   </component>
@@ -367,6 +440,9 @@
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="right" id="Database" order="3" />
     </layout>
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/c13.10/source/kernel/include/dev/keyboard.h" />

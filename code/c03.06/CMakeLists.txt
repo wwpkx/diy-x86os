@@ -26,5 +26,5 @@ include_directories(
 # 底层的若干子项目
 add_subdirectory(./source/boot)
 add_subdirectory(./source/loader)
-# add_subdirectory(./source/kernel)
+add_subdirectory(./source/kernel)
 

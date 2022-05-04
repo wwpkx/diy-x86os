@@ -76,4 +76,6 @@ struct ModeInfoBlock {
 };
 #pragma pack()
 
+extern boot_info_t boot_info;
+
 #endif // LOADER_H

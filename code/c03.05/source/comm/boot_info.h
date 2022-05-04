@@ -35,4 +35,6 @@ typedef struct _boot_info_t {
 #define SYS_CFG_SCREEN_HEIGHT      600			// 图形像素的高度
 #define SYS_CFG_SCREEN_BPP         32			// 每像素的表达位数
 
+#define SYS_DISK_SECTOR_SIZE		512			// 磁盘扇区大小
+
 #endif // BOOT_INFO_H

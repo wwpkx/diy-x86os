@@ -4,7 +4,7 @@ set DISK1_NAME=disk1.vhd
 dd if=boot.bin of=%DISK1_NAME% bs=512 conv=notrunc count=1
 
 @REM 写loader区，定位到磁盘第2个块，写1个块：512字节
-@REM dd if=loader.bin of=%DISK1_NAME% bs=512 conv=notrunc seek=1
+dd if=loader.bin of=%DISK1_NAME% bs=512 conv=notrunc seek=1
 
 @REM 写kernel区，定位到磁盘第100个块
 @REM dd if=kernel.elf of=%DISK1_NAME% bs=512 conv=notrunc seek=100

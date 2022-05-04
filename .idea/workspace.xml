@@ -2,12 +2,255 @@
 <project version="4">
   <component name="CMakeSettings">
     <configurations>
-      <configuration PROFILE_NAME="Debug" CONFIG_NAME="Debug" />
+      <configuration PROFILE_NAME="Debug" ENABLED="true" CONFIG_NAME="Debug" />
     </configurations>
   </component>
-  <component name="PropertiesComponent">
-    <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
-    <property name="nodejs_npm_path_reset_for_default_project" value="true" />
-    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
+  <component name="ChangeListManager">
+    <list default="true" id="3b809321-adb7-4cb5-9337-f7fb9457928e" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/code/c02.04/script/img-write-linux.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/code/c02.04/script/img-write-osx.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/code/c02.04/script/qemu-debug-linux.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/code/c02.04/script/qemu-debug-osx.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/code/c02.05/script/img-write-linux.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/code/c02.05/script/img-write-osx.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/code/c02.05/script/qemu-debug-linux.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/code/c02.05/script/qemu-debug-osx.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/code/c02.06/script/img-write-linux.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/code/c02.06/script/img-write-osx.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/code/c02.06/script/qemu-debug-linux.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/code/c02.06/script/qemu-debug-osx.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/code/c02.07/script/img-write-linux.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/code/c02.07/script/img-write-osx.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/code/c02.07/script/qemu-debug-linux.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/code/c02.07/script/qemu-debug-osx.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/code/c02.07/source/loader/CMakeLists.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/code/c02.07/source/loader/loader.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/code/c02.07/source/loader/start.S" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/code/c03.01/script/img-write-linux.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/code/c03.01/script/img-write-osx.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/code/c03.01/script/qemu-debug-linux.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/code/c03.01/script/qemu-debug-osx.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/code/c03.02/script/img-write-linux.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/code/c03.02/script/img-write-osx.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/code/c03.02/script/qemu-debug-linux.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/code/c03.02/script/qemu-debug-osx.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/code/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c02.02/.vscode/c_cpp_properties.json" beforeDir="false" afterPath="$PROJECT_DIR$/code/c02.07/.vscode/c_cpp_properties.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c02.02/.vscode/launch.json" beforeDir="false" afterPath="$PROJECT_DIR$/code/c02.07/.vscode/launch.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c02.02/.vscode/settings.json" beforeDir="false" afterPath="$PROJECT_DIR$/code/c02.07/.vscode/settings.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c02.02/.vscode/tasks.json" beforeDir="false" afterPath="$PROJECT_DIR$/code/c02.07/.vscode/tasks.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c02.02/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/code/c02.07/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c02.02/script/img-write-linux.sh" beforeDir="false" afterPath="$PROJECT_DIR$/code/c02.03/script/img-write-linux.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c02.02/script/img-write-osx.sh" beforeDir="false" afterPath="$PROJECT_DIR$/code/c02.03/script/img-write-osx.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c02.02/script/img-write-win.bat" beforeDir="false" afterPath="$PROJECT_DIR$/code/c02.07/script/img-write-win.bat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c02.02/script/qemu-debug-linux.sh" beforeDir="false" afterPath="$PROJECT_DIR$/code/c02.03/script/qemu-debug-linux.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c02.02/script/qemu-debug-osx.sh" beforeDir="false" afterPath="$PROJECT_DIR$/code/c02.03/script/qemu-debug-osx.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c02.02/script/qemu-debug-win.bat" beforeDir="false" afterPath="$PROJECT_DIR$/code/c02.07/script/qemu-debug-win.bat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c02.02/source/boot/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/code/c02.07/source/boot/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c02.02/source/boot/boot.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c02.02/source/boot/boot.h" beforeDir="false" afterPath="$PROJECT_DIR$/code/c02.07/source/boot/boot.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c02.02/source/boot/start.S" beforeDir="false" afterPath="$PROJECT_DIR$/code/c02.03/source/boot/start.S" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c02.03/.vscode/launch.json" beforeDir="false" afterPath="$PROJECT_DIR$/code/c02.03/.vscode/launch.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c02.03/.vscode/settings.json" beforeDir="false" afterPath="$PROJECT_DIR$/code/c02.03/.vscode/settings.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c02.03/.vscode/tasks.json" beforeDir="false" afterPath="$PROJECT_DIR$/code/c02.03/.vscode/tasks.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c02.03/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/code/c02.03/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c02.03/script/img-write-win.bat" beforeDir="false" afterPath="$PROJECT_DIR$/code/c02.03/script/img-write-win.bat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c02.03/script/qemu-debug-win.bat" beforeDir="false" afterPath="$PROJECT_DIR$/code/c02.03/script/qemu-debug-win.bat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c02.03/script/qemu-run-win.bat" beforeDir="false" afterPath="$PROJECT_DIR$/code/c03.04/script/qemu-run-win.bat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c02.03/source/boot/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/code/c02.03/source/boot/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c02.03/source/boot/boot.c" beforeDir="false" afterPath="$PROJECT_DIR$/code/c02.03/source/boot/boot.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c02.03/source/boot/boot.h" beforeDir="false" afterPath="$PROJECT_DIR$/code/c02.03/source/boot/boot.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c02.03/source/boot/start.asm" beforeDir="false" afterPath="$PROJECT_DIR$/code/c02.04/source/boot/start.S" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c02.04/.vscode/launch.json" beforeDir="false" afterPath="$PROJECT_DIR$/code/c02.04/.vscode/launch.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c02.04/.vscode/settings.json" beforeDir="false" afterPath="$PROJECT_DIR$/code/c02.04/.vscode/settings.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c02.04/.vscode/tasks.json" beforeDir="false" afterPath="$PROJECT_DIR$/code/c02.04/.vscode/tasks.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c02.04/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/code/c02.04/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c02.04/script/img-write-win.bat" beforeDir="false" afterPath="$PROJECT_DIR$/code/c02.04/script/img-write-win.bat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c02.04/script/qemu-debug-win.bat" beforeDir="false" afterPath="$PROJECT_DIR$/code/c02.04/script/qemu-debug-win.bat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c02.04/script/qemu-run-win.bat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c02.04/source/boot/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/code/c02.04/source/boot/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c02.04/source/boot/boot.c" beforeDir="false" afterPath="$PROJECT_DIR$/code/c02.04/source/boot/boot.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c02.04/source/boot/boot.h" beforeDir="false" afterPath="$PROJECT_DIR$/code/c02.04/source/boot/boot.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c02.04/source/boot/start.asm" beforeDir="false" afterPath="$PROJECT_DIR$/code/c02.05/source/boot/start.S" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c02.05/.vscode/launch.json" beforeDir="false" afterPath="$PROJECT_DIR$/code/c02.05/.vscode/launch.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c02.05/.vscode/settings.json" beforeDir="false" afterPath="$PROJECT_DIR$/code/c02.05/.vscode/settings.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c02.05/.vscode/tasks.json" beforeDir="false" afterPath="$PROJECT_DIR$/code/c02.05/.vscode/tasks.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c02.05/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/code/c02.05/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c02.05/script/img-write-win.bat" beforeDir="false" afterPath="$PROJECT_DIR$/code/c02.05/script/img-write-win.bat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c02.05/script/qemu-debug-win.bat" beforeDir="false" afterPath="$PROJECT_DIR$/code/c02.05/script/qemu-debug-win.bat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c02.05/script/qemu-run-win.bat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c02.05/source/boot/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/code/c02.05/source/boot/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c02.05/source/boot/boot.c" beforeDir="false" afterPath="$PROJECT_DIR$/code/c02.05/source/boot/boot.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c02.05/source/boot/boot.h" beforeDir="false" afterPath="$PROJECT_DIR$/code/c02.05/source/boot/boot.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c02.05/source/boot/start.asm" beforeDir="false" afterPath="$PROJECT_DIR$/code/c02.06/source/boot/start.S" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c02.06/.vscode/launch.json" beforeDir="false" afterPath="$PROJECT_DIR$/code/c02.06/.vscode/launch.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c02.06/.vscode/settings.json" beforeDir="false" afterPath="$PROJECT_DIR$/code/c02.06/.vscode/settings.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c02.06/.vscode/tasks.json" beforeDir="false" afterPath="$PROJECT_DIR$/code/c02.06/.vscode/tasks.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c02.06/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/code/c02.06/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c02.06/script/img-write-win.bat" beforeDir="false" afterPath="$PROJECT_DIR$/code/c02.06/script/img-write-win.bat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c02.06/script/qemu-debug-win.bat" beforeDir="false" afterPath="$PROJECT_DIR$/code/c02.06/script/qemu-debug-win.bat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c02.06/script/qemu-run-win.bat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c02.06/source/boot/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/code/c02.06/source/boot/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c02.06/source/boot/boot.c" beforeDir="false" afterPath="$PROJECT_DIR$/code/c02.06/source/boot/boot.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c02.06/source/boot/boot.h" beforeDir="false" afterPath="$PROJECT_DIR$/code/c02.06/source/boot/boot.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c02.06/source/boot/start.asm" beforeDir="false" afterPath="$PROJECT_DIR$/code/c03.01/source/boot/start.S" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c02.06/source/comm/types.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c02.06/source/loader/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/code/c03.04/source/loader/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c02.06/source/loader/loader.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c02.06/source/loader/loader_16.c" beforeDir="false" afterPath="$PROJECT_DIR$/code/c02.07/source/loader/loader_16.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c02.06/source/loader/loader_32.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c02.06/source/loader/start.asm" beforeDir="false" afterPath="$PROJECT_DIR$/code/c03.01/source/loader/start.S" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c03.01/.vscode/launch.json" beforeDir="false" afterPath="$PROJECT_DIR$/code/c03.01/.vscode/launch.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c03.01/.vscode/settings.json" beforeDir="false" afterPath="$PROJECT_DIR$/code/c03.01/.vscode/settings.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c03.01/.vscode/tasks.json" beforeDir="false" afterPath="$PROJECT_DIR$/code/c03.01/.vscode/tasks.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c03.01/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/code/c03.01/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c03.01/script/img-write-win.bat" beforeDir="false" afterPath="$PROJECT_DIR$/code/c03.01/script/img-write-win.bat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c03.01/script/qemu-debug-win.bat" beforeDir="false" afterPath="$PROJECT_DIR$/code/c03.01/script/qemu-debug-win.bat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c03.01/script/qemu-run-win.bat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c03.01/source/boot/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/code/c03.01/source/boot/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c03.01/source/boot/boot.c" beforeDir="false" afterPath="$PROJECT_DIR$/code/c03.01/source/boot/boot.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c03.01/source/boot/boot.h" beforeDir="false" afterPath="$PROJECT_DIR$/code/c03.01/source/boot/boot.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c03.01/source/boot/start.asm" beforeDir="false" afterPath="$PROJECT_DIR$/code/c03.04/source/boot/start.asm" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c03.01/source/comm/types.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c03.01/source/loader/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/code/c03.01/source/loader/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c03.01/source/loader/loader.h" beforeDir="false" afterPath="$PROJECT_DIR$/code/c03.01/source/loader/loader.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c03.01/source/loader/loader_16.c" beforeDir="false" afterPath="$PROJECT_DIR$/code/c03.01/source/loader/loader_16.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c03.01/source/loader/loader_32.c" beforeDir="false" afterPath="$PROJECT_DIR$/code/c03.01/source/loader/loader_32.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c03.01/source/loader/start.asm" beforeDir="false" afterPath="$PROJECT_DIR$/code/c03.02/source/loader/start.S" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c03.02/.vscode/launch.json" beforeDir="false" afterPath="$PROJECT_DIR$/code/c03.02/.vscode/launch.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c03.02/.vscode/settings.json" beforeDir="false" afterPath="$PROJECT_DIR$/code/c03.02/.vscode/settings.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c03.02/.vscode/tasks.json" beforeDir="false" afterPath="$PROJECT_DIR$/code/c03.02/.vscode/tasks.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c03.02/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/code/c03.02/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c03.02/script/img-write-win.bat" beforeDir="false" afterPath="$PROJECT_DIR$/code/c03.02/script/img-write-win.bat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c03.02/script/qemu-debug-win.bat" beforeDir="false" afterPath="$PROJECT_DIR$/code/c03.02/script/qemu-debug-win.bat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c03.02/script/qemu-run-win.bat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c03.02/source/boot/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/code/c03.02/source/boot/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c03.02/source/boot/boot.c" beforeDir="false" afterPath="$PROJECT_DIR$/code/c03.02/source/boot/boot.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c03.02/source/boot/boot.h" beforeDir="false" afterPath="$PROJECT_DIR$/code/c03.02/source/boot/boot.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c03.02/source/boot/start.asm" beforeDir="false" afterPath="$PROJECT_DIR$/code/c02.07/source/boot/start.S" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c03.02/source/comm/types.h" beforeDir="false" afterPath="$PROJECT_DIR$/code/c03.02/source/comm/types.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c03.02/source/loader/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/code/c03.02/source/loader/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c03.02/source/loader/loader.h" beforeDir="false" afterPath="$PROJECT_DIR$/code/c03.02/source/loader/loader.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c03.02/source/loader/loader_16.c" beforeDir="false" afterPath="$PROJECT_DIR$/code/c03.02/source/loader/loader_16.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c03.02/source/loader/loader_32.c" beforeDir="false" afterPath="$PROJECT_DIR$/code/c03.02/source/loader/loader_32.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c03.02/source/loader/start.asm" beforeDir="false" afterPath="$PROJECT_DIR$/code/c03.04/source/loader/loader_32.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c03.03/.vscode/c_cpp_properties.json" beforeDir="false" afterPath="$PROJECT_DIR$/code/c03.04/.vscode/c_cpp_properties.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c03.03/.vscode/launch.json" beforeDir="false" afterPath="$PROJECT_DIR$/code/c03.04/.vscode/launch.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c03.03/.vscode/settings.json" beforeDir="false" afterPath="$PROJECT_DIR$/code/c03.04/.vscode/settings.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c03.03/.vscode/tasks.json" beforeDir="false" afterPath="$PROJECT_DIR$/code/c03.04/.vscode/tasks.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c03.03/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/code/c03.04/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c03.03/script/img-write-win.bat" beforeDir="false" afterPath="$PROJECT_DIR$/code/c03.04/script/img-write-win.bat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c03.03/script/qemu-debug-win.bat" beforeDir="false" afterPath="$PROJECT_DIR$/code/c03.04/script/qemu-debug-win.bat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c03.03/script/qemu-run-win.bat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c03.03/source/boot/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/code/c03.04/source/boot/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c03.03/source/boot/boot.c" beforeDir="false" afterPath="$PROJECT_DIR$/code/c03.04/source/boot/boot.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c03.03/source/boot/boot.h" beforeDir="false" afterPath="$PROJECT_DIR$/code/c03.04/source/boot/boot.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c03.03/source/boot/start.asm" beforeDir="false" afterPath="$PROJECT_DIR$/code/c03.02/source/boot/start.S" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c03.03/source/comm/boot_info.h" beforeDir="false" afterPath="$PROJECT_DIR$/code/c03.04/source/comm/boot_info.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c03.03/source/comm/types.h" beforeDir="false" afterPath="$PROJECT_DIR$/code/c03.04/source/comm/types.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c03.03/source/loader/CMakeLists.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c03.03/source/loader/loader.h" beforeDir="false" afterPath="$PROJECT_DIR$/code/c03.04/source/loader/loader.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c03.03/source/loader/loader_16.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c03.03/source/loader/loader_32.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c03.03/source/loader/start.asm" beforeDir="false" afterPath="$PROJECT_DIR$/code/c02.07/source/loader/loader_32.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c03.05/source/comm/boot_info.h" beforeDir="false" afterPath="$PROJECT_DIR$/code/c03.05/source/comm/boot_info.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c03.05/source/comm/cpu_instr.h" beforeDir="false" afterPath="$PROJECT_DIR$/code/c03.05/source/comm/cpu_instr.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c03.05/source/loader/loader_32.c" beforeDir="false" afterPath="$PROJECT_DIR$/code/c03.05/source/loader/loader_32.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c03.06/.vscode/launch.json" beforeDir="false" afterPath="$PROJECT_DIR$/code/c03.06/.vscode/launch.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c03.06/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/code/c03.06/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c03.06/script/img-write-win.bat" beforeDir="false" afterPath="$PROJECT_DIR$/code/c03.06/script/img-write-win.bat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c03.06/source/comm/boot_info.h" beforeDir="false" afterPath="$PROJECT_DIR$/code/c03.06/source/comm/boot_info.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c03.06/source/loader/loader.h" beforeDir="false" afterPath="$PROJECT_DIR$/code/c03.06/source/loader/loader.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c03.06/source/loader/loader_16.c" beforeDir="false" afterPath="$PROJECT_DIR$/code/c03.06/source/loader/loader_16.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c03.06/source/loader/loader_32.c" beforeDir="false" afterPath="$PROJECT_DIR$/code/c03.06/source/loader/loader_32.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c03.07/script/img-write-win.bat" beforeDir="false" afterPath="$PROJECT_DIR$/code/c03.07/script/img-write-win.bat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c03.07/source/comm/boot_info.h" beforeDir="false" afterPath="$PROJECT_DIR$/code/c03.07/source/comm/boot_info.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c03.07/source/kernel/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/code/c03.07/source/kernel/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c03.07/source/loader/loader_32.c" beforeDir="false" afterPath="$PROJECT_DIR$/code/c03.07/source/loader/loader_32.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c03.08/.vscode/c_cpp_properties.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c03.08/.vscode/launch.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c03.08/.vscode/settings.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c03.08/.vscode/tasks.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c03.08/CMakeLists.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c03.08/script/img-write-win.bat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c03.08/script/qemu-debug-win.bat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c03.08/script/qemu-run-win.bat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c03.08/source/boot/CMakeLists.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c03.08/source/boot/boot.c" beforeDir="false" afterPath="$PROJECT_DIR$/code/c02.07/source/boot/boot.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c03.08/source/boot/boot.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c03.08/source/boot/start.asm" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c03.08/source/comm/boot_info.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c03.08/source/comm/cpu_instr.h" beforeDir="false" afterPath="$PROJECT_DIR$/code/c03.04/source/comm/cpu_instr.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c03.08/source/comm/elf.h" beforeDir="false" afterPath="$PROJECT_DIR$/code/c03.07/source/comm/elf.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c03.08/source/comm/types.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c03.08/source/kernel/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/code/c03.06/source/kernel/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c03.08/source/kernel/init.c" beforeDir="false" afterPath="$PROJECT_DIR$/code/c03.06/source/kernel/init.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c03.08/source/kernel/start.asm" beforeDir="false" afterPath="$PROJECT_DIR$/code/c03.06/source/kernel/start.asm" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c03.08/source/loader/CMakeLists.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c03.08/source/loader/loader.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c03.08/source/loader/loader_16.c" beforeDir="false" afterPath="$PROJECT_DIR$/code/c03.04/source/loader/loader_16.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c03.08/source/loader/loader_32.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c03.08/source/loader/start.asm" beforeDir="false" afterPath="$PROJECT_DIR$/code/c03.04/source/loader/start.asm" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/目录.txt" beforeDir="false" afterPath="$PROJECT_DIR$/code/目录.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/image/boot.bin" beforeDir="false" afterPath="$PROJECT_DIR$/image/boot.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/start/start/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/start/start/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/start/start/source/boot/boot.c" beforeDir="false" afterPath="$PROJECT_DIR$/start/start/source/boot/boot.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/start/start/source/boot/start.S" beforeDir="false" afterPath="$PROJECT_DIR$/start/start/source/boot/start.S" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/start/test/source/loader/loader.h" beforeDir="false" afterPath="$PROJECT_DIR$/start/test/source/loader/loader.h" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ClangdSettings">
+    <option name="formatViaClangd" value="false" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectId" id="28eJDL3o1imUgZKmGbIxOJoaCpf" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "cf.first.check.clang-format": "false",
+    "cidr.known.project.marker": "true",
+    "last_opened_file_path": "/Users/mac/Documents/diy-x86os/code/c03.03/source"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/code/c03.03/source" />
+      <recent name="$PROJECT_DIR$/code/c03.03" />
+      <recent name="$PROJECT_DIR$/code/c03.02/source" />
+      <recent name="$PROJECT_DIR$/code/c03.02" />
+      <recent name="$PROJECT_DIR$/code/c03.01/script" />
+    </key>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="3b809321-adb7-4cb5-9337-f7fb9457928e" name="Changes" comment="" />
+      <created>1651570997632</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1651570997632</updated>
+      <workItem from="1651570999316" duration="9722000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
   </component>
 </project>
