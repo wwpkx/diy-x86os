@@ -10,22 +10,6 @@
 
 #include "types.h"
 
-static inline uint8_t inb(uint16_t  port) {
-	uint8_t rv;
-	__asm__ __volatile__("inb %1, %0" : "=a" (rv) : "dN" (port));
-	return rv;
-}
-
-static inline uint16_t inw(uint16_t  port) {
-	uint16_t rv;
-	__asm__ __volatile__("in %1, %0" : "=a" (rv) : "dN" (port));
-	return rv;
-}
-
-static inline void outb(uint16_t port, uint8_t data) {
-	__asm__ __volatile__("outb %1, %0" : : "dN" (port), "a" (data));
-}
-
 static inline void cli() {
 	__asm__ __volatile__("cli");
 }
@@ -56,11 +40,6 @@ static inline uint16_t read_cr0() {
 
 static inline void write_cr0(uint32_t v) {
 	__asm__ __volatile__("mov %0, %%cr0"::"r"(v));
-}
-
-static inline void far_jump(uint32_t selector, uint32_t offset) {
-	uint32_t addr[] = {offset, selector };
-	__asm__ __volatile__("ljmpl *(%0)"::"r"(addr));
 }
 
 #endif
