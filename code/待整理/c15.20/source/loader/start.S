@@ -7,9 +7,6 @@
  * 作者：李述铜
  * 联系邮箱: 527676163@qq.com
  */
-.set CODE_SEL,	8
-.set DATA_SEL,	16
-
   	// 16位代码，务必加上
   	.code16
  	.text
@@ -29,7 +26,7 @@ _start:
 	.extern load_kernel
 protect_mode_entry:
 	// 重新加载所有的数据段描述符
-	mov $DATA_SEL, %ax		// 16为数据段选择子
+	mov $16, %ax		// 16为数据段选择子
 	mov %ax, %ds
     mov %ax, %ss
     mov %ax, %es
@@ -37,6 +34,6 @@ protect_mode_entry:
     mov %ax, %gs
 
     // 长跳转进入到32位内核加载模式中
-    jmp $CODE_SEL, $load_kernel
+    jmp $8, $load_kernel
 
 

@@ -19,11 +19,5 @@ _start:
 	// boot没有这个能力做到，所以直接用汇编，以便_start处于整个bin文件开头，这样boot直接跳到开头就可以
 	jmp loader_entry
 
-	// 32位保护模式下的代码
-	.code32
-	.text
-	.global protect_mode_entry
-protect_mode_entry:
-    jmp $
 
 

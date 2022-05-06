@@ -76,16 +76,11 @@ static void  detect_memory(void) {
 }
 
 // GDT表。临时用，后面内容会替换成自己的
-#define CODE_SELECTOR           8       // 缺省第1个
-#define DS_SELECTOR             16      // 缺省第2个
 uint16_t gdt_table[][4] = {
     {0, 0, 0, 0},
     {0xFFFF, 0x0000, 0x9A00, 0x00CF},
     {0xFFFF, 0x0000, 0x9200, 0x00CF},
 };
-
-// 保护模式入口函数，在start.asm中定义
-void protect_mode_entry (void);
 
 /**
  * 进入保护模式
@@ -99,15 +94,17 @@ static void  enter_protect_mode() {
     uint8_t v = inb(0x92);
     outb(0x92, v | 0x2);
 
-    // 打开CR0的保护模式位，进入保持模式
-    v = read_cr0();
-    write_cr0(v | (1 << 0) | (1 << 1));
-
     // 加载GDT。由于中断已经关掉，IDT不需要加载
     lgdt((uint32_t)gdt_table, sizeof(gdt_table));
 
+    // 打开CR0的保护模式位，进入保持模式
+    uint32_t cr0 = read_cr0();
+    write_cr0(cr0 | (1 << 0) | (1 << 1));
+
+
     // 长跳转进入到保护模式
-    far_jump(CODE_SELECTOR, (uint32_t)protect_mode_entry);
+    // 使用长跳转，以便清空流水线，将里面的16位代码给清空
+    far_jump(8, (uint32_t)protect_mode_entry);
 }
 
 void loader_entry(void) {

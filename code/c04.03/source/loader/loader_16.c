@@ -82,9 +82,6 @@ uint16_t gdt_table[][4] = {
     {0xFFFF, 0x0000, 0x9200, 0x00CF},
 };
 
-// 保护模式入口函数，在start.asm中定义
-void protect_mode_entry (void);
-
 /**
  * 进入保护模式
  */
@@ -92,9 +89,10 @@ static void  enter_protect_mode() {
     // 关中断
     cli();
 
-    // 打开CR0的保护模式位，进入保持模式
-    v = read_cr0();
-    write_cr0(v | (1 << 0) | (1 << 1));
+    // 开启A20地址线，使得可访问1M以上空间
+    // 使用的是Fast A20 Gate方式，见https://wiki.osdev.org/A20#Fast_A20_Gate
+    uint8_t v = inb(0x92);
+    outb(0x92, v | 0x2);
 
     // 加载GDT。由于中断已经关掉，IDT不需要加载
     lgdt((uint32_t)gdt_table, sizeof(gdt_table));
