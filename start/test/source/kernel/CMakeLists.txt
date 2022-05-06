@@ -1,5 +1,4 @@
-
-project(kernel LANGUAGES C)  
+project(kernel LANGUAGES C)
 
 # 使用自定义的链接器
 # 加入相应的库
