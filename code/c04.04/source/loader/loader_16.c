@@ -99,7 +99,7 @@ static void  enter_protect_mode() {
 
     // 打开CR0的保护模式位，进入保持模式
     uint32_t cr0 = read_cr0();
-    write_cr0(cr0 | (1 << 0) | (1 << 1));
+    write_cr0(cr0 | (1 << 0));
 
 
     // 长跳转进入到保护模式

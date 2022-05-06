@@ -7,22 +7,44 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="3b809321-adb7-4cb5-9337-f7fb9457928e" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/code/c04.05/script/img-write-linux.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/code/c04.05/script/img-write-osx.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/code/c04.05/script/qemu-debug-linux.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/code/c04.05/script/qemu-debug-osx.sh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/code/c04.03/source/comm/cpu_instr.h" beforeDir="false" afterPath="$PROJECT_DIR$/code/c04.03/source/comm/cpu_instr.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/c04.03/source/loader/loader.h" beforeDir="false" afterPath="$PROJECT_DIR$/code/c04.03/source/loader/loader.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/c04.03/source/loader/loader_16.c" beforeDir="false" afterPath="$PROJECT_DIR$/code/c04.03/source/loader/loader_16.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/c04.03/source/loader/start.S" beforeDir="false" afterPath="$PROJECT_DIR$/code/c04.03/source/loader/start.S" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/c04.04/source/comm/cpu_instr.h" beforeDir="false" afterPath="$PROJECT_DIR$/code/c04.04/source/comm/cpu_instr.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/code/c04.04/source/loader/loader.h" beforeDir="false" afterPath="$PROJECT_DIR$/code/c04.04/source/loader/loader.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/code/c04.04/source/loader/loader_16.c" beforeDir="false" afterPath="$PROJECT_DIR$/code/c04.04/source/loader/loader_16.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/待整理/c15.20/source/loader/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/code/待整理/c15.20/source/loader/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/待整理/c15.20/source/loader/loader.h" beforeDir="false" afterPath="$PROJECT_DIR$/code/待整理/c15.20/source/loader/loader.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c04.05/.vscode/launch.json" beforeDir="false" afterPath="$PROJECT_DIR$/code/c04.05/.vscode/launch.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c04.05/.vscode/settings.json" beforeDir="false" afterPath="$PROJECT_DIR$/code/c04.05/.vscode/settings.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c04.05/.vscode/tasks.json" beforeDir="false" afterPath="$PROJECT_DIR$/code/c04.05/.vscode/tasks.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c04.05/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/code/c04.05/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c04.05/script/img-write-win.bat" beforeDir="false" afterPath="$PROJECT_DIR$/code/c04.05/script/img-write-win.bat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c04.05/script/qemu-debug-win.bat" beforeDir="false" afterPath="$PROJECT_DIR$/code/c04.05/script/qemu-debug-win.bat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c04.05/script/qemu-run-win.bat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c04.05/source/boot/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/code/c04.05/source/boot/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c04.05/source/boot/boot.c" beforeDir="false" afterPath="$PROJECT_DIR$/code/c04.05/source/boot/boot.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c04.05/source/boot/boot.h" beforeDir="false" afterPath="$PROJECT_DIR$/code/c04.05/source/boot/boot.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c04.05/source/boot/start.asm" beforeDir="false" afterPath="$PROJECT_DIR$/code/c04.05/source/boot/start.S" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c04.05/source/comm/boot_info.h" beforeDir="false" afterPath="$PROJECT_DIR$/code/c04.05/source/comm/boot_info.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c04.05/source/comm/cpu_instr.h" beforeDir="false" afterPath="$PROJECT_DIR$/code/c04.05/source/comm/cpu_instr.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c04.05/source/comm/types.h" beforeDir="false" afterPath="$PROJECT_DIR$/code/c04.05/source/comm/types.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c04.05/source/loader/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/code/c04.05/source/loader/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c04.05/source/loader/loader.h" beforeDir="false" afterPath="$PROJECT_DIR$/code/c04.05/source/loader/loader.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c04.05/source/loader/loader_16.c" beforeDir="false" afterPath="$PROJECT_DIR$/code/c04.05/source/loader/loader_16.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c04.05/source/loader/loader_32.c" beforeDir="false" afterPath="$PROJECT_DIR$/code/c04.05/source/loader/loader_32.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c04.05/source/loader/start.asm" beforeDir="false" afterPath="$PROJECT_DIR$/code/c04.05/source/loader/start.S" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/待整理/c15.20/source/boot/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/code/待整理/c15.20/source/boot/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/待整理/c15.20/source/boot/boot.c" beforeDir="false" afterPath="$PROJECT_DIR$/code/待整理/c15.20/source/boot/boot.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/待整理/c15.20/source/boot/start.S" beforeDir="false" afterPath="$PROJECT_DIR$/code/待整理/c15.20/source/boot/start.S" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/待整理/c15.20/source/comm/boot_info.h" beforeDir="false" afterPath="$PROJECT_DIR$/code/待整理/c15.20/source/comm/boot_info.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/待整理/c15.20/source/comm/cpu_instr.h" beforeDir="false" afterPath="$PROJECT_DIR$/code/待整理/c15.20/source/comm/cpu_instr.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/待整理/c15.20/source/comm/types.h" beforeDir="false" afterPath="$PROJECT_DIR$/code/待整理/c15.20/source/comm/types.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/code/待整理/c15.20/source/loader/loader_16.c" beforeDir="false" afterPath="$PROJECT_DIR$/code/待整理/c15.20/source/loader/loader_16.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/code/待整理/c15.20/source/loader/loader_32.c" beforeDir="false" afterPath="$PROJECT_DIR$/code/待整理/c15.20/source/loader/loader_32.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/待整理/c15.20/source/loader/start.S" beforeDir="false" afterPath="$PROJECT_DIR$/code/待整理/c15.20/source/loader/start.S" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/start/start/source/loader/loader.h" beforeDir="false" afterPath="$PROJECT_DIR$/start/start/source/loader/loader.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/start/start/source/loader/loader_16.c" beforeDir="false" afterPath="$PROJECT_DIR$/start/start/source/loader/loader_16.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/start/start/source/loader/start.S" beforeDir="false" afterPath="$PROJECT_DIR$/start/start/source/loader/start.S" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/start/start/source/comm/boot_info.h" beforeDir="false" afterPath="$PROJECT_DIR$/start/start/source/comm/boot_info.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/start/start/source/comm/cpu_instr.h" beforeDir="false" afterPath="$PROJECT_DIR$/start/start/source/comm/cpu_instr.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/start/start/source/loader/loader_32.c" beforeDir="false" afterPath="$PROJECT_DIR$/start/start/source/loader/loader_32.c" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -43,25 +65,25 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
-    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/mac/Documents/diy-x86os/code&quot;,
-    &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "cf.first.check.clang-format": "false",
+    "cidr.known.project.marker": "true",
+    "last_opened_file_path": "/Users/mac/Documents/diy-x86os/code/c04.05/script",
+    "run.code.analysis.last.selected.profile": "pProject Default"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/code/c04.05/script" />
       <recent name="$PROJECT_DIR$/code" />
       <recent name="$PROJECT_DIR$/code/c04.04" />
       <recent name="$PROJECT_DIR$/code/c04.02/source/comm" />
       <recent name="$PROJECT_DIR$/code/c03.03/source" />
-      <recent name="$PROJECT_DIR$/code/c03.03" />
     </key>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
@@ -74,7 +96,7 @@
       <updated>1651570997632</updated>
       <workItem from="1651570999316" duration="15484000" />
       <workItem from="1651715310122" duration="9821000" />
-      <workItem from="1651808840597" duration="6798000" />
+      <workItem from="1651808840597" duration="10819000" />
     </task>
     <servers />
   </component>

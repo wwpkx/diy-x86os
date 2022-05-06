@@ -8,9 +8,6 @@
  * 作者：李述铜
  * 联系邮箱: 527676163@qq.com
  */
-#include "comm/types.h"
-#include "comm/cpu_instr.h"
-#include "comm/boot_info.h"
 #include "comm/elf.h"
 #include "loader.h"
 
@@ -38,7 +35,7 @@ static void read_disk(int sector, int sector_count, uint8_t * buf) {
 		while ((inb(0x1F7) & 0x88) != 0x8) {}
 
 		// 读取并将数据写入到缓存中
-		for (int i = 0; i < SYS_DISK_SECTOR_SIZE / 2; i++) {
+		for (int i = 0; i < SECTOR_SIZE / 2; i++) {
 			*data_buf++ = inw(0x1F0);
 		}
 	}

@@ -31,8 +31,8 @@ static inline void sti() {
 static inline void lgdt(uint32_t start, uint32_t size) {
 	struct {
 		uint16_t limit;
-		uint16_t start15_0;
-		uint16_t start31_16;
+		uint16_t start15_0;    // 视频中这里写成了32位
+		uint16_t start31_16;    // 视频中这里写成了32位
 	} gdt;
 
 	gdt.start31_16 = start >> 16;
