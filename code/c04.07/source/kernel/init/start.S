@@ -12,13 +12,21 @@
  	.global _start
 	.extern kernel_init
 _start:
-	push %ebp
-	mov %esp, %ebp
-	movl 8(%ebp), %eax			// 取传给loader的参数
+    # 第一种方法
+    # push %ebp
+    # mov %esp, %ebp
+    # mov 0x8(%ebp), %eax
+    # push %eax
 
-	push %eax					// 再作为参数传递给kernel_init
-	call kernel_init
-	add $0x4, %esp				// 恢复之前的esp值
+    # 第二种方法
+    # mov 4(%esp), %eax
+    # push %eax
+
+    # 第三种方法
+    push 4(%esp)
+
+    # kernel_init(boot_info)
+    call kernel_init
 
 	jmp .
 

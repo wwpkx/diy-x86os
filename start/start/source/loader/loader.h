@@ -18,4 +18,6 @@ typedef struct SMAP_entry {
  
 }__attribute__((packed)) SMAP_entry_t;
 
+extern boot_info_t boot_info;
+
 #endif 
