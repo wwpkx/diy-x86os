@@ -8,16 +8,8 @@
   <component name="ChangeListManager">
     <list default="true" id="3b809321-adb7-4cb5-9337-f7fb9457928e" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/c04.05/source/loader/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/code/c04.05/source/loader/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/c04.07/source/kernel/init/init.c" beforeDir="false" afterPath="$PROJECT_DIR$/code/c04.07/source/kernel/init/init.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/c04.07/source/kernel/init/start.S" beforeDir="false" afterPath="$PROJECT_DIR$/code/c04.07/source/kernel/init/start.S" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/image/boot.bin" beforeDir="false" afterPath="$PROJECT_DIR$/image/boot.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/start/start/.vscode/launch.json" beforeDir="false" afterPath="$PROJECT_DIR$/start/start/.vscode/launch.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/start/start/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/start/start/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/start/start/script/img-write-linux.sh" beforeDir="false" afterPath="$PROJECT_DIR$/start/start/script/img-write-linux.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/start/start/script/img-write-osx.sh" beforeDir="false" afterPath="$PROJECT_DIR$/start/start/script/img-write-osx.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/start/start/script/img-write-win.bat" beforeDir="false" afterPath="$PROJECT_DIR$/start/start/script/img-write-win.bat" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/start/start/source/loader/loader_32.c" beforeDir="false" afterPath="$PROJECT_DIR$/start/start/source/loader/loader_32.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/c04.06/source/kernel/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/code/c04.06/source/kernel/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/目录.txt" beforeDir="false" afterPath="$PROJECT_DIR$/code/目录.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -74,7 +66,7 @@
       <workItem from="1651570999316" duration="15484000" />
       <workItem from="1651715310122" duration="9821000" />
       <workItem from="1651808840597" duration="20005000" />
-      <workItem from="1651873087757" duration="4555000" />
+      <workItem from="1651873087757" duration="5823000" />
     </task>
     <servers />
   </component>

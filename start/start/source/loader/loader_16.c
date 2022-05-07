@@ -2,7 +2,7 @@ __asm__(".code16gcc");
 
 #include "loader.h"
 
-static boot_info_t boot_info;
+boot_info_t boot_info;
 
 static void show_msg (const char * msg) {
     char c;

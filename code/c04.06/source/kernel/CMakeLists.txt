@@ -6,8 +6,8 @@ set(CMAKE_C_LINK_EXECUTABLE "${LINKER_TOOL} <OBJECTS> ${CMAKE_EXE_LINKER_FLAGS} 
 
 # 将所有的汇编、C文件加入工程
 # 注意保证start.asm在最前头
-file(GLOB_RECURSE C_LIST "*.c" "*.h" "*.S")
-add_executable(${PROJECT_NAME} ${C_LIST})
+file(GLOB_RECURSE C_LIST "*.c" "*.h")
+add_executable(${PROJECT_NAME} init/start.S ${C_LIST})
 
 # 不带调试信息的elf生成，何种更小，写入到image目录下
 add_custom_command(TARGET ${PROJECT_NAME}
