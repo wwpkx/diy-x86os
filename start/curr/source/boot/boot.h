@@ -9,14 +9,7 @@
  * 作者：李述铜
  * 联系邮箱: 527676163@qq.com
  */
-__asm__(".code16gcc");
+#ifndef BOOT_H
+#define BOOT_H
 
-#include "boot.h"
-
-/**
- * Boot的C入口函数
- * 只完成一项功能，即从磁盘找到loader文件然后加载到内容中，并跳转过去
- */
-void boot_entry(void) {
-} 
-
+#endif
