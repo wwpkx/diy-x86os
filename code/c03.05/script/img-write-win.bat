@@ -14,7 +14,6 @@ dd if=boot.bin of=%DISK1_NAME% bs=512 conv=notrunc count=1
 @REM dd if=shell.elf of=%DISK1_NAME% bs=512 conv=notrunc seek=5000
 
 @REM 写应用程序，使用系统的挂载命令
-@REM 开始复制
 @REM set DISK2_NAME=disk2.vhd
 @REM set TARGET_PATH=k
 @REM echo select vdisk file="%cd%\%DISK2_NAME%" >a.txt

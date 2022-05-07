@@ -39,11 +39,11 @@
                     "ignoreFailures": true
                 },
                 // 设置体系结构: i8086，方便以16位方式进行反汇编
-                {
-                    "description": "设置体系结构",
-                    "text": "-gdb-set arch i8086",
-                    "ignoreFailures": true
-                }
+                // {
+                //     "description": "设置体系结构",
+                //     "text": "-gdb-set arch i386",
+                //     "ignoreFailures": true
+                // }
             ],
             // gdb连接后的设置
             "postRemoteConnectCommands": [
@@ -52,16 +52,16 @@
                     "text": "-file-symbol-file ./build/source/boot/boot.elf",
                     "ignoreFailures": false
                 },       
-                // {
-                //     "description": "加载内核符号文件",
-                //      "text": "add-symbol-file ./build/source/kernel/kernel.elf 0x100000",
-                //     "ignoreFailures": false
-                // },
-                // {
-                //     "description": "加载load符号文件",
-                //     "text": "add-symbol-file ./build/source/loader/loader.elf 0x8000",
-                //     "ignoreFailures": false
-                // },
+                {
+                    "description": "加载内核符号文件",
+                    "text": "add-symbol-file ./build/source/kernel/kernel.elf 0x100000",
+                    "ignoreFailures": false
+                },
+                {
+                    "description": "加载load符号文件",
+                    "text": "add-symbol-file ./build/source/loader/loader.elf 0x8000",
+                    "ignoreFailures": false
+                },
                 // {
                 //     "description": "加载boot符号文件",
                 //     "text": "add-symbol-file ./build/source/boot/boot.elf 0x7c00",
