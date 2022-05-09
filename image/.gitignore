@@ -1,0 +1,6 @@
+*.bin
+*.elf
+*.vhd
+*.img
+*.dmg
+loop

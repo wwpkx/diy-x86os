@@ -3,4 +3,3 @@ build
 *.dmg
 *.elf
 *.bin
-image/boot.bin
