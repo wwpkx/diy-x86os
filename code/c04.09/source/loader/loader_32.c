@@ -60,6 +60,9 @@ static uint32_t reload_elf_file (uint8_t * file_buffer) {
     // 然后从中加载程序头，将内容拷贝到相应的位置
     for (int i = 0; i < elf_hdr->e_phnum; i++) {
         Elf32_Phdr * phdr = (Elf32_Phdr *)(file_buffer + elf_hdr->e_phoff) + i;
+        if (phdr->p_type != PT_LOAD) {
+            continue;
+        }
 
 		// 全部使用物理地址，此时分页机制还未打开
         uint8_t * src = file_buffer + phdr->p_offset;
@@ -76,6 +79,13 @@ static uint32_t reload_elf_file (uint8_t * file_buffer) {
     }
 
     return elf_hdr->e_entry;
+}
+
+/**
+ * 死机
+ */
+static void die (int code) {
+    for (;;) {}
 }
 
 /**
