@@ -91,7 +91,7 @@ void cpu_init (void);
 void gdt_reload (void);
 gdt_descriptor_t * gdt_alloc_desc (void);
 void set_gate_desc(gate_descriptor_t *desc, uint16_t selector, uint32_t offset, uint16_t attr);
-void set_segment_desc(gdt_descriptor_t *desc, uint32_t base, uint32_t limit, uint16_t attr);
+void gdt_segment_desc_set(gdt_descriptor_t *desc, uint32_t base, uint32_t limit, uint16_t attr);
 int gdt_alloc_segment (uint32_t base, uint32_t limit, uint16_t attr);
 void gdt_free_sel (int sel);
 

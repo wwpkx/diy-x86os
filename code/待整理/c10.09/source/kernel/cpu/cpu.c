@@ -15,7 +15,7 @@ static gdt_descriptor_t gdt_table[GDT_TABLE_SIZE];
 /**
  * 设置段描述符
  */
-void set_segment_desc(gdt_descriptor_t *desc, uint32_t base, uint32_t limit, uint16_t attr) {
+void gdt_segment_desc_set(gdt_descriptor_t *desc, uint32_t base, uint32_t limit, uint16_t attr) {
 	// 如果界限比较长，将长度单位换成4KB
 	if (limit > 0xfffff) {
 		attr |= 0x8000;
@@ -99,16 +99,16 @@ uint16_t desc_2_gdt_selector(gdt_descriptor_t * desc) {
 void init_gdt(void) {
 	// 全部清空
     for (int i = 0; i < GDT_TABLE_SIZE; i++) {
-        set_segment_desc(gdt_table + i, 0, 0, 0);
+        gdt_segment_desc_set(gdt_table + i, 0, 0, 0);
     }
 
     //数据段
-    set_segment_desc(gdt_table + (KERNEL_SELECTOR_DS >> 3), 0x00000000, 0xFFFFFFFF,
+    gdt_segment_desc_set(gdt_table + (KERNEL_SELECTOR_DS >> 3), 0x00000000, 0xFFFFFFFF,
                      GDT_SET_PRESENT | GDT_SEG_DPL0 | GDT_SEG_S_CODE_DATA | GDT_SEG_TYPE_DATA | GDT_SEG_TYPE_RW |
                      GDT_SEG_D);
 
     // 只能用非一致代码段，以便通过调用门更改当前任务的CPL执行关键的资源访问操作
-    set_segment_desc(gdt_table + (KERNEL_SELECTOR_CS >> 3), 0x00000000, 0xFFFFFFFF,
+    gdt_segment_desc_set(gdt_table + (KERNEL_SELECTOR_CS >> 3), 0x00000000, 0xFFFFFFFF,
                      GDT_SET_PRESENT | GDT_SEG_DPL0 | GDT_SEG_S_CODE_DATA | GDT_SEG_TYPE_CODE | GDT_SEG_TYPE_RW | GDT_SEG_D);
 
 

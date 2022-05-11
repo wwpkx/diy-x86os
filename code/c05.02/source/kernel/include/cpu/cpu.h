@@ -26,19 +26,6 @@
 #define GDT_SEG_TYPE_RW			(1 << 1)		// ���ݶοɶ�д������οɶ���ִ�С�����ֻ����ִֻ��
 #define GDT_SEG_TYPE_C_E		(1 << 2)		// ����Σ�һ�´���Ρ����ݶΣ����λ��չ
 
-#define GDB_TSS_BUSY            (1 << 1)        // TSS忙
-#define GDB_TSS_TYPE            (0x9)           // TSS类型
-
-#define GDT_TYPE_LDT            (2 << 0)
-#define GDT_TYPE_TSS            (9 << 0)
-#define GDT_TYPE_INT_GATE       (14 << 0)
-
-#define GDT_SELECTOR_TI         (1 << 2)
-#define GDT_RPL0                (0 << 0)
-#define GDT_RPL1                (1 << 0)
-#define GDT_RPL2                (2 << 0)
-#define GDT_RPL3                (3 << 0)
-
 #pragma pack(1)
 
 /**

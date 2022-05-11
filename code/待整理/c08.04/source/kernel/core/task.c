@@ -20,7 +20,7 @@ int task_init (task_t *task, const char * name, uint32_t entry, uint32_t esp) {
     if (tss_desc == (gdt_descriptor_t *)0) {
         return -1;
     }
-    set_segment_desc(tss_desc, (uint32_t)&task->tss, sizeof(tss_t), GDT_SET_PRESENT | GDT_SEG_DPL0 | GDB_TSS_TYPE);
+    gdt_segment_desc_set(tss_desc, (uint32_t)&task->tss, sizeof(tss_t), GDT_SET_PRESENT | GDT_SEG_DPL0 | GDB_TSS_TYPE);
 
     // tss段初始化
     kernel_memset(&task->tss, 0, sizeof(tss_t));
