@@ -43,6 +43,14 @@ static void read_disk(int sector, int sector_count, uint8_t * buf) {
 }
 
 /**
+ * 死机
+ */
+static void die (int code) {
+    for (;;) {
+    }
+}
+
+/**
  * 解析elf文件，提取内容到相应的内存中
  * https://wiki.osdev.org/ELF
  * @param file_buffer
@@ -82,13 +90,6 @@ static uint32_t reload_elf_file (uint8_t * file_buffer) {
 }
 
 /**
- * 死机
- */
-static void die (int code) {
-    for (;;) {}
-}
-
-/**
  * 从磁盘上加载内核
  */
 void load_kernel(void) {
@@ -103,6 +104,6 @@ void load_kernel(void) {
 		die(-1);
 	}
 
+	// 转换为函数指针，然后跳进内核
     ((void (*)(boot_info_t *))kernel_entry)(&boot_info);
-    for (;;) {}
 }
