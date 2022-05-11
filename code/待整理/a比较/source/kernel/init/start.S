@@ -7,9 +7,7 @@
  * 作者：李述铜
  * 联系邮箱: 527676163@qq.com
  */
-.set KERNEL_SELECTOR_CS, 8
-.set KERNEL_SELECTOR_DS, 16
- .set KERNEL_STACK_SIZE, 4096
+ #include "os_cfg.h"
 
   	// 不必加.code32因默认就是32位
  	.text

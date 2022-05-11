@@ -8,12 +8,14 @@
 #include "cpu/cpu.h"
 #include "os_cfg.h"
 
-static gdt_descriptor_t gdt_table[GDT_TABLE_SIZE];
+static segment_desc_t gdt_table[GDT_TABLE_SIZE];
 
 /**
  * 设置段描述符
  */
-void gdt_segment_desc_set(gdt_descriptor_t *desc, uint32_t base, uint32_t limit, uint16_t attr) {
+void segment_desc_set(int selector, uint32_t base, uint32_t limit, uint16_t attr) {
+    segment_desc_t * desc = gdt_table + (selector >> 3);
+
 	// 如果界限比较长，将长度单位换成4KB
 	if (limit > 0xfffff) {
 		attr |= 0x8000;
@@ -32,7 +34,7 @@ void gdt_segment_desc_set(gdt_descriptor_t *desc, uint32_t base, uint32_t limit,
 void init_gdt(void) {
 	// 全部清空
     for (int i = 0; i < GDT_TABLE_SIZE; i++) {
-        gdt_segment_desc_set(gdt_table + i, 0, 0, 0);
+        segment_desc_set(i << 3, 0, 0, 0);
     }
 }
 

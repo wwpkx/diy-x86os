@@ -26,7 +26,7 @@ static mutex_t task_table_mutex;        // 进程表互斥访问锁
 int task_init (task_t *task, const char * name, int flag, uint32_t entry, uint32_t esp) {
     // 为TSS分配GDT
     int tss_sel = gdt_alloc_segment((uint32_t)&task->tss,
-                                sizeof(tss_t), GDT_SET_PRESENT | GDT_SEG_DPL0 | GDB_TSS_TYPE);
+                                sizeof(tss_t), SEG_P_PRESENT | SEG_DPL0 | GDB_TSS_TYPE);
     if (tss_sel < 0) {
         return -1;
     }
@@ -163,12 +163,12 @@ void task_manager_init (void) {
     //数据段和代码段，使用DPL3，所有应用共用同一个
     //为调试方便，暂时使用DPL0
     task_manager.app_data_sel = gdt_alloc_segment(0x00000000, 0xFFFFFFFF,
-                     GDT_SET_PRESENT | GDT_SEG_DPL3 | GDT_SEG_S_CODE_DATA | 
-                     GDT_SEG_TYPE_DATA | GDT_SEG_TYPE_RW | GDT_SEG_D);
+                     SEG_P_PRESENT | SEG_DPL3 | SEG_S_NORMAL |
+                     SEG_TYPE_DATA | SEG_TYPE_RW | SEG_D);
 
     task_manager.app_code_sel = gdt_alloc_segment(0x00000000, 0xFFFFFFFF,
-                     GDT_SET_PRESENT | GDT_SEG_DPL3 | GDT_SEG_S_CODE_DATA | 
-                     GDT_SEG_TYPE_CODE | GDT_SEG_TYPE_RW | GDT_SEG_D);
+                     SEG_P_PRESENT | SEG_DPL3 | SEG_S_NORMAL |
+                     SEG_TYPE_CODE | SEG_TYPE_RW | SEG_D);
 
     // <0和0的id有其它用途
     task_incr_id = 1;

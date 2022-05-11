@@ -14,11 +14,11 @@
  */
 int task_init (task_t *task, uint32_t entry, uint32_t esp) {
     // 为TSS分配GDT
-    gdt_descriptor_t * tss_desc = gdt_alloc_desc();
-    if (tss_desc == (gdt_descriptor_t *)0) {
+    segment_desc_t * tss_desc = gdt_alloc_desc();
+    if (tss_desc == (segment_desc_t *)0) {
         return -1;
     }
-    gdt_segment_desc_set(tss_desc, (uint32_t)&task->tss, sizeof(tss_t), GDT_SET_PRESENT | GDT_SEG_DPL0 | GDB_TSS_TYPE);
+    segment_desc_set(tss_desc, (uint32_t)&task->tss, sizeof(tss_t), SEG_P_PRESENT | SEG_DPL0 | GDB_TSS_TYPE);
 
     // tss段初始化
     kernel_memset(&task->tss, 0, sizeof(tss_t));

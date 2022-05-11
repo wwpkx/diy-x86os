@@ -9,7 +9,6 @@
 #include "comm/cpu_instr.h"
 #include "cpu/cpu.h"
 #include "cpu/irq.h"
-#include "dev/timer.h"
 #include "os_cfg.h"
 
 static boot_info_t * init_boot_info;        // 启动信息
@@ -27,8 +26,7 @@ void kernel_init (boot_info_t * boot_info) {
 
 void init_main(void) {
     irq_init();
-    timer_init();
 
-    //int a = 3 / 0;
+    int a = 3 / 0;
     for (;;) {}
 }

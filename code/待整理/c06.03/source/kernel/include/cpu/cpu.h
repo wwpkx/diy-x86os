@@ -10,20 +10,20 @@
 
 #include "comm/types.h"
 
-#define GDT_SEG_G				(1 << 15)		// ���ȵ�λΪ4KB
-#define GDT_SEG_D				(1 << 14)		// ���ݺ�ָ��Ϊ32λ
-#define GDT_SET_PRESENT			(1 << 7)		// ���Ƿ����
+#define SEG_G				(1 << 15)		// ���ȵ�λΪ4KB
+#define SEG_D				(1 << 14)		// ���ݺ�ָ��Ϊ32λ
+#define SEG_P_PRESENT			(1 << 7)		// ���Ƿ����
 
-#define GDT_SEG_DPL0			(0 << 5)		// DPL��Ȩ��0
-#define GDT_SEG_DPL3			(3 << 5)		// DPL��Ȩ��3
+#define SEG_DPL0			(0 << 5)		// DPL��Ȩ��0
+#define SEG_DPL3			(3 << 5)		// DPL��Ȩ��3
 
-#define GDT_SEG_S_SYS_GATE		(0 << 4)		// ϵͳ����������
-#define GDT_SEG_S_CODE_DATA		(1 << 4)		// ���ݺʹ���������
+#define SEG_S_SYSTEM		(0 << 4)		// ϵͳ����������
+#define SEG_S_NORMAL		(1 << 4)		// ���ݺʹ���������
 
-#define GDT_SEG_TYPE_CODE		(1 << 3)		// �����
-#define GDT_SEG_TYPE_DATA		(0 << 3)		// ���ݶ�
+#define SEG_TYPE_CODE		(1 << 3)		// �����
+#define SEG_TYPE_DATA		(0 << 3)		// ���ݶ�
 #define GDT_SEG_TYPE_A			(1 << 0)		// �Ѿ������ʹ�
-#define GDT_SEG_TYPE_RW			(1 << 1)		// ���ݶοɶ�д������οɶ���ִ�С�����ֻ����ִֻ��
+#define SEG_TYPE_RW			(1 << 1)		// ���ݶοɶ�д������οɶ���ִ�С�����ֻ����ִֻ��
 #define GDT_SEG_TYPE_C_E		(1 << 2)		// ����Σ�һ�´���Ρ����ݶΣ����λ��չ
 
 #define GDB_TSS_BUSY            (1 << 1)        // TSS忙
@@ -55,23 +55,23 @@
 /**
  * GDT描述符
  */
-typedef struct _gdt_descriptor_t {
+typedef struct _segment_desc_t {
 	uint16_t limit15_0;		
 	uint16_t base15_0;
 	uint8_t base23_16;
 	uint16_t attr;
 	uint8_t base31_24;
-}gdt_descriptor_t;
+}segment_desc_t;
 
 /*
  * 调用门描述符
  */
-typedef struct _gate_descriptor_t {
+typedef struct _gate_desc_t {
 	uint16_t offset15_0;
 	uint16_t selector;
 	uint16_t attr;
 	uint16_t offset31_16;
-}gate_descriptor_t;
+}gate_desc_t;
 
 /**
  * tss描述符
@@ -89,10 +89,10 @@ typedef struct _tss_t {
 
 void cpu_init (void);
 void gdt_reload (void);
-gdt_descriptor_t * gdt_alloc_desc (void);
-uint16_t desc_2_gdt_selector(gdt_descriptor_t * desc);
-void set_gate_desc(gate_descriptor_t *desc, uint16_t selector, uint32_t offset, uint16_t attr);
-void gdt_segment_desc_set(gdt_descriptor_t *desc, uint32_t base, uint32_t limit, uint16_t attr);
+segment_desc_t * gdt_alloc_desc (void);
+uint16_t desc_2_gdt_selector(segment_desc_t * desc);
+void gate_desc_set(gate_desc_t *desc, uint16_t selector, uint32_t offset, uint16_t attr);
+void segment_desc_set(segment_desc_t *desc, uint32_t base, uint32_t limit, uint16_t attr);
 
 void switch_to_tss (uint32_t tss_selector);
 

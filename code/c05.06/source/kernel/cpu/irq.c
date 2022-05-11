@@ -12,33 +12,37 @@
 
 #define IDT_TABLE_NR			128				// IDT表项数量
 
-static gate_descriptor_t idt_table[IDT_TABLE_NR];	// 中断描述表
+static gate_desc_t idt_table[IDT_TABLE_NR];	// 中断描述表
 
 static void do_default_handler (const char * message) {
     for (;;) {hlt();}
 }
 
-void do_handler_divider(void) {
-	do_default_handler("Device Error.");
+void do_handler_unknown (void) {
+	do_default_handler("Unknown exception.");
 }
 
+/**
+ * @brief 中断和异常初始化
+ */
 void irq_init(void) {	
-	for (uint32_t i = 0; i < sizeof(idt_table) / sizeof(gate_descriptor_t); i++) {
-        set_gate_desc(idt_table + i, 0, 0, 0);
+	for (uint32_t i = 0; i < IDT_TABLE_NR; i++) {
+    	gate_desc_set(idt_table + i, KERNEL_SELECTOR_CS, (uint32_t) exception_handler_unknown,
+                  GATE_P_PRESENT | GATE_DPL0 | GATE_TYPE_IDT);
 	}
-
-	// 设置异常处理接口
-	irq_install(IRQ0_DE, (irq_handler_t)handler_divider);
 
 	lidt((uint32_t)idt_table, sizeof(idt_table));
 }
 
+/**
+ * @brief 安装中断或异常处理程序
+ */
 int irq_install(int irq_num, irq_handler_t handler) {
 	if (irq_num >= IDT_TABLE_NR) {
 		return -1;
 	}
 
-    set_gate_desc(idt_table + irq_num, KERNEL_SELECTOR_CS | GDT_RPL3, (uint32_t) handler,
-                  GDT_GATE_PRESENT | GDT_GATE_DPL0 | GDT_GATE_TYPE_IDT);
+    gate_desc_set(idt_table + irq_num, KERNEL_SELECTOR_CS, (uint32_t) handler,
+                  SEG_P_PRESENT | SEG_DPL0 | GATE_TYPE_IDT);
 	return 0;
 }

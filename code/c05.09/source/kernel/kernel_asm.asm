@@ -98,6 +98,3 @@ excetpion_handler alignment_check, 17, 1
 excetpion_handler machine_check, 18, 0
 excetpion_handler smd_exception, 19, 0
 excetpion_handler virtual_exception, 20, 0
-
-// 硬件中断
-excetpion_handler timer, 0x20, 0

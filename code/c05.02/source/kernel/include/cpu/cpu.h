@@ -10,39 +10,38 @@
 
 #include "comm/types.h"
 
-#define GDT_SEG_G				(1 << 15)		// ���ȵ�λΪ4KB
-#define GDT_SEG_D				(1 << 14)		// ���ݺ�ָ��Ϊ32λ
-#define GDT_SET_PRESENT			(1 << 7)		// ���Ƿ����
+#define SEG_G				(1 << 15)		// 设置段界限的单位，1-4KB，0-字节
+#define SEG_D				(1 << 14)		// 控制是否是32位、16位的代码或数据段
+#define SEG_P_PRESENT	    (1 << 7)		// 段是否存在
 
-#define GDT_SEG_DPL0			(0 << 5)		// DPL��Ȩ��0
-#define GDT_SEG_DPL3			(3 << 5)		// DPL��Ȩ��3
+#define SEG_DPL0			(0 << 5)		// 特权级0，最高特权级
+#define SEG_DPL3			(3 << 5)		// 特权级3，最低权限
 
-#define GDT_SEG_S_SYS_GATE		(0 << 4)		// ϵͳ����������
-#define GDT_SEG_S_CODE_DATA		(1 << 4)		// ���ݺʹ���������
+#define SEG_S_SYSTEM		(0 << 4)		// 是否是系统段，如调用门或者中断
+#define SEG_S_NORMAL		(1 << 4)		// 普通的代码段或数据段
 
-#define GDT_SEG_TYPE_CODE		(1 << 3)		// �����
-#define GDT_SEG_TYPE_DATA		(0 << 3)		// ���ݶ�
-#define GDT_SEG_TYPE_A			(1 << 0)		// �Ѿ������ʹ�
-#define GDT_SEG_TYPE_RW			(1 << 1)		// ���ݶοɶ�д������οɶ���ִ�С�����ֻ����ִֻ��
-#define GDT_SEG_TYPE_C_E		(1 << 2)		// ����Σ�һ�´���Ρ����ݶΣ����λ��չ
+#define SEG_TYPE_CODE		(1 << 3)		// 指定其为代码段
+#define SEG_TYPE_DATA		(0 << 3)		// 数据段
+
+#define SEG_TYPE_RW			(1 << 1)		// 是否可写可读，不设置为只读
 
 #pragma pack(1)
 
 /**
  * GDT描述符
  */
-typedef struct _gdt_descriptor_t {
-	uint16_t limit15_0;		
+typedef struct _segment_desc_t {
+	uint16_t limit15_0;
 	uint16_t base15_0;
 	uint8_t base23_16;
 	uint16_t attr;
 	uint8_t base31_24;
-}gdt_descriptor_t;
+}segment_desc_t;
 
 #pragma pack()
 
 void cpu_init (void);
-void gdt_reload (void);
+void segment_desc_set(int selector, uint32_t base, uint32_t limit, uint16_t attr);
 
 #endif
 
