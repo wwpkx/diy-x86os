@@ -43,6 +43,14 @@ static void read_disk(int sector, int sector_count, uint8_t * buf) {
 }
 
 /**
+ * 死机
+ */
+static void die (int code) {
+    for (;;) {
+    }
+}
+
+/**
  * 解析elf文件，提取内容到相应的内存中
  * https://wiki.osdev.org/ELF
  * @param file_buffer
@@ -60,6 +68,9 @@ static uint32_t reload_elf_file (uint8_t * file_buffer) {
     // 然后从中加载程序头，将内容拷贝到相应的位置
     for (int i = 0; i < elf_hdr->e_phnum; i++) {
         Elf32_Phdr * phdr = (Elf32_Phdr *)(file_buffer + elf_hdr->e_phoff) + i;
+        if (phdr->p_type != PT_LOAD) {
+            continue;
+        }
 
 		// 全部使用物理地址，此时分页机制还未打开
         uint8_t * src = file_buffer + phdr->p_offset;
@@ -93,6 +104,6 @@ void load_kernel(void) {
 		die(-1);
 	}
 
+	// 转换为函数指针，然后跳进内核
     ((void (*)(boot_info_t *))kernel_entry)(&boot_info);
-    for (;;) {}
 }

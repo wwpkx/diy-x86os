@@ -9,6 +9,7 @@
  * 联系邮箱: 527676163@qq.com
  */
 #include "loader.h"
+#include "comm/elf.h"
 
 /**
 * 使用LBA48位模式读取磁盘
