@@ -30,8 +30,3 @@ _start:
 
 	jmp .
 
-    .data
-    .global test_data
-test_data: .string "1234"
-
-

@@ -22,7 +22,7 @@ static uint32_t idle_task_stack[IDLE_STACK_SIZE];	// 空闲任务堆栈
 int task_init (task_t *task, const char * name, uint32_t entry, uint32_t esp) {
     // 为TSS分配GDT
     int tss_sel = gdt_alloc_segment((uint32_t)&task->tss,
-                                sizeof(tss_t), GDT_SET_PRESENT | GDT_SEG_DPL0 | GDB_TSS_TYPE);
+                                sizeof(tss_t), SEG_P_PRESENT | SEG_DPL0 | GDB_TSS_TYPE);
     if (tss_sel < 0) {
         return -1;
     }

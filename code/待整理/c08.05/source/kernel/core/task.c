@@ -17,9 +17,9 @@ static task_manager_t task_manager;     // 任务管理器
  */
 int task_init (task_t *task, const char * name, uint32_t entry, uint32_t esp) {
     // 为TSS分配GDT
-    gdt_descriptor_t * tss_desc = gdt_alloc_segment((uint32_t)&task->tss, 
-                                sizeof(tss_t), GDT_SET_PRESENT | GDT_SEG_DPL0 | GDB_TSS_TYPE);
-    if (tss_desc == (gdt_descriptor_t *)0) {
+    segment_desc_t * tss_desc = gdt_alloc_segment((uint32_t)&task->tss,
+                                sizeof(tss_t), SEG_P_PRESENT | SEG_DPL0 | GDB_TSS_TYPE);
+    if (tss_desc == (segment_desc_t *)0) {
         return -1;
     }
 
