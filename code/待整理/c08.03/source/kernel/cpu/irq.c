@@ -15,7 +15,7 @@
 #define IRQ_PIC_START			0x20			// PIC中断起始号
 #define IRQ_PIC_NR				8				// PIC的中断数量
 
-static gate_descriptor_t idt_table[IDT_TABLE_NR];	// 中断描述表
+static gate_desc_t idt_table[IDT_TABLE_NR];	// 中断描述表
 
 static void init_pic(void) {
     outb(PIC0_ICW1, PIC_ICW_ALWAYS_1 | PIC_ICW1_ICW4);
@@ -139,8 +139,8 @@ void do_handler_virtual_exception(exception_frame_t * frame) {
 }
 
 void irq_init(void) {	
-	for (uint32_t i = 0; i < sizeof(idt_table) / sizeof(gate_descriptor_t); i++) {
-        set_gate_desc(idt_table + i, 0, 0, 0);
+	for (uint32_t i = 0; i < sizeof(idt_table) / sizeof(gate_desc_t); i++) {
+        gate_desc_set(idt_table + i, 0, 0, 0);
 	}
 
 	// 设置异常处理接口
@@ -176,7 +176,7 @@ int irq_install(int irq_num, irq_handler_t handler) {
 		return -1;
 	}
 
-    set_gate_desc(idt_table + irq_num, KERNEL_SELECTOR_CS | GDT_RPL3, (uint32_t) handler,
+    gate_desc_set(idt_table + irq_num, KERNEL_SELECTOR_CS | GDT_RPL3, (uint32_t) handler,
                   GDT_GATE_PRESENT | GDT_GATE_DPL0 | GDT_GATE_TYPE_IDT);
 	return 0;
 }
