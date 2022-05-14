@@ -5,3 +5,4 @@
 *.img
 *.dmg
 loop
+/boot.bin
