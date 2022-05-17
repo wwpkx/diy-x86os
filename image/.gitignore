@@ -1,6 +1,8 @@
+
 *.bin
 *.elf
 *.vhd
 *.img
 *.dmg
 loop
+/boot.bin
