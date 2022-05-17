@@ -8,7 +8,6 @@
 #include "comm/boot_info.h"
 #include "comm/cpu_instr.h"
 #include "cpu/cpu.h"
-#include "cpu/irq.h"
 #include "os_cfg.h"
 
 static boot_info_t * init_boot_info;        // 启动信息
@@ -21,11 +20,9 @@ void kernel_init (boot_info_t * boot_info) {
 
     // 初始化CPU，再重新加载
     cpu_init();
-    irq_init();
 }
 
 void init_main(void) {
-
     int a = 3 / 0;
     for (;;) {}
 }

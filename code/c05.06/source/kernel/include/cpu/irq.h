@@ -8,11 +8,6 @@
 #ifndef IRQ_H
 #define IRQ_H
 
-typedef void(*irq_handler_t)(void);
-
 void irq_init (void);
-int irq_install(int irq_num, irq_handler_t handler);
-
-void exception_handler_unknown (void);
 
 #endif

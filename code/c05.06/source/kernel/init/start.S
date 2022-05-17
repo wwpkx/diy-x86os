@@ -51,37 +51,3 @@ gdt_reload:
 	.bss
 .comm stack, KERNEL_STACK_SIZE    // comm 声明未初始化的通用内存区域，以字节计
 
-
-// 中断发生时，会自动切换到特权级0对应的栈中去执行
-// 并且只保存ss,esp,cs,eip,flags寄存器
-// 所以需要在中断中自行保存其它寄存器
-
-    .text
-	.extern do_handler_unknown
-	.global exception_handler_unknown
-exception_handler_unknown:
-	push $0			// 没有错误码，压入一个缺省值
-	push $-1		// 压入异常的号码
-
-	// 保存所有寄存器
-	pushal
-	push %ds
-	push %es
-	push %fs
-	push %gs
-
-	// 调用中断处理函数
-	call do_handler_unknown
-
-	// 恢复保存的寄存器
-	pop %gs
-	pop %fs
-	pop %es
-	pop %ds
-	popal
-
-	// 跳过压入的异常号和错误码
-	add $(2*4), %esp
-
-	iret
-
