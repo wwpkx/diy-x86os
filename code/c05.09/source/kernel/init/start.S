@@ -96,5 +96,5 @@ gdt_reload:
 		iret
 .endm
 
-exception_handler known, -1, 0
+exception_handler unknown, -1, 0
 exception_handler divider, 0, 0
