@@ -6,7 +6,7 @@
         {
             "label": "写映像文件",
             "type": "shell",
-            "command": "bash ${workspaceRoot}/script/img-write-osx.sh &",
+            "command": "bash ${workspaceRoot}/script/img-write-osx.sh",
             "windows": {
                 // windows下特殊一些
                 "command": "${workspaceRoot}/script/img-write-win.bat",
@@ -31,14 +31,6 @@
             },
             "options": {
                 "cwd": "${workspaceRoot}/../../image/"
-            },
-            "presentation":{
-                "echo": true,
-                "reveal": "always",
-                "focus": false,
-                "panel": "new",
-                "showReuseMessage": true,
-                "clear": false,
             }
         },
         {

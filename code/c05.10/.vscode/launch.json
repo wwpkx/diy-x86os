@@ -15,13 +15,13 @@
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",
-            "miDebuggerPath": "x86_64-elf-gdb",
+            "MIDebuggerPath": "x86_64-elf-gdb",
             "miDebuggerServerAddress": "127.0.0.1:1234",
             "targetArchitecture": "x86",
             "stopAtConnect": true,
-            "preLaunchTask": "调试准备", // 仅在windows下可自动运行
             // 启动gdb之前，做些准备：写映像文件、启动qemu
             "windows": {
+                "preLaunchTask": "调试准备", // 仅在windows下可自动运行
             },
             "linux": {
                 "miDebuggerPath": "gdb", // linux下的特殊配置

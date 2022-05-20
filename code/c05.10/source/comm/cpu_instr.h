@@ -76,4 +76,9 @@ static inline void lidt(uint32_t start, uint32_t size) {
 
 	__asm__ __volatile__("lidt %0"::"m"(idt));
 }
+
+static inline void hlt(void) {
+    __asm__ __volatile__("hlt");
+}
+
 #endif
