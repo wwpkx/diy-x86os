@@ -1,12 +1,12 @@
 if [ -f "disk1.vhd" ]; then
-    mv disk1.vhd disk1.img
+    mv disk1.vhd disk1.dmg
 fi
 
 if [ -f "disk2.vhd" ]; then
-    mv disk2.vhd disk2.img
+    mv disk2.vhd disk2.dmg
 fi
 
-export DISK1_NAME=disk1.img
+export DISK1_NAME=disk1.dmg
 
 # 写boot区，定位到磁盘开头，写1个块：512字节
 dd if=boot.bin of=$DISK1_NAME bs=512 conv=notrunc count=1
@@ -22,12 +22,11 @@ dd if=kernel.elf of=$DISK1_NAME bs=512 conv=notrunc seek=100
 # dd if=shell.elf of=$DISK1_NAME bs=512 conv=notrunc seek=5000
 
 # 写应用程序，使用系统的挂载命令
-export DISK2_NAME=disk2.img
-export TARGET_PATH=mp
-rm -rf $TARGET_PATH
-mkdir $TARGET_PATH
-sudo mount -o offset=$[128*512],rw $DISK2_NAME $TARGET_PATH
-sudo cp -v init.elf $TARGET_PATH
-sudo cp -v shell.elf $TARGET_PATH
-sudo cp -v loop $TARGET_PATH
-sudo umount $TARGET_PATH
+# export DISK2_NAME=disk2.dmg
+# export TARGET_PATH=mp
+# rm $TARGET_PATH
+# hdiutil attach $DISK2_NAME -mountpoint $TARGET_PATH
+# cp -v init.elf $TARGET_PATH
+# cp -v shell.elf $TARGET_PATH
+# cp -v loop $TARGET_PATH
+# hdiutil unmount $TARGET_PATH -verbose

@@ -14,22 +14,21 @@ dd if=kernel.elf of=%DISK1_NAME% bs=512 conv=notrunc seek=100
 @REM dd if=shell.elf of=%DISK1_NAME% bs=512 conv=notrunc seek=5000
 
 @REM 写应用程序，使用系统的挂载命令
-@REM 开始复制
-set DISK2_NAME=disk2.vhd
-set TARGET_PATH=k
-echo select vdisk file="%cd%\%DISK2_NAME%" >a.txt
-echo attach vdisk >>a.txt
-echo select partition 1 >> a.txt
-echo assign letter=%TARGET_PATH% >> a.txt
-diskpart /s a.txt
-del a.txt
+@REM set DISK2_NAME=disk2.vhd
+@REM set TARGET_PATH=k
+@REM echo select vdisk file="%cd%\%DISK2_NAME%" >a.txt
+@REM echo attach vdisk >>a.txt
+@REM echo select partition 1 >> a.txt
+@REM echo assign letter=%TARGET_PATH% >> a.txt
+@REM diskpart /s a.txt
+@REM del a.txt
 
 @REM 复制应用程序
-copy /Y init.elf %TARGET_PATH%:\init.elf
-copy /Y shell.elf %TARGET_PATH%:\shell.elf
-copy /Y loop %TARGET_PATH%:\loop
+@REM copy /Y init.elf %TARGET_PATH%:\init.elf
+@REM copy /Y shell.elf %TARGET_PATH%:\shell.elf
+@REM copy /Y loop %TARGET_PATH%:\loop
 
-echo select vdisk file="%cd%\%DISK2_NAME%" >a.txt
-echo detach vdisk >>a.txt
-diskpart /s a.txt
-del a.txt
+@REM echo select vdisk file="%cd%\%DISK2_NAME%" >a.txt
+@REM echo detach vdisk >>a.txt
+@REM diskpart /s a.txt
+@REM del a.txt

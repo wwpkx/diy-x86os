@@ -171,6 +171,9 @@ void irq_init(void) {
 	init_pic();
 }
 
+/**
+ * @brief 安装中断或异常处理程序
+ */
 int irq_install(int irq_num, irq_handler_t handler) {
 	if (irq_num >= IDT_TABLE_NR) {
 		return -1;
