@@ -171,13 +171,16 @@ void irq_init(void) {
 	init_pic();
 }
 
+/**
+ * @brief 安装中断或异常处理程序
+ */
 int irq_install(int irq_num, irq_handler_t handler) {
 	if (irq_num >= IDT_TABLE_NR) {
 		return -1;
 	}
 
-    gate_desc_set(idt_table + irq_num, KERNEL_SELECTOR_CS | GDT_RPL3, (uint32_t) handler,
-                  GDT_GATE_PRESENT | GDT_GATE_DPL0 | GDT_GATE_TYPE_IDT);
+    gate_desc_set(idt_table + irq_num, KERNEL_SELECTOR_CS, (uint32_t) handler,
+                  GATE_P_PRESENT | GATE_DPL0 | GATE_TYPE_IDT);
 	return 0;
 }
 
@@ -186,15 +189,15 @@ void irq_enable(int irq_num) {
         return;
     }
 
-	irq_num -= IRQ_PIC_START;
-	if (irq_num < IRQ_PIC_NR) {
-		uint8_t mask = inb(PIC0_IMR) & ~(1 << irq_num);
-		outb(PIC0_IMR, mask);
-	} else {
-		irq_num -= IRQ_PIC_NR;
-		uint8_t mask = inb(PIC1_IMR) & ~(1 << irq_num);
-		outb(PIC1_IMR, mask);
-	}
+    irq_num -= IRQ_PIC_START;
+    if (irq_num < IRQ_PIC_NR) {
+        uint8_t mask = inb(PIC0_IMR) & ~(1 << irq_num);
+        outb(PIC0_IMR, mask);
+    } else {
+        irq_num -= IRQ_PIC_NR;
+        uint8_t mask = inb(PIC1_IMR) & ~(1 << irq_num);
+        outb(PIC1_IMR, mask);
+    }
 }
 
 void irq_disable(int irq_num) {
@@ -202,23 +205,23 @@ void irq_disable(int irq_num) {
         return;
     }
 
-	irq_num -= IRQ_PIC_START;
-	if (irq_num < IRQ_PIC_NR) {
-		uint8_t mask = inb(PIC0_IMR) | (1 << irq_num);
-		outb(PIC0_IMR, mask);
-	} else {
-		irq_num -= IRQ_PIC_NR;
-		uint8_t mask = inb(PIC1_IMR) | (1 << irq_num);
-		outb(PIC1_IMR, mask);
-	}
+    irq_num -= IRQ_PIC_START;
+    if (irq_num < IRQ_PIC_NR) {
+        uint8_t mask = inb(PIC0_IMR) | (1 << irq_num);
+        outb(PIC0_IMR, mask);
+    } else {
+        irq_num -= IRQ_PIC_NR;
+        uint8_t mask = inb(PIC1_IMR) | (1 << irq_num);
+        outb(PIC1_IMR, mask);
+    }
 }
 
 void irq_disable_global(void) {
-	cli();
+    cli();
 }
 
 void irq_enable_global(void) {
-	sti();
+    sti();
 }
 
 /**
