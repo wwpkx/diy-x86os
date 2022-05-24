@@ -82,6 +82,21 @@ void do_handler_control_exception (exception_frame_t * frame) {
     do_default_handler(frame, "control exception exception");
 }
 
+static void init_pic (void) {
+    outb(PIC0_ICW1, PIC_ICW1_ALWAYS_1 | PIC_ICW1_ICW4);
+    outb(PIC0_ICW2, IRQ_PIC_START);
+    outb(PIC0_ICW3, 1 << 2);
+    outb(PIC0_ICW4, PIC_ICW4_8086);
+
+    outb(PIC1_ICW1, PIC_ICW1_ALWAYS_1 | PIC_ICW1_ICW4);
+    outb(PIC1_ICW2, IRQ_PIC_START + 8);
+    outb(PIC1_ICW3, 2);
+    outb(PIC1_ICW4, PIC_ICW4_8086);
+
+    outb(PIC0_IMR, 0xFF & ~(1 << 2));
+    outb(PIC1_IMR, 0xff);
+}
+
 void irq_init (void) {
     for (int i = 0; i < IDE_TABLE_NR; i++) {
         gate_desc_set(idt_table + i, KERNEL_SELECTOR_CS, (uint32_t)exception_handler_unknown, 
@@ -109,6 +124,8 @@ void irq_init (void) {
     irq_install(IRQ21_CP, (irq_handler_t)exception_handler_control_exception);
 
     lidt((uint32_t)idt_table, sizeof(idt_table));
+
+    init_pic();
 }
 
 int irq_install (int irq_num, irq_handler_t handler) {
@@ -120,3 +137,51 @@ int irq_install (int irq_num, irq_handler_t handler) {
      (uint32_t)handler, GATE_P_PRESENT | GATE_DPL0 | GATE_TYPE_INT);
      return 0;
 }
+
+void irq_enable (int irq_num) {
+    if (irq_num < IRQ_PIC_START) {
+        return;
+    }
+
+    irq_num -= IRQ_PIC_START;
+    if (irq_num < 8) {
+        uint8_t mask = inb(PIC0_IMR) & ~(1 << irq_num);
+        outb(PIC0_IMR, mask);
+    } else {
+        uint8_t mask = inb(PIC1_IMR) & ~(1 << irq_num);
+        outb(PIC1_IMR, mask);
+    }
+}
+
+void irq_disable (int irq_num) {
+    if (irq_num < IRQ_PIC_START) {
+        return;
+    }
+
+    irq_num -= IRQ_PIC_START;
+    if (irq_num < 8) {
+        uint8_t mask = inb(PIC0_IMR) | (1 << irq_num);
+        outb(PIC0_IMR, mask);
+    } else {
+        uint8_t mask = inb(PIC1_IMR) | (1 << irq_num);
+        outb(PIC1_IMR, mask);
+    }
+}
+
+void irq_disable_global (void) {
+    cli();
+}
+
+void irq_enable_global (void) {
+    sti();
+}
+
+void pic_send_eoi (int irq_num) {
+    irq_num -= IRQ_PIC_START;
+    if (irq_num >= 8) {
+        outb(PIC1_OCW2, PIC_OCW2_EOI);
+    }
+
+    outb(PIC0_OCW2, PIC_OCW2_EOI);
+}
+

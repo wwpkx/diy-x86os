@@ -87,6 +87,9 @@ void exception_handler_virtual_exception (void);
 #define PIC_ICW4_8086	    (1 << 0)        // 8086工作模式
 
 #define IRQ_PIC_START		0x20			// PIC中断起始号
-#define PIC_IRQ_MAX         8               // 单个PIC最多支持的IRQ数量
 
+void irq_enable(int irq_num);
+void irq_disable(int irq_num);
+void irq_disable_global(void);
+void irq_enable_global(void);
 #endif
