@@ -132,7 +132,7 @@ void pic_send_eoi(int irq_num) {
     irq_num -= IRQ_PIC_START;
 
     // 从片也可能需要发送EOI
-    if (irq_num >= PIC_IRQ_MAX) {
+    if (irq_num >= 8) {
         outb(PIC1_OCW2, PIC_OCW2_EOI);
     }
 
@@ -199,7 +199,7 @@ void irq_enable(int irq_num) {
         uint8_t mask = inb(PIC0_IMR) & ~(1 << irq_num);
         outb(PIC0_IMR, mask);
     } else {
-        irq_num -= PIC_IRQ_MAX;
+        irq_num -= 8;
         uint8_t mask = inb(PIC1_IMR) & ~(1 << irq_num);
         outb(PIC1_IMR, mask);
     }
@@ -215,7 +215,7 @@ void irq_disable(int irq_num) {
         uint8_t mask = inb(PIC0_IMR) | (1 << irq_num);
         outb(PIC0_IMR, mask);
     } else {
-        irq_num -= PIC_IRQ_MAX;
+        irq_num -= 8;
         uint8_t mask = inb(PIC1_IMR) | (1 << irq_num);
         outb(PIC1_IMR, mask);
     }

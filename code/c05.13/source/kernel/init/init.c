@@ -28,6 +28,6 @@ void kernel_init (boot_info_t * boot_info) {
 
 void init_main(void) {
     //int a = 3 / 0;
-    irq_enable_global();
+    // irq_enable_global();
     for (;;) {}
 }
