@@ -64,8 +64,8 @@ void move_to_first_task(void) {
 
 void init_main(void) {
     log_printf("Kernel is running....");
-    log_printf("Version: %s", OS_VERSION);
-    log_printf("print int: %d, %x", 1234, 0x1234);
+    log_printf("Version: %s, name: %s", OS_VERSION, "tiny x86 os");
+    log_printf("%d %x %c", 'a', 'a', 'a');
 
     fs_load_root(ROOT_DEV);
 
