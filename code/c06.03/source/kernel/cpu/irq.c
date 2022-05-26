@@ -23,7 +23,7 @@ void do_handler_unknown (exception_frame_t * frame) {
 }
 
 void do_handler_divider(exception_frame_t * frame) {
-	do_default_handler(frame, "Device Error.");
+	do_default_handler(frame, "Divider Error.");
 }
 
 void do_handler_Debug(exception_frame_t * frame) {

@@ -16,6 +16,7 @@ void kernel_strcpy (char * dest, const char * src) {
     while (*dest && *src) {
         *dest++ = *src++;
     }
+    *dest = '\0';
 }
 
 void kernel_strncpy(char * dest, const char * src, int size) {

@@ -1,14 +1,7 @@
-/**
- * 一些字符串的处理函数
- *
- * 创建时间：2022年8月5日
- * 作者：李述铜
- * 联系邮箱: 527676163@qq.com
- */
+#include "comm/types.h"
 #include "tools/klib.h"
 
-
-void kernel_strcpy (char * dest, const char * src) {
+void kernel_strcpy(char * dest, const char * src) {
     if (!dest || !src) {
         return;
     }
@@ -16,6 +9,7 @@ void kernel_strcpy (char * dest, const char * src) {
     while (*dest && *src) {
         *dest++ = *src++;
     }
+
     *dest = '\0';
 }
 
@@ -26,10 +20,10 @@ void kernel_strncpy(char * dest, const char * src, int size) {
 
     char * d = dest;
     const char * s = src;
-
     while ((size-- > 0) && (*s)) {
         *d++ = *s++;
     }
+
     if (size == 0) {
         *(d - 1) = '\0';
     } else {
@@ -37,39 +31,34 @@ void kernel_strncpy(char * dest, const char * src, int size) {
     }
 }
 
-int kernel_strlen(const char * str) {
-    if (str == (const char *)0) {
-        return 0;
-    }
-
-	const char * c = str;
-
-	int len = 0;
-	while (*c++) {
-		len++;
-	}
-
-	return len;
-}
-
-/**
- * 比较两个字符串，最多比较size个字符
- * 如果某一字符串提前比较完成，也算相同
- */
-int kernel_strncmp (const char * s1, const char * s2, int size) {
+int kernel_strncmp(const char * s1, const char * s2, int size) {
     if (!s1 || !s2) {
         return -1;
     }
 
     while (*s1 && *s2 && (*s1 == *s2) && size) {
-    	s1++;
-    	s2++;
+        s1++;
+        s2++;
     }
+    // s2 = "abcdefg"
+    // s1 = "abcdefg"
 
     return !((*s1 == '\0') || (*s2 == '\0') || (*s1 == *s2));
 }
+int kernel_strlen(const char * str) {
+    if (!str) {
+        return 0;
+    }
 
-void kernel_memcpy (void * dest, void * src, int size) {
+    const char * c = str;
+    int len = 0;
+    while (*c++) {
+        len++;
+    }
+    return len;
+}
+
+void kernel_memcpy(void * dest, void * src, int size) {
     if (!dest || !src || !size) {
         return;
     }
@@ -92,77 +81,76 @@ void kernel_memset(void * dest, uint8_t v, int size) {
     }
 }
 
-int kernel_memcmp (void * d1, void * d2, int size) {
-    if (!d1 || !d2) {
+int kernel_memcmp(void * d1, void * d2, int size) {
+    if (!d1 || !d2 || !size) {
         return 1;
     }
 
-	uint8_t * p_d1 = (uint8_t *)d1;
-	uint8_t * p_d2 = (uint8_t *)d2;
-	while (size--) {
-		if (*p_d1++ != *p_d2++) {
-			return 1;
-		}
-	}
+    uint8_t * p_d1 = (uint8_t *)d1;
+    uint8_t * p_d2 = (uint8_t *)d2;
+    while (size--) {
+        if (*p_d1++ != *p_d2++) {
+            return 1;
+        }
+    }
 
-	return 0;
+    return 0;
 }
 
-void kernel_itoa(char * buf, int num, int base) {
-    // 转换字符索引[-15, -14, ...-1, 0, 1, ...., 14, 15]
+// num = 12345 -> 10
+// 1、12345 % 10 = 5   12345 / 10 = 1234
+// 2. 1234 % 10 = 4   1234 / 10 = 123
+// 3. 123 % 10 = 3    123 / 10 = 12
+// 4. 12 % 10 = 2     12 / 10 = 1
+// 5. 1 / % = 1       1 / 10 = 0
+void kernel_itoa (char * buf, int num, int base) {
     static const char * num2ch = {"FEDCBA9876543210123456789ABCDEF"};
     char * p = buf;
     int old_num = num;
 
-    // 仅支持部分进制
     if ((base != 2) && (base != 8) && (base != 10) && (base != 16)) {
         *p = '\0';
         return;
     }
 
-    // 只支持十进制负数
     if ((num < 0) && (base == 10)) {
         *p++ = '-';
     }
 
     do {
-        char ch = num2ch[num % base + 15];
+        char ch = num2ch[num % base + 15]; 
         *p++ = ch;
         num /= base;
-    } while (num);
+    }while (num);
     *p-- = '\0';
 
-    // 将转换结果逆序，生成最终的结果
-    char * start = (old_num >= 0) ? buf : buf + 1;
+    // a b c d e 
+    char * start = (old_num > 0) ? buf : buf + 1;
     while (start < p) {
         char ch = *start;
         *start = *p;
-        *p-- = ch;
+        *p = ch;
+
+        p--;
         start++;
     }
 }
 
-/**
- * @brief 格式化字符串到缓存中
- */
-void kernel_sprintf(char * buffer, const char * fmt, ...) {
+void kernel_sprintf(char * buf, const char * fmt, ...) {
     va_list args;
 
     va_start(args, fmt);
-    kernel_vsprintf(buffer, fmt, args);
+    kernel_vsprintf(buf, fmt, args);
     va_end(args);
 }
 
-/**
- * 格式化字符串
- */
-void kernel_vsprintf(char * buffer, const char * fmt, va_list args) {
+// "Version: %s", "1.0.10"
+void kernel_vsprintf(char * buf, const char * fmt, va_list args) {
     enum {NORMAL, READ_FMT} state = NORMAL;
+    char * curr = buf;
     char ch;
-    char * curr = buffer;
     while ((ch = *fmt++)) {
         switch (state) {
-            // 普通字符
             case NORMAL:
                 if (ch == '%') {
                     state = READ_FMT;
@@ -170,7 +158,6 @@ void kernel_vsprintf(char * buffer, const char * fmt, va_list args) {
                     *curr++ = ch;
                 }
                 break;
-            // 格式化控制字符，只支持部分
             case READ_FMT:
                 if (ch == 'd') {
                     int num = va_arg(args, int);
@@ -189,11 +176,10 @@ void kernel_vsprintf(char * buffer, const char * fmt, va_list args) {
                     while (len--) {
                         *curr++ = *str++;
                     }
-                }
+                } 
+
                 state = NORMAL;
                 break;
         }
     }
 }
-
-
