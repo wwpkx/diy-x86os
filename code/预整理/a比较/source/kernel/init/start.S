@@ -48,8 +48,9 @@ gdt_reload:
 	// 栈和段等沿用之前的设置
 	jmp init_main
 
-	.data
-.comm stack, KERNEL_STACK_SIZE
+	.bss
+.comm stack, KERNEL_STACK_SIZE    // comm 声明未初始化的通用内存区域，以字节计
+
 
     .text
 // 使用宏来生成相应的代码，这样简单

@@ -9,7 +9,7 @@
 #include "comm/cpu_instr.h"
 #include "cpu/cpu.h"
 #include "cpu/irq.h"
-#include "dev/timer.h"
+#include "dev/time.h"
 #include "tools/log.h"
 #include "core/task.h"
 #include "tools/list.h"

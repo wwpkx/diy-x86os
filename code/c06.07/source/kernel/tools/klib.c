@@ -7,24 +7,7 @@
  */
 #include "tools/klib.h"
 #include "tools/log.h"
-#include "cpu/irq.h"
 #include "comm/cpu_instr.h"
-#include "core/task.h"
-
-
-/**
- * @brief 计算字符串的数量
- */
-int strings_count (char ** start) {
-    int count = 0;
-    
-    if (start) {
-        while (*start++) {
-            count++;
-        }
-    }
-    return count;
-}
 
 void kernel_strcpy (char * dest, const char * src) {
     if (!dest || !src) {
@@ -40,7 +23,7 @@ void kernel_strncpy(char * dest, const char * src, int size) {
     if (!dest || !src || !size) {
         return;
     }
-    
+
     char * d = dest;
     const char * s = src;
 
@@ -215,43 +198,13 @@ void kernel_vsprintf(char * buffer, const char * fmt, va_list args) {
     }
 }
 
-/**
- * @brief 从路径中解释文件名
- */
-char * get_file_name (char * name) {
-    char * s = name;
+void pannic (const char * file, int line, const char * func, const char * cond) {
+    log_printf("assert failed! %s", cond);
+    log_printf("file: %s\nline %d\nfunc: %s\n", file, line, func);
 
-    // 定位到结束符
-    while (*s != '\0') {
-        s++;
-    }
-    
-    // 反向搜索，直到找到反斜杆或者到文件开头
-    while ((*s != '\\') && (*s != '/') && (s >= name)) {
-        s--;
-    }
-    return s + 1;
-}
-
-/**
- * 打印错误信息然后死机
- **/
-void pannic (const char * string) {
-    log_printf("Error: %s", string);
-   
-    task_t * task = task_current();
-    log_printf("task: %s", task ? task->name : "none");
     for (;;) {
         hlt();
     }
-}
-
-void panic_debug (const char * filename, int line, const char * func, const char * conditon) {
-    irq_disable_global();
-
-    log_printf("assert failed! %s", conditon);
-    log_printf("file: %s\nline %d\nfunc: %s\n", filename, line, func);
-    pannic("assert failed");
 }
 
 

@@ -48,6 +48,8 @@ void init_task_entry(void *param) {
 }
 
 void init_main(void) {
+    list_test();
+
     log_printf("Kernel is running....");
     log_printf("Version: %s, name: %s", OS_VERSION, "tiny x86 os");
     log_printf("%d %x %c", 'a', 'a', 'a');

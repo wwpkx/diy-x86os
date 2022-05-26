@@ -7,9 +7,7 @@
  */
 #include "comm/cpu_instr.h"
 #include "cpu/cpu.h"
-#include "cpu/irq.h"
 #include "os_cfg.h"
-#include "core/syscall.h"
 
 static segment_desc_t gdt_table[GDT_TABLE_SIZE];
 
@@ -41,39 +39,6 @@ void gate_desc_set(gate_desc_t * desc, uint16_t selector, uint32_t offset, uint1
 	desc->offset31_16 = (offset >> 16) & 0xffff;
 }
 
-void gdt_free_sel (int sel) {
-    gdt_table[sel / sizeof(segment_desc_t)].attr = 0;
-}
-
-/**
- * 分配一个GDT推荐表符
- */
-int gdt_alloc_segment (uint32_t base, uint32_t limit, uint16_t attr) {
-    int i;
-
-    irq_state_t state = irq_enter_protection();
-
-    for (i = 1; i < GDT_TABLE_SIZE; i++) {
-        segment_desc_t * desc = gdt_table + i;
-        if ((desc->attr & (0xF)) == 0) {
-            // 如果界限比较长，将长度单位换成4KB
-            if (limit > 0xfffff) {
-                attr |= 0x8000;
-                limit /= 0x1000;
-            }
-            desc->limit15_0 = limit & 0xffff;
-            desc->base15_0 = base & 0xffff;
-            desc->base23_16 = (base >> 16) & 0xff;
-            desc->attr = attr | (((limit >> 16) & 0xf) << 8);
-            desc->base31_24 = (base >> 24) & 0xff;
-            break;
-        }
-    }
-
-    irq_leave_protection(state);
-    return i >= GDT_TABLE_SIZE ? -1 : i * sizeof(segment_desc_t);
-}
-
 /**
  * 初始化GDT
  */
@@ -93,21 +58,9 @@ void init_gdt(void) {
                      SEG_P_PRESENT | SEG_DPL0 | SEG_S_NORMAL | SEG_TYPE_CODE
                      | SEG_TYPE_RW | SEG_D | SEG_G);
 
-    // 调用门
-    gate_desc_set((gate_desc_t *)(gdt_table + (SELECTOR_SYSCALL >> 3)),
-            KERNEL_SELECTOR_CS,
-            (uint32_t)excetpion_handler_syscall,
-            GDT_GATE_PRESENT | GDT_GATE_DPL3 | GDT_GATE_TYPE_CALL | SYSCALL_PARAM_COUNT);
 
     // 加载gdt
     lgdt((uint32_t)gdt_table, sizeof(gdt_table));
-}
-
-/**
- * 切换至TSS，即跳转实现任务切换
- */
-void switch_to_tss (uint32_t tss_selector) {
-    far_jump(tss_selector, 0);
 }
 
 /**
