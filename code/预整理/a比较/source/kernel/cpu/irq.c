@@ -8,12 +8,9 @@
 #include "cpu/irq.h"
 #include "cpu/cpu.h"
 #include "comm/cpu_instr.h"
-#include "tools/log.h"
 #include "os_cfg.h"
 
 #define IDT_TABLE_NR			128				// IDT表项数量
-#define IRQ_PIC_START			0x20			// PIC中断起始号
-#define IRQ_PIC_NR				8				// PIC的中断数量
 
 static gate_desc_t idt_table[IDT_TABLE_NR];	// 中断描述表
 
@@ -210,11 +207,11 @@ void irq_disable(int irq_num) {
     }
 
     irq_num -= IRQ_PIC_START;
-    if (irq_num < IRQ_PIC_NR) {
+    if (irq_num < 8) {
         uint8_t mask = inb(PIC0_IMR) | (1 << irq_num);
         outb(PIC0_IMR, mask);
     } else {
-        irq_num -= IRQ_PIC_NR;
+        irq_num -= 8;
         uint8_t mask = inb(PIC1_IMR) | (1 << irq_num);
         outb(PIC1_IMR, mask);
     }

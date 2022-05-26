@@ -16,7 +16,9 @@ static segment_desc_t gdt_table[GDT_TABLE_SIZE];
 /**
  * 设置段描述符
  */
-void segment_desc_set(segment_desc_t *desc, uint32_t base, uint32_t limit, uint16_t attr) {
+void segment_desc_set(int selector, uint32_t base, uint32_t limit, uint16_t attr) {
+    segment_desc_t * desc = gdt_table + (selector >> 3);
+
 	// 如果界限比较长，将长度单位换成4KB
 	if (limit > 0xfffff) {
 		attr |= 0x8000;
@@ -32,7 +34,7 @@ void segment_desc_set(segment_desc_t *desc, uint32_t base, uint32_t limit, uint1
 /**
  * 设置门描述符
  */
-void gate_desc_set(gate_desc_t *desc, uint16_t selector, uint32_t offset, uint16_t attr) {
+void gate_desc_set(gate_desc_t * desc, uint16_t selector, uint32_t offset, uint16_t attr) {
 	desc->offset15_0 = offset & 0xffff;
 	desc->selector = selector;
 	desc->attr = attr;
@@ -78,17 +80,18 @@ int gdt_alloc_segment (uint32_t base, uint32_t limit, uint16_t attr) {
 void init_gdt(void) {
 	// 全部清空
     for (int i = 0; i < GDT_TABLE_SIZE; i++) {
-        segment_desc_set(gdt_table + i, 0, 0, 0);
+        segment_desc_set(i << 3, 0, 0, 0);
     }
 
     //数据段
-    segment_desc_set(gdt_table + (KERNEL_SELECTOR_DS >> 3), 0x00000000, 0xFFFFFFFF,
-                     SEG_P_PRESENT | SEG_DPL0 | SEG_S_NORMAL | SEG_TYPE_DATA | SEG_TYPE_RW |
-                     SEG_D);
+    segment_desc_set(KERNEL_SELECTOR_DS, 0x00000000, 0xFFFFFFFF,
+                     SEG_P_PRESENT | SEG_DPL0 | SEG_S_NORMAL | SEG_TYPE_DATA
+                     | SEG_TYPE_RW | SEG_D | SEG_G);
 
     // 只能用非一致代码段，以便通过调用门更改当前任务的CPL执行关键的资源访问操作
-    segment_desc_set(gdt_table + (KERNEL_SELECTOR_CS >> 3), 0x00000000, 0xFFFFFFFF,
-                     SEG_P_PRESENT | SEG_DPL0 | SEG_S_NORMAL | SEG_TYPE_CODE | SEG_TYPE_RW | SEG_D);
+    segment_desc_set(KERNEL_SELECTOR_CS, 0x00000000, 0xFFFFFFFF,
+                     SEG_P_PRESENT | SEG_DPL0 | SEG_S_NORMAL | SEG_TYPE_CODE
+                     | SEG_TYPE_RW | SEG_D | SEG_G);
 
     // 调用门
     gate_desc_set((gate_desc_t *)(gdt_table + (SELECTOR_SYSCALL >> 3)),

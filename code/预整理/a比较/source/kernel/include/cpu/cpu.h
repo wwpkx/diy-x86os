@@ -56,7 +56,7 @@
  * GDT描述符
  */
 typedef struct _segment_desc_t {
-	uint16_t limit15_0;		
+	uint16_t limit15_0;
 	uint16_t base15_0;
 	uint8_t base23_16;
 	uint16_t attr;

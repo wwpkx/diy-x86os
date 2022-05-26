@@ -1,6 +1,10 @@
-//
-// Created by lishutong on 2021-07-30.
-//
+/**
+ * 一些字符串的处理函数
+ *
+ * 创建时间：2022年8月5日
+ * 作者：李述铜
+ * 联系邮箱: 527676163@qq.com
+ */
 #include "tools/klib.h"
 #include "tools/log.h"
 #include "cpu/irq.h"
@@ -239,7 +243,7 @@ void pannic (const char * string) {
     log_printf("task: %s", task ? task->name : "none");
     for (;;) {
         hlt();
-    }    
+    }
 }
 
 void panic_debug (const char * filename, int line, const char * func, const char * conditon) {
