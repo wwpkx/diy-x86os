@@ -25,6 +25,7 @@
             },
             "linux": {
                 "miDebuggerPath": "gdb", // linux下的特殊配置
+                "preLaunchTask": "调试准备", // 仅在windows下可自动运行
             },
             "customLaunchSetupCommands": [],
             "setupCommands": [
