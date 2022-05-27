@@ -1,20 +1,20 @@
 set DISK1_NAME=disk1.vhd
 
-@REM ÂÜôbootÂå∫ÔºåÂÆö‰ΩçÂà∞Á£ÅÁõòÂºÄÂ§¥ÔºåÂÜô1‰∏™ÂùóÔºö512Â≠óËäÇ
-dd if=boot.bin of=%DISK1_NAME% bs=512 conv=notrunc count=1 
+@REM –¥boot«¯£¨∂®ŒªµΩ¥≈≈Ãø™Õ∑£¨–¥1∏ˆøÈ£∫512◊÷Ω⁄
+dd if=boot.bin of=%DISK1_NAME% bs=512 conv=notrunc count=1
 
-@REM ÂÜôloaderÂå∫ÔºåÂÆö‰ΩçÂà∞Á£ÅÁõòÁ¨¨2‰∏™ÂùóÔºåÂÜô1‰∏™ÂùóÔºö512Â≠óËäÇ
+@REM –¥loader«¯£¨∂®ŒªµΩ¥≈≈Ãµ⁄2∏ˆøÈ£¨–¥1∏ˆøÈ£∫512◊÷Ω⁄
 dd if=loader.bin of=%DISK1_NAME% bs=512 conv=notrunc seek=1
 
-@REM ÂÜôkernelÂå∫ÔºåÂÆö‰ΩçÂà∞Á£ÅÁõòÁ¨¨100‰∏™Âùó
+@REM –¥kernel«¯£¨∂®ŒªµΩ¥≈≈Ãµ⁄100∏ˆøÈ
 dd if=kernel.elf of=%DISK1_NAME% bs=512 conv=notrunc seek=100
 
-@REM ÂÜôÂ∫îÁî®Á®ãÂ∫èinitÔºå‰∏¥Êó∂‰ΩøÁî®
+@REM –¥”¶”√≥Ã–Úinit£¨¡Ÿ ± π”√
 @REM dd if=init.elf of=%DISK1_NAME% bs=512 conv=notrunc seek=5000
 @REM dd if=shell.elf of=%DISK1_NAME% bs=512 conv=notrunc seek=5000
 
-@REM ÂÜôÂ∫îÁî®Á®ãÂ∫èÔºå‰ΩøÁî®Á≥ªÁªüÁöÑÊåÇËΩΩÂëΩ‰ª§
-@REM ÂºÄÂßãÂ§çÂà∂
+@REM –¥”¶”√≥Ã–Ú£¨ π”√œµÕ≥µƒπ“‘ÿ√¸¡Ó
+@REM ø™ º∏¥÷∆
 set DISK2_NAME=disk2.vhd
 set TARGET_PATH=k
 echo select vdisk file="%cd%\%DISK2_NAME%" >a.txt
@@ -24,7 +24,7 @@ echo assign letter=%TARGET_PATH% >> a.txt
 diskpart /s a.txt
 del a.txt
 
-@REM Â§çÂà∂Â∫îÁî®Á®ãÂ∫è
+@REM ∏¥÷∆”¶”√≥Ã–Ú
 copy /Y init.elf %TARGET_PATH%:\init.elf
 copy /Y shell.elf %TARGET_PATH%:\shell.elf
 copy /Y loop %TARGET_PATH%:\loop

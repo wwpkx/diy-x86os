@@ -1,7 +1,7 @@
 if [ -f "disk1.vhd" ]; then
     mv disk1.vhd disk1.dmg
 fi
-z
+
 if [ -f "disk2.vhd" ]; then
     mv disk2.vhd disk2.dmg
 fi

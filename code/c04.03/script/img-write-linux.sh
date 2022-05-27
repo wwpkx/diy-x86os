@@ -8,7 +8,6 @@ fi
 
 export DISK1_NAME=disk1.img
 
-
 # 写boot区，定位到磁盘开头，写1个块：512字节
 dd if=boot.bin of=$DISK1_NAME bs=512 conv=notrunc count=1
 
