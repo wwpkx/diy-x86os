@@ -3,3 +3,5 @@ build
 *.dmg
 *.elf
 *.bin
+/image/disk1.vhd
+/image/disk2.vhd
