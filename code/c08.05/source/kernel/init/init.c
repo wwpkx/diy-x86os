@@ -84,6 +84,7 @@ void list_test (void) {
     }
     log_printf("list: first=0x%x, last=0x%x, count=%d", list_first(&list), list_last(&list), list_count(&list));
 
+
     // 插入
     for (int i = 0; i < 5; i++) {
         list_node_t * node = nodes + i;
