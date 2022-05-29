@@ -1,0 +1,11 @@
+{
+    "cmake.configureOnOpen": false,
+    "cmake.sourceDirectory": "${workspaceFolder}/.",
+    "C_Cpp.errorSquiggles": "Disabled",
+    "files.associations": {
+        "fat.h": "c",
+        "cluster.h": "c",
+        "fs.h": "c",
+        "dir.h": "c"
+    },
+}

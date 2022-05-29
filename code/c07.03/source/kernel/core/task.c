@@ -24,6 +24,7 @@ static int tss_init (task_t * task, uint32_t entry, uint32_t esp) {
     task->tss.iomap = 0x40000000;
 
     task->tss_sel = 0;
+    return 0;
 }
 
 /**

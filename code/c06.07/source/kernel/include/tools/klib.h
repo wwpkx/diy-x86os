@@ -22,7 +22,7 @@ void kernel_vsprintf(char * buffer, const char * fmt, va_list args);
 #ifndef RELEASE
 #define ASSERT(condition)    \
     if (!(condition)) pannic(__FILE__, __LINE__, __func__, #condition)
-void pannic (const char * file, int line, const char * func, const char * cond);
+void panic (const char * file, int line, const char * func, const char * cond);
 #else
 #define ASSERT(condition)    ((void)0)
 #endif

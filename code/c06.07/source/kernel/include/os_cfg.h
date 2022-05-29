@@ -15,8 +15,6 @@
 
 #define OS_TICK_MS              10       	// 每毫秒的时钟数
 
-#define LOG_ENABLE              1           // 是否开启log输出
-
 #define OS_VERSION              "0.0.1"     // OS版本号
 
 #endif //OS_OS_CFG_H
