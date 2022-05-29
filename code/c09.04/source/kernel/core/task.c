@@ -44,6 +44,8 @@ static int tss_init (task_t * task, uint32_t entry, uint32_t esp) {
  * @brief 初始化任务
  */
 int task_init (task_t *task, const char * name, uint32_t entry, uint32_t esp) {
+    ASSERT(task != (task_t *)0);
+
     int err = tss_init(task, entry, esp);
     if (err < 0) {
         log_printf("init task failed.\n");
@@ -135,8 +137,6 @@ task_t * task_current (void) {
  * @brief 当前任务主动放弃CPU
  */
 int sys_sched_yield (void) {
-    irq_state_t state = irq_enter_protection();
-
     if (list_count(&task_manager.ready_list) > 1) {
         task_t * curr_task = task_current();
 
@@ -148,7 +148,6 @@ int sys_sched_yield (void) {
         // 由于某些原因运行后阻塞或删除，再回到这里切换将发生问题
         task_dispatch();
     }
-    irq_leave_protection(state);
 
     return 0;
 }

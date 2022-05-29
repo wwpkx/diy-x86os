@@ -30,7 +30,7 @@ typedef struct _task_t {
     char name[TASK_NAME_SIZE];		// 任务名字
 
     int sleep_ticks;		// 睡眠时间
-	int reload_ticks;			// 时间片
+    int time_slice;			// 时间片
 	int slice_ticks;		// 递减时间片计数
 
 	tss_t tss;				// 任务的TSS段

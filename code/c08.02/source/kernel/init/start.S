@@ -136,12 +136,14 @@ simple_switch:
 	push %ebx
 	push %esi
 	push %edi
+	pushf
 
 	// 切换栈
 	mov %esp, (%eax)    // from->stack = esp
   	mov %edx, %esp      // esp = to->stack
 
 	// 加载下一任务的栈
+	popf
 	pop %edi
 	pop %esi
 	pop %ebx

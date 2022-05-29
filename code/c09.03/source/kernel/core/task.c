@@ -44,6 +44,8 @@ static int tss_init (task_t * task, uint32_t entry, uint32_t esp) {
  * @brief 初始化任务
  */
 int task_init (task_t *task, const char * name, uint32_t entry, uint32_t esp) {
+    ASSERT(task != (task_t *)0);
+
     int err = tss_init(task, entry, esp);
     if (err < 0) {
         log_printf("init task failed.\n");

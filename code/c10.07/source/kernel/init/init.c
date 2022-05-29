@@ -13,6 +13,7 @@
 #include "tools/log.h"
 #include "core/task.h"
 #include "os_cfg.h"
+#include "tools/klib.h"
 #include "tools/list.h"
 #include "ipc/sem.h"
 #include "ipc/bfifo.h"
@@ -49,8 +50,7 @@ void init_task_entry(void *param) {
     int count = 0;
 
     for (;;) {
-        sem_wait(&sem);
-        
+        // sem_wait(&sem);
         log_printf("init task: %d", count++);
         //sys_msleep(2000);
     }
@@ -59,9 +59,10 @@ void init_task_entry(void *param) {
 void init_main(void) {
     log_printf("Kernel is running....");
     log_printf("Version: %s, name: %s", OS_VERSION, "tiny x86 os");
-    log_printf("%d %x %c", 'a', 'a', 'a');
+    log_printf("%d %d %x %c", -123, 123456, 0x12345, 'a');
 
-    // 初始化任务，调整下前后位置，让first_task在前，因为其是先运行的
+    // 初始化任务
+    // 调整下前后位置，让first_task在前，因为其是先运行的
     // 如果不调换，则当开启中断时，会触发定时，最终调用task_dipatch，立即切换到test_task中运行
     // 然而此时信号量还未初始化
     task_first_init();

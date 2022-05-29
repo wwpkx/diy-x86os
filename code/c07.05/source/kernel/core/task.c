@@ -42,6 +42,8 @@ static int tss_init (task_t * task, uint32_t entry, uint32_t esp) {
  * @brief 初始化任务
  */
 int task_init (task_t *task, uint32_t entry, uint32_t esp) {
+    ASSERT(task != (task_t *)0);
+
     // tss_init(task, entry, esp);
     uint32_t * pesp = (uint32_t *)esp;
     if (pesp) {
@@ -51,6 +53,7 @@ int task_init (task_t *task, uint32_t entry, uint32_t esp) {
         *(--pesp) = 0;
         *(--pesp) = 0;
         *(--pesp) = 0;
+        *(--pesp) = EFLAGS_DEFAULT | EFLAGS_IF;
         task->stack = pesp;
     }
  

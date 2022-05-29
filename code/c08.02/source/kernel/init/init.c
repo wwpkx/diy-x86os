@@ -13,6 +13,7 @@
 #include "tools/log.h"
 #include "core/task.h"
 #include "os_cfg.h"
+#include "tools/klib.h"
 #include "tools/list.h"
 
 static boot_info_t * init_boot_info;        // 启动信息
@@ -61,7 +62,7 @@ void init_main(void) {
 
     log_printf("Kernel is running....");
     log_printf("Version: %s, name: %s", OS_VERSION, "tiny x86 os");
-    log_printf("%d %x %c", 'a', 'a', 'a');
+    log_printf("%d %d %x %c", -123, 123456, 0x12345, 'a');
 
     // 初始化任务
     task_init(&init_task, (uint32_t)init_task_entry, (uint32_t)&init_task_stack[1024]);

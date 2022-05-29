@@ -45,6 +45,8 @@ static int tss_init (task_t * task, uint32_t entry, uint32_t esp) {
  * @brief 初始化任务
  */
 int task_init (task_t *task, const char * name, uint32_t entry, uint32_t esp) {
+    ASSERT(task != (task_t *)0);
+
     int err = tss_init(task, entry, esp);
     if (err < 0) {
         log_printf("init task failed.\n");
@@ -54,14 +56,15 @@ int task_init (task_t *task, const char * name, uint32_t entry, uint32_t esp) {
     // 任务字段初始化
     kernel_strncpy(task->name, name, TASK_NAME_SIZE);
     task->state = TASK_CREATED;
-    task->reload_ticks = TASK_TIME_SLICE_DEFAULT;
-    task->slice_ticks = task->reload_ticks;
+    task->time_slice = TASK_TIME_SLICE_DEFAULT;
+    task->slice_ticks = task->time_slice;
     list_node_init(&task->all_node);
     list_node_init(&task->run_node);
 
     // 插入就绪队列中和所有的任务队列中
     irq_state_t state = irq_enter_protection();
     task_set_ready(task);
+    list_insert_last(&task_manager.task_list, &task->all_node);
     irq_leave_protection(state);
     return 0;
 }
@@ -180,7 +183,7 @@ void task_time_tick (void) {
     if (--curr_task->slice_ticks == 0) {
         // 时间片用完，重新加载时间片
         // 对于空闲任务，此处减未用
-        curr_task->slice_ticks = curr_task->reload_ticks;
+        curr_task->slice_ticks = curr_task->time_slice;
 
         // 调整队列的位置到尾部，不用直接操作队列
         task_set_block(curr_task);

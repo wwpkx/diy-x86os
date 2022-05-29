@@ -31,6 +31,8 @@ static int tss_init (task_t * task, uint32_t entry, uint32_t esp) {
  * @brief 初始化任务
  */
 int task_init (task_t *task, uint32_t entry, uint32_t esp) {
+    ASSERT(task != (task_t *)0);
+
     tss_init(task, entry, esp);
     return 0;
 }
