@@ -1,9 +1,0 @@
-{
-    "cmake.configureOnOpen": false,
-    "files.associations": {
-        "boot.h": "c",
-        "types.h": "c",
-        "irq.h": "c"
-    },
-    "cmake.sourceDirectory": "${workspaceFolder}/."
-}
