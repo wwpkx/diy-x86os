@@ -1,1 +1,2 @@
-start qemu-system-i386  -m 128M -serial stdio -s -S -drive format=raw,file=os.vhd -d pcall,cpu_reset,guest_errors,trace:ps2_keyboard_set_translation
+@REM 适用于windows
+start qemu-system-i386  -m 128M -s -S -serial stdio -drive file=disk1.vhd,index=0,media=disk,format=raw -drive file=disk2.vhd,index=2,media=disk,format=raw -d pcall,page,mmu,cpu_reset,guest_errors,page,trace:ps2_keyboard_set_translation

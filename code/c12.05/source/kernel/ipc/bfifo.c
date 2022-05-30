@@ -138,6 +138,13 @@ int bfifo_get (bfifo_t * bfifo, void * buf, int size) {
 /**
  * 获取fifo中已有的数据量
  */
-int bfifo_count (bfifo_t * bfifo) {
+int bfifo_data_count (bfifo_t * bfifo) {
 	return sem_count(&bfifo->read_sem);
+}
+
+/*
+ * 获取fifo中空间单元的数量
+ */
+int bfifo_free_count (bfifo_t * bfifo) {
+	return sem_count(&bfifo->write_sem);
 }

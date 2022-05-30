@@ -19,7 +19,7 @@
  * @brief 任务控制块结构
  */
 typedef struct _task_t {
-		enum {
+    enum {
 		TASK_CREATED,
 		TASK_RUNNING,
 		TASK_SLEEP,
@@ -29,8 +29,8 @@ typedef struct _task_t {
 
     char name[TASK_NAME_SIZE];		// 任务名字
 
-	int sleep_ticks;		// 睡眠时间
-	int time_slice;			// 时间片
+    int sleep_ticks;		// 睡眠时间
+    int time_slice;			// 时间片
 	int slice_ticks;		// 递减时间片计数
 
 	tss_t tss;				// 任务的TSS段
@@ -42,16 +42,16 @@ typedef struct _task_t {
 }task_t;
 
 int task_init (task_t *task, const char * name, uint32_t entry, uint32_t esp);
-void task_switch_to (task_t * task);
+void task_switch_from_to (task_t * from, task_t * to);
 void task_set_ready(task_t *task);
 void task_set_block (task_t *task);
 void task_set_sleep(task_t *task, uint32_t ticks);
 void task_set_wakeup (task_t *task);
 int sys_sched_yield (void);
 void task_dispatch (void);
+task_t * task_current (void);
 void task_time_tick (void);
 void sys_msleep (uint32_t ms);
-task_t * task_current (void);
 
 typedef struct _task_manager_t {
     task_t * curr_task;         // 当前运行的任务
@@ -68,6 +68,8 @@ typedef struct _task_manager_t {
 }task_manager_t;
 
 void task_manager_init (void);
+void task_first_init (void);
+task_t * task_init_task (void);
 
 #endif
 

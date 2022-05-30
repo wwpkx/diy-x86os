@@ -1,39 +1,38 @@
-ENTRY(_start)
+/* 参考文档： https://ftp.gnu.org/old-gnu/Manuals/ld-2.9.1/html_chapter/ld_3.html */
 SECTIONS
 {
-	PROVIDE(kernel_base_addr = 0x0);
+	PROVIDE(kernel_base = 0x0);
 
-	/* 启动代码，放在最开头，加载地址为0x80000000 */
-	.init_task 0x80000000: AT(0x10000) {
-		*init_*(.text .data .bss)
-	}
-	PROVIDE(init_load_addr = LOADADDR(.init_task));
-	PROVIDE(init_load_size = SIZEOF(.init_task));
+	. = 0x00010000;
 
-	/* 重设LMA，并对齐的4KB */
-	. = 0x00010000 + init_load_size;
-	. = ALIGN(4096);
-
-	/* 代码的起始地址为64KB地址处 */
-	PROVIDE(text_start = .);
+	PROVIDE(s_text = .);
 	.text : {
-		*(.text)
+		*(EXCLUDE_FILE(*first_task*) .text)
 	}
 	.rodata : {
-		*(.rodata .rodata.*)
+		*(EXCLUDE_FILE(*first_task*) .rodata)
 	}
-	PROVIDE(text_end = .);	
+	PROVIDE(e_text = .);
 
 	. = ALIGN(4096);
-	PROVIDE(data_start = .);
+	PROVIDE(s_data = .);
 	.data : {
-		*(.data)
+		*(EXCLUDE_FILE(*first_task*) .data)
 	}
 	.bss : {
-		*(.bss)
+		*(EXCLUDE_FILE(*first_task*) .bss)
 	}
-	PROVIDE(data_end = .);
 
+	/* 初始进程的配置：接紧着在低端1MB内存开始存储，但是运行时搬运到0x80000000处 */
 	. = ALIGN(4096);
-	PROVIDE(mem_free_start = .);
+	PROVIDE(s_first_task = .);
+	PROVIDE(e_first_task = . + SIZEOF(.first_task));
+	.first_task 0x80000000: AT(s_first_task) {
+		*first_task_entry*(.text .data .bss)
+		*first_task*(.text .data .bss)
+	}
+
+	/* 重设LMA，并对齐的4KB */
+	. = ALIGN(4096);
+	PROVIDE(mem_free_start = . - 0x80000000);
 }

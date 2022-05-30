@@ -8,32 +8,34 @@
 #include "comm/cpu_instr.h"
 #include "core/task.h"
 #include "tools/klib.h"
-#include "cpu/irq.h"
-#include "cpu/mmu.h"
+#include "tools/log.h"
 #include "os_cfg.h"
+#include "cpu/irq.h"
 #include "core/memory.h"
+#include "cpu/cpu.h"
+#include "cpu/mmu.h"
 
 static task_manager_t task_manager;     // 任务管理器
 static uint32_t idle_task_stack[IDLE_STACK_SIZE];	// 空闲任务堆栈
 
-/**
- * @brief 初始化任务
- */
-int task_init (task_t *task, const char * name, uint32_t entry, uint32_t esp) {
+static int tss_init (task_t * task, uint32_t entry, uint32_t esp) {
     // 为TSS分配GDT
-    int tss_sel = gdt_alloc_segment((uint32_t)&task->tss,
-                                sizeof(tss_t), SEG_P_PRESENT | SEG_DPL0 | GDB_TSS_TYPE);
+    int tss_sel = gdt_alloc_desc();
     if (tss_sel < 0) {
+        log_printf("alloc tss failed.\n");
         return -1;
     }
+
+    segment_desc_set(tss_sel, (uint32_t)&task->tss, sizeof(tss_t),
+            SEG_P_PRESENT | SEG_DPL0 | SEG_TYPE_TSS);
 
     // tss段初始化
     kernel_memset(&task->tss, 0, sizeof(tss_t));
 
     int code_sel, data_sel;
     // 注意加了RP3,不然将产生段保护错误
-    code_sel = task_manager.app_code_sel | GDT_RPL3;
-    data_sel = task_manager.app_data_sel | GDT_RPL3;
+    code_sel = task_manager.app_code_sel | SEG_RPL3;
+    data_sel = task_manager.app_data_sel | SEG_RPL3;
 
     task->tss.eip = entry;
     task->tss.esp = task->tss.esp0 = esp;
@@ -44,14 +46,30 @@ int task_init (task_t *task, const char * name, uint32_t entry, uint32_t esp) {
             = task->tss.gs = data_sel;   // 全部采用同一数据段
     task->tss.cs = code_sel; 
     task->tss.iomap = 0x40000000;
-    task->tss_sel = tss_sel;
 
     // 页表初始化
     uint32_t page_dir = memory_create_uvm();
     if (page_dir == 0) {
-        goto task_init_failed;
+        gdt_free_sel(tss_sel);
+        return -1;
     }
     task->tss.cr3 = page_dir;
+
+    task->tss_sel = tss_sel;
+    return 0;
+}
+
+/**
+ * @brief 初始化任务
+ */
+int task_init (task_t *task, const char * name, uint32_t entry, uint32_t esp) {
+    ASSERT(task != (task_t *)0);
+
+    int err = tss_init(task, entry, esp);
+    if (err < 0) {
+        log_printf("init task failed.\n");
+        return err;
+    }
 
     // 任务字段初始化
     kernel_strncpy(task->name, name, TASK_NAME_SIZE);
@@ -63,22 +81,67 @@ int task_init (task_t *task, const char * name, uint32_t entry, uint32_t esp) {
     list_node_init(&task->run_node);
     list_node_init(&task->wait_node);
 
-    // 插入就绪队列中'
+    // 插入就绪队列中和所有的任务队列中
     irq_state_t state = irq_enter_protection();
     task_set_ready(task);
+    list_insert_last(&task_manager.task_list, &task->all_node);
     irq_leave_protection(state);
     return 0;
-
-task_init_failed:
-    gdt_free_sel(tss_sel);
-    return -1;
 }
+
+void simple_switch (uint32_t ** from, uint32_t * to);
 
 /**
  * @brief 切换至指定任务
  */
-void task_switch_to (task_t * task) {
-    switch_to_tss(task->tss_sel);
+void task_switch_from_to (task_t * from, task_t * to) {
+     switch_to_tss(to->tss_sel);
+    //simple_switch(&from->stack, to->stack);
+}
+
+/**
+ * @brief 初始进程的初始化
+ * 没有采用从磁盘加载的方式，因为需要用到文件系统，并且最好是和kernel绑在一定，这样好加载
+ * 当然，也可以采用将init的源文件和kernel的一起编译。此里要调整好kernel.lds，在其中
+ * 将init加载地址设置成和内核一起的，运行地址设置成用户进程运行的高处。
+ * 不过，考虑到init可能用到newlib库，如果与kernel合并编译，在lds中很难控制将newlib的
+ * 代码与init进程的放在一起，有可能与kernel放在了一起。
+ * 综上，最好是分离。
+ */
+void task_first_init (void) {
+    void first_task_entry (void);
+
+    // 以下获得的是bin文件在内存中的物理地址
+    extern uint8_t s_first_task, e_first_task;
+
+    // 分配的空间比实际存储的空间要大一些，多余的用于放置栈
+    uint32_t copy_size = (uint32_t)(&e_first_task - &s_first_task);
+    uint32_t alloc_size = 10 * MEM_PAGE_SIZE;
+    ASSERT(copy_size < alloc_size);
+
+    uint32_t first_start = (uint32_t)first_task_entry;
+
+    // 第一个任务代码量小一些，好和栈放在1个页面呢
+    // 这样就不要立即考虑还要给栈分配空间的问题
+    task_init(&task_manager.init_task, "init task", first_start, 0);     // 里面的值不必要写
+    task_manager.curr_task = &task_manager.init_task;
+
+    // 更新页表地址为自己的
+    mmu_set_page_dir(task_manager.init_task.tss.cr3);
+
+    // 分配一页内存供代码存放使用，然后将代码复制过去
+    memory_alloc_page_for(first_start,  alloc_size, PTE_P | PTE_W);
+    kernel_memcpy((void *)first_start, (void *)&s_first_task, copy_size);
+
+    // 写TR寄存器，指示当前运行的第一个任务
+    write_tr(task_manager.init_task.tss_sel);
+}
+
+/**
+ * @brief 返回初始任务
+ */
+task_t * task_init_task (void) {
+    return &task_manager.init_task;
 }
 
 /**
@@ -90,55 +153,36 @@ static void idle_task_entry (void) {
     }
 }
 
-static void first_task_init (void) {
-    extern uint8_t * init_load_addr;
-    extern uint8_t * init_load_size;
-
-    uint32_t init_size = (uint32_t)&init_load_size;
-    uint32_t total_size = 10 * MEM_PAGE_SIZE;        // 可以设置的大一些, 如40KB
-    ASSERT(init_size < MEM_PAGE_SIZE);
-
-    // 第一个任务代码量小一些，好和栈放在1个页面呢
-    // 这样就不要立即考虑还要给栈分配空间的问题
-    task_init(&task_manager.init_task, "kernel task", 0, 0);     // 里面的值不必要写
-    task_manager.curr_task = (task_t *)&task_manager.init_task;
-
-    // 更新页表地址为自己的
-    mmu_set_page_dir(task_manager.init_task.tss.cr3);
-
-    // 分配一页内存供代码存放使用，然后将代码复制过去
-    memory_alloc_page_for(MEMORY_TASK_BASE,  total_size, PTE_P | PTE_W);
-    kernel_memcpy((void *)MEMORY_TASK_BASE, (void *)&init_load_addr, init_size);
-}
-
 /**
  * @brief 任务管理器初始化
  */
 void task_manager_init (void) {
     //数据段和代码段，使用DPL3，所有应用共用同一个
     //为调试方便，暂时使用DPL0
-    task_manager.app_data_sel = gdt_alloc_segment(0x00000000, 0xFFFFFFFF,
+    int sel = gdt_alloc_desc();
+    segment_desc_set(sel, 0x00000000, 0xFFFFFFFF,
                      SEG_P_PRESENT | SEG_DPL3 | SEG_S_NORMAL |
                      SEG_TYPE_DATA | SEG_TYPE_RW | SEG_D);
+    task_manager.app_data_sel = sel;
 
-    task_manager.app_code_sel = gdt_alloc_segment(0x00000000, 0xFFFFFFFF,
+    sel = gdt_alloc_desc();
+    segment_desc_set(sel, 0x00000000, 0xFFFFFFFF,
                      SEG_P_PRESENT | SEG_DPL3 | SEG_S_NORMAL |
                      SEG_TYPE_CODE | SEG_TYPE_RW | SEG_D);
+    task_manager.app_code_sel = sel;
 
     // 各队列初始化
     list_init(&task_manager.ready_list);
     list_init(&task_manager.task_list);
     list_init(&task_manager.sleep_list);
 
-    first_task_init();
+    // 空闲任务初始化
     task_init(&task_manager.idle_task,
                 "idle task", 
                 (uint32_t)idle_task_entry, 
                 (uint32_t)(idle_task_stack + IDLE_STACK_SIZE));     // 里面的值不必要写
-    task_manager.curr_task = &task_manager.init_task;
 
-    // 写TR寄存器，指示当前运行的第一个任务
-    write_tr(task_manager.init_task.tss_sel);
+    task_manager.curr_task = (task_t *)0;
 }
 
 /**
@@ -159,11 +203,10 @@ void task_set_block (task_t *task) {
         list_remove(&task_manager.ready_list, &task->run_node);
     }
 }
-
 /**
  * @brief 获取下一将要运行的任务
  */
-task_t * task_next_run (void) {
+static task_t * task_next_run (void) {
     // 如果没有任务，则运行空闲任务
     if (list_count(&task_manager.ready_list) == 0) {
         return &task_manager.idle_task;
@@ -207,19 +250,21 @@ task_t * task_current (void) {
  * @brief 当前任务主动放弃CPU
  */
 int sys_sched_yield (void) {
-    task_t * curr_task = task_current();
-
     irq_state_t state = irq_enter_protection();
 
-    // 如果队列中还有其它任务，则将当前任务移入到队列尾部
-    task_set_block(curr_task);
-    task_set_ready(curr_task);
+    if (list_count(&task_manager.ready_list) > 1) {
+        task_t * curr_task = task_current();
 
-    // 切换至下一个任务，在切换完成前要保护，不然可能下一任务
-    // 由于某些原因运行后阻塞或删除，再回到这里切换将发生问题
-    task_dispatch();
+        // 如果队列中还有其它任务，则将当前任务移入到队列尾部
+        task_set_block(curr_task);
+        task_set_ready(curr_task);
 
+        // 切换至下一个任务，在切换完成前要保护，不然可能下一任务
+        // 由于某些原因运行后阻塞或删除，再回到这里切换将发生问题
+        task_dispatch();
+    }
     irq_leave_protection(state);
+
     return 0;
 }
 
@@ -227,10 +272,12 @@ int sys_sched_yield (void) {
  * @brief 进行一次任务调度
  */
 void task_dispatch (void) {
-    task_t * next_task = task_next_run();
-    if (next_task != task_manager.curr_task) {
-        task_manager.curr_task = next_task;
-        task_switch_to(task_manager.curr_task);
+    task_t * to = task_next_run();
+    if (to != task_manager.curr_task) {
+        task_t * from = task_manager.curr_task;
+
+        task_manager.curr_task = to;
+        task_switch_from_to(from, to);
     }
 }
 

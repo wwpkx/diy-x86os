@@ -11,36 +11,36 @@
 #include "tools/log.h"
 #include "cpu/irq.h"
 #include "os_cfg.h"
+#include "ipc/mutex.h"
 
+// 目标用串口，参考资料：https://wiki.osdev.org/Serial_Ports
 #define COM1_PORT           0x3F8       // RS232端口0初始化
+
+static mutex_t mutex;
 
 /**
  * @brief 初始化日志输出
  */
 void log_init (void) {
-#if LOG_ENABLE
+    mutex_init(&mutex);
+
     outb(COM1_PORT + 1, 0x00);    // Disable all interrupts
     outb(COM1_PORT + 3, 0x80);    // Enable DLAB (set baud rate divisor)
     outb(COM1_PORT + 0, 0x03);    // Set divisor to 3 (lo byte) 38400 baud
     outb(COM1_PORT + 1, 0x00);    //                  (hi byte)
     outb(COM1_PORT + 3, 0x03);    // 8 bits, no parity, one stop bit
     outb(COM1_PORT + 2, 0xC7);    // Enable FIFO, clear them, with 14-byte threshold
-    outb(COM1_PORT + 4, 0x0B);    // IRQs enabled, RTS/DSR set
-    outb(COM1_PORT + 4, 0x1E);    // Set in loopback mode, test the serial chip
-    outb(COM1_PORT + 0, 0xAE);    // Test serial chip (send byte 0xAE and check if serial returns same byte)
   
     // If serial is not faulty set it in normal operation mode
     // (not-loopback with IRQs enabled and OUT#1 and OUT#2 bits enabled)
     outb(COM1_PORT + 4, 0x0F);
-#endif
 }
 
 /**
  * @brief 日志打印
  */
 void log_printf(const char * fmt, ...) {
-#if LOG_ENABLE
-   char str_buf[128];
+    char str_buf[128];
     va_list args;
 
     kernel_memset(str_buf, '\0', sizeof(str_buf));
@@ -49,7 +49,9 @@ void log_printf(const char * fmt, ...) {
     kernel_vsprintf(str_buf, fmt, args);
     va_end(args);
 
-    irq_state_t state = irq_enter_protection();
+    // 显示，如果发送速度太慢，会造成这里关中断太长时间
+    // 所以，这里这样做不是好办法
+    mutex_lock(&mutex);
     
     const char * p = str_buf;    
     while (*p != '\0') {
@@ -58,10 +60,8 @@ void log_printf(const char * fmt, ...) {
     }
 
     outb(COM1_PORT, '\r');
-    while ((inb(COM1_PORT + 5) & (1 << 6)) == 0);
     outb(COM1_PORT, '\n');
-    
-    irq_leave_protection(state);
-#endif    
+
+    mutex_unlock(&mutex);
 }
 

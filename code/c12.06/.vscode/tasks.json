@@ -6,20 +6,28 @@
         {
             "label": "写映像文件",
             "type": "shell",
-            "command": "${workspaceRoot}/script/img-write-win.bat",
-            "osx": {
-                "command": "bash ${workspaceRoot}/script/img-write-osx.sh",
+            "command": "bash ${workspaceRoot}/script/img-write-osx.sh",
+            "windows": {
+                // windows下特殊一些
+                "command": "${workspaceRoot}/script/img-write-win.bat",
+            },
+            "linux":{
+                "command": "bash ${workspaceRoot}/script/img-write-linux.sh"
             },
             "options": {
                 "cwd": "${workspaceRoot}/../../image/"
-            },
+            }
         },
         {
             "label": "启动qemu",
             "type": "shell",
-            "command": "${workspaceRoot}/script/qemu-debug-win.bat",
-            "osx": {
-                "command": "bash ${workspaceRoot}/script/qemu-debug-osx.sh",
+            "command": "bash ${workspaceRoot}/script/qemu-debug-osx.sh",
+            "windows": {
+                // windows下特殊一些
+                "command": "${workspaceRoot}/script/qemu-debug-win.bat",
+            },
+            "linux":{
+                "command": "bash ${workspaceRoot}/script/qemu-debug-linux.sh",
             },
             "options": {
                 "cwd": "${workspaceRoot}/../../image/"
@@ -28,10 +36,10 @@
         {
             "label": "调试准备",
             "dependsOrder": "sequence",
-            "dependsOn": ["写映像文件", "启动qemu"],
-            "options": {
-                "cwd": "${workspaceRoot}/../../image/"
-            }
+            "dependsOn": [
+                "写映像文件",
+                "启动qemu"
+            ],
         }
     ]
 }

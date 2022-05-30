@@ -36,6 +36,22 @@ void kernel_init (boot_info_t * boot_info) {
     task_manager_init();
 }
 
+
+/**
+ * @brief 移至第一个进程运行
+ */
+void move_to_first_task(void) {
+    task_t * curr = task_current();
+    ASSERT(curr != 0);
+
+    tss_t * tss = &(curr->tss);
+
+    // 也可以使用类似boot跳loader中的函数指针跳转
+    // 这里用jmp是因为后续需要使用内联汇编添加其它代码
+    __asm__ __volatile__(
+            "jmp *%[ip]"	::[ip]"r"(tss->eip));
+}
+
 void init_main(void) {
     log_printf("Kernel is running....");
     log_printf("Version: %s, name: %s", OS_VERSION, "tiny x86 os");
@@ -43,6 +59,5 @@ void init_main(void) {
 
     // 初始化任务
     task_first_init();
-
-    for (;;) {}
+    move_to_first_task();
 }

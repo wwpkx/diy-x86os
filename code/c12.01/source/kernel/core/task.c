@@ -103,9 +103,13 @@ void task_switch_from_to (task_t * from, task_t * to) {
  * 综上，最好是分离。
  */
 void task_first_init (void) {
+    void first_task_entry (void);
+
+    uint32_t first_start = (uint32_t)first_task_entry;
+
     // 第一个任务代码量小一些，好和栈放在1个页面呢
     // 这样就不要立即考虑还要给栈分配空间的问题
-    task_init(&task_manager.init_task, "init task", 0, 0);     // 里面的值不必要写
+    task_init(&task_manager.init_task, "init task", first_start, 0);     // 里面的值不必要写
     task_manager.curr_task = &task_manager.init_task;
 
     // 更新页表地址为自己的

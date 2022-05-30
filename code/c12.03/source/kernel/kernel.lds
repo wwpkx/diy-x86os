@@ -28,6 +28,7 @@ SECTIONS
 	PROVIDE(s_first_task = .);
 	PROVIDE(e_first_task = . + SIZEOF(.first_task));
 	.first_task 0x80000000: AT(s_first_task) {
+		*first_task_entry*(.text .data .bss)
 		*first_task*(.text .data .bss)
 	}
 

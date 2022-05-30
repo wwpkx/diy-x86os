@@ -24,9 +24,6 @@
 #define PDE_CNT             1024
 #define PTE_CNT             1024
 
-#define PDE_CNT             1024
-#define PTE_CNT             1024
-
 #pragma pack(1)
 /**
  * @brief Page-Table Entry
