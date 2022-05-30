@@ -13,7 +13,7 @@
  */
 int strings_count (char ** start) {
     int count = 0;
-    
+
     if (start) {
         while (*start++) {
             count++;

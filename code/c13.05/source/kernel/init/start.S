@@ -154,16 +154,12 @@ simple_switch:
     .extern do_handler_syscall
 exception_handler_syscall:
 	// 保存前一任务的状态
-	push %ebp
-	push %ebx
-	push %esi
-	push %edi
-	pushf
-
+	pusha
 	push %ds
 	push %es
 	push %fs
 	push %gs
+	pushf
 
 	// 使用内核段寄存器，避免使用应用层的
 	mov $(KERNEL_SELECTOR_DS), %eax
@@ -179,15 +175,12 @@ exception_handler_syscall:
 	add $4, %esp
 
     // 再切换回来
+	popf
 	pop %gs
 	pop %fs
 	pop %es
 	pop %ds
-	popf
-	pop %edi
-	pop %esi
-	pop %ebx
-	pop %ebp
+	popa
 	
 	// 5个参数，加上5*4，不加会导致返回时ss取不出来，最后返回出现问题
     retf $(5*4)    // CS发生了改变，需要使用远跳转

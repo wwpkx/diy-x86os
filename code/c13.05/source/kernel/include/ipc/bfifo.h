@@ -29,7 +29,6 @@ int bfifo_write (bfifo_t * bfifo, void * buf, int size);
 int bfifo_put (bfifo_t * bfifo, void * buf, int size);
 int bfifo_read (bfifo_t * bfifo, void * buf, int size);
 int bfifo_get (bfifo_t * bfifo, void * buf, int size);
-int bfifo_data_count (bfifo_t * bfifo);
-int bfifo_free_count (bfifo_t * bfifo);
+int bfifo_count (bfifo_t * bfifo);
 
 #endif /* BFIFO_H */

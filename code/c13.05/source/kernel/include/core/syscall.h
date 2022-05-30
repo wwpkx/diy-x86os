@@ -19,12 +19,12 @@
  * 系统调用的栈信息
  */
 typedef struct _syscall_frame_t {
-    int eflags;
-	int edi, esi, ebx, ebp;
-    int gs, fs, es, ds;
+	int eflags;
+	int gs, fs, es, ds;
+	int edi, esi, ebp, dummy, ebx, edx, ecx, eax;
 	int eip, cs;
 	int func_id, arg0, arg1, arg2, arg3;
-	int esp3, ss3;
+	int esp, ss;
 }syscall_frame_t;
 
 void exception_handler_syscall (void);		// syscall处理

@@ -29,20 +29,20 @@ static const syscall_handler_t sys_table[] = {
 /**
  * 处理系统调用。该函数由系统调用函数调用
  */
-int do_handler_syscall (syscall_frame_t * frame) {
+void do_handler_syscall (syscall_frame_t * frame) {
 	// 超出边界，返回错误
     if (frame->func_id < sizeof(sys_table) / sizeof(sys_table[0])) {
 		// 查表取得处理函数，然后调用处理
 		syscall_handler_t handler = sys_table[frame->func_id];
 		if (handler) {
 			int ret = handler(frame->arg0, frame->arg1, frame->arg2, frame->arg3);
-			return ret;  // 设置系统调用的返回值，由eax传递
+			frame->eax = ret;  // 设置系统调用的返回值，由eax传递
+            return;
 		}
 	}
 
 	// 不支持的系统调用，打印出错信息
-	// 不支持的系统调用，打印出错信息
 	task_t * task = task_current();
-	log_printf("pid: %d, %s, Unknown syscall: %d", task->pid, task->name,  frame->func_id);
-    return -1;
+	log_printf("task: %s, Unknown syscall: %d", task->name,  frame->func_id);
+    frame->eax = -1;  // 设置系统调用的返回值，由eax传递
 }

@@ -461,7 +461,7 @@ static void copy_opened_files(task_t * child_task) {
 }
 
 /**
- * @brief 创建子进程
+ * @brief 创建进程的副本
  */
 int sys_fork (void) {
     task_t * parent_task = task_current();
@@ -687,7 +687,7 @@ static int copy_args (char * to, uint32_t page_dir, int argc, char **argv) {
 int sys_execve(char *name, char **argv, char **env) {
     task_t * task = task_current();
 
-    // 复制名称
+    // 后面会切换页表，所以先处理需要从进程空间取数据的情况
     kernel_strncpy(task->name, get_file_name(name), TASK_NAME_SIZE);
 
     // 现在开始加载了，先准备应用页表，由于所有操作均在内核区中进行，所以可以直接先切换到新页表
@@ -719,7 +719,7 @@ int sys_execve(char *name, char **argv, char **env) {
     if (err < 0) {
         goto exec_failed;
     }
-    
+
     // 加载完毕，为程序的执行做必要准备
     // 注意，exec的作用是替换掉当前进程，所以只要改变当前进程的执行流即可
     // 当该进程恢复运行时，像完全重新运行一样，所以用户栈要设置成初始模式
