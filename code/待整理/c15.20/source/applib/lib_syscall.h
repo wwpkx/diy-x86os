@@ -8,6 +8,9 @@
 #ifndef LIB_SYSCALL_H
 #define LIB_SYSCALL_H
 
+#include "core/syscall.h"
+#include "os_cfg.h"
+
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/fcntl.h>
@@ -26,8 +29,8 @@ int wait(int* status);
 void _exit(int status);
 
 int open(const char *name, int flags, ...);
-int read(int file, void *ptr, size_t len);
-int write(int file, const void *ptr, size_t len);
+int read(int file, char *ptr, int len);
+int write(int file, char *ptr, int len);
 int close(int file);
 off_t lseek(int file, off_t ptr, int dir);
 int unlink(const char *name);

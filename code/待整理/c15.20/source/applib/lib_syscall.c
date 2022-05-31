@@ -12,31 +12,36 @@
 /**
  * 执行系统调用
  */
-int sys_call (int syscall_num, int arg0, int arg1, int arg2, int arg3) {
-	const unsigned long sys_gate_addr[] = {0, SELECTOR_SYSCALL | 0};  // 使用特权级0
+static inline int sys_call (syscall_args_t * args) {
+    const unsigned long sys_gate_addr[] = {0, SELECTOR_SYSCALL | 0};  // 使用特权级0
     int ret;
 
     // 采用调用门, 这里只支持5个参数
     // 用调用门的好处是会自动将参数复制到内核栈中，这样内核代码很好取参数
     // 而如果采用寄存器传递，取参比较困难，需要先压栈再取
     __asm__ __volatile__(
-            "push %1\n\t"
-            "push %2\n\t"
-            "push %3\n\t"
-            "push %4\n\t"
-            "push %5\n\t"
-            "lcalll *(%6)\n\n"
-    		:"=a"(ret)
-			 :"r"(arg3), "r"(arg2), "r"(arg1), "r"(arg0), "r"(syscall_num), "r"(sys_gate_addr));
+            "push %[arg3]\n\t"
+            "push %[arg2]\n\t"
+            "push %[arg1]\n\t"
+            "push %[arg0]\n\t"
+            "push %[id]\n\t"
+            "lcalll *(%[gate])\n\n"
+            :"=a"(ret)
+            :[arg3]"r"(args->arg3), [arg2]"r"(args->arg2), [arg1]"r"(args->arg1),
+    [arg0]"r"(args->arg0), [id]"r"(args->id),
+    [gate]"r"(sys_gate_addr));
     return ret;
 }
 
 int msleep (int ms) {
-	return sys_call(SYS_msleep, ms, 0, 0, 0);
-}
+    if (ms <= 0) {
+        return 0;
+    }
 
-int fork() {
-    return sys_call(SYS_fork, 0, 0, 0, 0);
+    syscall_args_t args;
+    args.id = SYS_msleep;
+    args.arg0 = ms;
+    return sys_call(&args);
 }
 
 int getpid() {
@@ -61,16 +66,30 @@ void _exit(int status) {
 }
 
 int open(const char *name, int flags, ...) {
-    // 简单点，不支持那么多的参数
-    return sys_call(SYS_open, (int)name, (int)flags, 0, 0);
+    // 不考虑支持太多参数
+    syscall_args_t args;
+    args.id = SYS_open;
+    args.arg0 = (int)name;
+    args.arg1 = (int)flags;
+    return sys_call(&args);
 }
 
-int read(int file, void *ptr, size_t len) {
-    return sys_call(SYS_read, (int)file, (int)ptr, (int)len, 0);
+int read(int file, char *ptr, int len) {
+    syscall_args_t args;
+    args.id = SYS_read;
+    args.arg0 = (int)file;
+    args.arg1 = (int)ptr;
+    args.arg2 = len;
+    return sys_call(&args);
 }
 
-int write(int file, const void *ptr, size_t len) {
-    return sys_call(SYS_write, (int)file, (int)ptr, (int)len, 0);
+int write(int file, char *ptr, int len) {
+    syscall_args_t args;
+    args.id = SYS_write;
+    args.arg0 = (int)file;
+    args.arg1 = (int)ptr;
+    args.arg2 = len;
+    return sys_call(&args);
 }
 
 int close(int file) {
@@ -113,11 +132,17 @@ int stat(const char *file, struct stat *st) {
  * 判断文件描述符与tty关联
  */
 int isatty(int file) {
-    return sys_call(SYS_isatty, file, 0, 0, 0);
+    syscall_args_t args;
+    args.id = SYS_isatty;
+    args.arg0 = (int)file;
+    return sys_call(&args);
 }
 
 void * sbrk(ptrdiff_t incr) {
-    return (caddr_t)sys_call(SYS_sbrk, incr, 0, 0, 0);
+    syscall_args_t args;
+    args.id = SYS_sbrk;
+    args.arg0 = (int)incr;
+    return (void *)sys_call(&args);
 }
 
 int dup (int file) {

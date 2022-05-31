@@ -435,3 +435,10 @@ void memory_init (boot_info_t * boot_info) {
     // 先切换到当前页表
     mmu_set_page_dir((uint32_t)kernel_page_dir);
 }
+
+/**
+ * @brief 调整堆的内存分配，返回堆之前的指针
+ */
+char * sys_sbrk(int incr) {
+    return (char *)0;
+}
