@@ -51,7 +51,7 @@ static void read_disk(int sector, int sector_count, uint8_t * buf) {
  * 打开文件
  */
 int sys_open(const char *name, int flags, ...) {
-    if (name[0] == 's') {
+    if (name[0] == '/') {
         // 暂时直接从扇区1000上读取, 读取大概40KB，足够了
         read_disk(5000, 80, (uint8_t *)TEMP_ADDR);
         temp_pos = (uint8_t *)TEMP_ADDR;

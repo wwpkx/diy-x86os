@@ -30,7 +30,7 @@ int main (int argc, char **argv) {
             // 子进程，用sh替代
             char *argv[] = {"arg0", "arg1", "arg2", "arg3"};
 
-            execve("shell.elf", argv, (char **)0);
+            execve("/shell.elf", argv, (char **)0);
             printf("create shell failed.\n");
 
             int cnt = 0;

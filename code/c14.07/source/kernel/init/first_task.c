@@ -23,7 +23,7 @@ int first_task_main (void) {
         for (;;) {
             // 子进程
             char * argv[] = {"arg0", "arg1", "arg2", "arg3"};
-            execve("shell", argv, (char **)0);
+            execve("/shell.elf", argv, (char **)0);
         }
     } else {
         print_msg("child task id=%d", pid);
