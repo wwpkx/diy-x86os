@@ -32,7 +32,7 @@ static void update_led_status (void) {
  * func是按下shift或者numlock按下时的键值
  * esc是以esc开头的的键值
  */
-static const key_map_t map_table[] = {
+static const key_map_t map_table[256] = {
 		[0x1] = {ASCII_ESC, ASCII_ESC},
 		[0x2] = {'1', '!'},
 		[0x3] = {'2', '@'},
