@@ -121,19 +121,30 @@ void kernel_itoa(char * buf, int num, int base) {
     }
 
     // 只支持十进制负数
+    int signed_num = 0;
     if ((num < 0) && (base == 10)) {
         *p++ = '-';
+        signed_num = 1;
     }
 
-    do {
-        char ch = num2ch[num % base + 15];
-        *p++ = ch;
-        num /= base;
-    } while (num);
+    if (signed_num) {
+        do {
+            char ch = num2ch[num % base + 15];
+            *p++ = ch;
+            num /= base;
+        } while (num);
+    } else {
+        uint32_t u_num = (uint32_t)num;
+        do {
+            char ch = num2ch[u_num % base + 15];
+            *p++ = ch;
+            u_num /= base;
+        } while (u_num);
+    }
     *p-- = '\0';
 
     // 将转换结果逆序，生成最终的结果
-    char * start = (old_num >= 0) ? buf : buf + 1;
+    char * start = (!signed_num) ? buf : buf + 1;
     while (start < p) {
         char ch = *start;
         *start = *p;

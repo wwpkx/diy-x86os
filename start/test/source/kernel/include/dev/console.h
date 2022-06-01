@@ -22,27 +22,31 @@
 
 // 各种颜色
 typedef enum _cclor_t {
-	COLOR_Black			= 0,
-	COLOR_Blue			= 1,
-	COLOR_Green			= 2,
-	COLOR_Cyan			= 3,
-	COLOR_Red			= 4,
-	COLOR_Purple		= 5,
-	COLOR_Brown			= 6,
-	COLOR_Gray			= 7,
-	COLOR_Dark_Gray 	= 8,
-	COLOR_Light_Blue	= 9,
-	COLOR_Light_Green	= 10,
-	COLOR_Light_Cyan	= 11,
-	COLOR_Light_Red		= 12,
-	COLOR_Light_Purple	= 13,
-	COLOR_Yellow		= 14,
-	COLOR_White			= 15
+    COLOR_Black			= 0,
+    COLOR_Blue			= 1,
+    COLOR_Green			= 2,
+    COLOR_Cyan			= 3,
+    COLOR_Red			= 4,
+    COLOR_Purple		= 5,
+    COLOR_Brown			= 6,
+    COLOR_Gray			= 7,
+    COLOR_Dark_Gray 	= 8,
+    COLOR_Light_Blue	= 9,
+    COLOR_Light_Green	= 10,
+    COLOR_Light_Cyan	= 11,
+    COLOR_Light_Red		= 12,
+    COLOR_Light_Purple	= 13,
+    COLOR_Yellow		= 14,
+    COLOR_White			= 15
 }cclor_t;
 
 #define CONSOLE_FORGROUND	COLOR_White
 #define CONSOLE_BACKGROUND	COLOR_Black
 
+
+/**
+ * @brief 显示字符
+ */
 typedef union {
 	struct {
 		char c;						// 显示的字符
