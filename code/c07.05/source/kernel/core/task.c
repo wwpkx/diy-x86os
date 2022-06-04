@@ -67,5 +67,5 @@ void simple_switch (uint32_t ** from, uint32_t * to);
  */
 void task_switch_from_to (task_t * from, task_t * to) {
     // switch_to_tss(to->tss_sel);
-    simple_switch(&from->stack, to->stack);
+    simple_switch(from->stack, to->stack);
 }
