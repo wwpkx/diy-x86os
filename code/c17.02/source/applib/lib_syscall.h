@@ -10,6 +10,7 @@
 
 #include "core/syscall.h"
 #include "os_cfg.h"
+#include "fs/fs.h"
 
 #include <sys/stat.h>
 typedef struct _syscall_args_t {

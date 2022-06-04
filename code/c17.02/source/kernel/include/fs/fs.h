@@ -10,6 +10,10 @@
 
 #include <sys/stat.h>
 
+#define O_RDONLY        (0 << 0)            // 只读
+#define O_WRONLY        (1 << 0)            // 只写
+#define O_RDWR          (2 << 0)            // 读写
+
 void fs_init (void);
 
 int sys_open(const char *name, int flags, ...);

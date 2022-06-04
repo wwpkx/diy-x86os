@@ -40,7 +40,7 @@ static task_t init_task;
  * 初始任务函数
  * 目前暂时用函数表示，以后将会作为加载为进程
  */
-void init_task_entry(void *param) {
+void init_task_entry(void) {
     int count = 0;
 
     for (;;) {

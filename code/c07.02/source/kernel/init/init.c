@@ -34,12 +34,11 @@ void kernel_init (boot_info_t * boot_info) {
  * 初始任务函数
  * 目前暂时用函数表示，以后将会作为加载为进程
  */
-void init_task_entry(void *param) {
+void init_task_entry(void) {
     int count = 0;
 
     for (;;) {
         log_printf("init task: %d", count++);
-        //task_switch_to(&init_task);
     }
 }
 
@@ -49,9 +48,9 @@ void init_main(void) {
     log_printf("%d %d %x %c", -123, 123456, 0x12345, 'a');
 
     //int a = 3 / 0;
+    // irq_enable_global();
     int count = 0;
     for (;;) {
         log_printf("first task: %d", count++);
-        //task_switch_to(&init_task);
     }
 }

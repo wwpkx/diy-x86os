@@ -39,12 +39,11 @@ static task_t init_task;
  * 初始任务函数
  * 目前暂时用函数表示，以后将会作为加载为进程
  */
-void init_task_entry(void *param) {
+void init_task_entry(void) {
     int count = 0;
 
     for (;;) {
         log_printf("init task: %d", count++);
-        //task_switch_from_to(&first_task);
     }
 }
 
@@ -58,9 +57,9 @@ void init_main(void) {
     task_init(&first_task, 0, 0); 
 
     //int a = 3 / 0;
+    // irq_enable_global();
     int count = 0;
     for (;;) {
         log_printf("first task: %d", count++);
-        //task_switch_from_to(&init_task);
     }
 }

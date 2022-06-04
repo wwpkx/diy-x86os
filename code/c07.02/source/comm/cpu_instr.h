@@ -81,8 +81,4 @@ static inline void hlt(void) {
     __asm__ __volatile__("hlt");
 }
 
-static inline void write_tr (uint32_t tss_selector) {
-    __asm__ __volatile__("ltr %%ax"::"a"(tss_selector));
-}
-
 #endif

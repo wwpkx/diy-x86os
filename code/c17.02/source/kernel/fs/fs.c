@@ -13,6 +13,7 @@
 #include <sys/stat.h>
 #include "dev/console.h"
 #include "fs/file.h"
+#include "tools/log.h"
 
 #define TEMP_FILE_ID		100
 #define TEMP_ADDR        	(8*1024*1024)      // 在0x800000处缓存原始
@@ -58,17 +59,58 @@ void fs_init (void) {
 }
 
 /**
+ * @brief 检查路径是否正常
+ */
+static int is_path_valid (const char * path) {
+	if ((path == (const char *)0) || (path[0] == '\0')) {
+		return 0;
+	}
+
+    return 1;
+}
+
+/**
  * 打开文件
  */
 int sys_open(const char *name, int flags, ...) {
-    if (name[0] == '/') {
-        // 暂时直接从扇区1000上读取, 读取大概40KB，足够了
-        read_disk(5000, 80, (uint8_t *)TEMP_ADDR);
-        temp_pos = (uint8_t *)TEMP_ADDR;
-        return TEMP_FILE_ID;
-    }
+	int fd = -1;
 
-    return -1;
+	// 必要的参数检查
+	if (!is_path_valid(name)) {
+        log_printf("path is not valid.");
+		return -1;
+	}
+
+	// 分配文件描述符链接。这个过程中可能会被释放
+	file_t * file = file_alloc();
+	if (file) {
+		fd = task_alloc_fd(file);
+		if (fd < 0) {
+			goto sys_open_failed;
+		}
+	}
+
+	if (kernel_strncmp(name, "tty0", sizeof("tty0")) == 0) {
+		
+	} else {
+		if (name[0] == '/') {
+            // 暂时直接从扇区1000上读取, 读取大概40KB，足够了
+            read_disk(5000, 80, (uint8_t *)TEMP_ADDR);
+            temp_pos = (uint8_t *)TEMP_ADDR;
+            return TEMP_FILE_ID;
+        }
+	}
+
+	return fd;
+sys_open_failed:
+	if (file) {
+		file_free(file);
+	}
+
+	if (fd >= 0) {
+		task_remove_fd(fd);
+	}
+	return -1;
 }
 
 /**

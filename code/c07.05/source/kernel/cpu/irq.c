@@ -19,7 +19,7 @@ static void dump_core_regs (exception_frame_t * frame) {
     // 打印CPU寄存器相关内容
     log_printf("IRQ: %d, error code: %d.", frame->num, frame->error_code);
     log_printf("CS: %d\nDS: %d\nES: %d\nSS: %d\nFS:%d\nGS:%d",
-               frame->cs, frame->ds, frame->es, frame->ds, frame->gs
+               frame->cs, frame->ds, frame->es, frame->ds, frame->fs, frame->gs
     );
     log_printf("EAX:0x%x\n"
                 "EBX:0x%x\n"

@@ -15,6 +15,9 @@
         "bitmap.h": "c",
         "log.h": "c",
         "fs.h": "c",
-        "os_cfg.h": "c"
+        "os_cfg.h": "c",
+        "stdio.h": "c",
+        "cdefs.h": "c",
+        "syscall.h": "c"
     },
 }
