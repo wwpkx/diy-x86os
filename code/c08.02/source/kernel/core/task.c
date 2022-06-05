@@ -32,7 +32,7 @@ static int tss_init (task_t * task, uint32_t entry, uint32_t esp) {
     task->tss.es = task->tss.ss = task->tss.ds
             = task->tss.fs = task->tss.gs = KERNEL_SELECTOR_DS;   // 暂时写死
     task->tss.cs = KERNEL_SELECTOR_CS;    // 暂时写死
-    task->tss.iomap = 0x40000000;
+    task->tss.iomap = 0;
 
     task->tss_sel = tss_sel;
     return 0;
@@ -47,7 +47,6 @@ int task_init (task_t *task, uint32_t entry, uint32_t esp) {
     tss_init(task, entry, esp);
 //    uint32_t * pesp = (uint32_t *)esp;
 //    if (pesp) {
-//        *(--pesp) = 0;
 //        *(--pesp) = entry;
 //        *(--pesp) = 0;
 //        *(--pesp) = 0;

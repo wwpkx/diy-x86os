@@ -50,7 +50,7 @@ static int tss_init (task_t * task, int flag, uint32_t entry, uint32_t esp) {
     task->tss.es = task->tss.ss = task->tss.ds = task->tss.fs 
             = task->tss.gs = data_sel;   // 全部采用同一数据段
     task->tss.cs = code_sel; 
-    task->tss.iomap = 0x40000000;
+    task->tss.iomap = 0;
 
     // 页表初始化
     uint32_t page_dir = memory_create_uvm();

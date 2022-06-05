@@ -65,7 +65,7 @@ int task_init (task_t *task, const char * name, int flag, uint32_t entry, uint32
     task->tss.es = task->tss.ss = task->tss.ds = task->tss.fs 
             = task->tss.gs = data_sel;   // 全部采用同一数据段
     task->tss.cs = code_sel; 
-    task->tss.iomap = 0x40000000;
+    task->tss.iomap = 0;
     task->tss_sel = tss_sel;
 
     task->heap_top = 0;

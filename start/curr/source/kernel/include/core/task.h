@@ -5,6 +5,8 @@
 #include "cpu/cpu.h"
 
 typedef struct _task_t {
+    //uint32_t * stack;
+    
     tss_t tss;
     int tss_sel;
 }task_t;

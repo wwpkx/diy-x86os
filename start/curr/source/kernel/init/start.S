@@ -91,8 +91,26 @@ exception_handler control_exception, 21, 1
 
 exception_handler time, 0x20, 0
 
+    // simple_switch(&from, to)
+    .text
+    .global simple_switch
+simple_switch:
+    mov 4(%esp), %eax
+    mov 8(%esp), %edx
 
+    push %ebp
+    push %ebx
+    push %esi
+    push %edi
+    mov %esp, (%eax)
 
+    mov %edx, %esp
+    pop %edi
+    pop %esi
+    pop %ebx
+    pop %ebp
+
+    ret
 
 
 

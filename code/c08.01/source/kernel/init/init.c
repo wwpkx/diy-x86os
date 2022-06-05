@@ -68,6 +68,7 @@ void init_main(void) {
     write_tr(first_task.tss_sel);
 
     //int a = 3 / 0;
+    // irq_enable_global();
     int count = 0;
     for (;;) {
         log_printf("first task: %d", count++);

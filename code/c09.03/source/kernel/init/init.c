@@ -56,7 +56,7 @@ void init_main(void) {
     log_printf("%d %d %x %c", -123, 123456, 0x12345, 'a');
 
     // 初始化任务
-    task_init(&init_task, "test task", (uint32_t)init_task_entry, (uint32_t)&init_task_stack[1024]);
+    task_init(&init_task, "init task", (uint32_t)init_task_entry, (uint32_t)&init_task_stack[1024]);
     task_first_init();
 
     //int a = 3 / 0;

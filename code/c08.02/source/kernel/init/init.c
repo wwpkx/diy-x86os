@@ -51,7 +51,6 @@ void init_task_entry(void) {
 
 void list_test (void) {
     list_t list;
-    list_node_t nodes[5];
     
     list_init(&list);
     log_printf("list: first=0x%x, last=0x%x, count=%d", list_first(&list), list_last(&list), list_count(&list));
@@ -70,6 +69,7 @@ void init_main(void) {
     write_tr(first_task.tss_sel);
 
     //int a = 3 / 0;
+    // irq_enable_global();
     int count = 0;
     for (;;) {
         log_printf("first task: %d", count++);
