@@ -163,16 +163,16 @@ void task_first_init (void) {
 
     // 初始进程也是要求传递参数的，只不过传递的参数为空，所以加上下面的设置
     task_args_t * task_args = (task_args_t *)(MEMORY_TASK_BASE + total_size - sizeof(task_args_t));
-    task_init(&task_manager.init_task, "kernel task", 0, 
+    task_init(&task_manager.first_task, "kernel task", 0,
                 MEMORY_TASK_BASE, // init进程从进程空间起点处运行
                 (uint32_t)task_args);     // 里面的值不必要写
 
     // todo: 这里不正确，bin结尾是bss区。。。。???
-    task_manager.init_task.heap_top = (uint32_t)&first_task_end;  // 这里不对
-    task_manager.curr_task = &task_manager.init_task;
+    task_manager.first_task.heap_top = (uint32_t)&first_task_end;  // 这里不对
+    task_manager.curr_task = &task_manager.first_task;
 
     // 更新页表地址为自己的
-    mmu_set_page_dir(task_manager.init_task.tss.cr3);
+    mmu_set_page_dir(task_manager.first_task.tss.cr3);
 
     // 分配内存供代码存放使用，然后将代码复制过去
     memory_alloc_page_for(MEMORY_TASK_BASE,  total_size, PTE_P | PTE_W | PTE_U);
@@ -184,10 +184,10 @@ void task_first_init (void) {
     task_args->ret_addr = 0;
 
     // 启动进程
-    task_start(&task_manager.init_task);
+    task_start(&task_manager.first_task);
 
     // 写TR寄存器，指示当前运行的第一个任务
-    write_tr(task_manager.init_task.tss_sel);
+    write_tr(task_manager.first_task.tss_sel);
 }
 
 /**
@@ -815,7 +815,7 @@ void sys_exit(int status) {
         task_t * task = task_table + i;
         if (task->parent == curr_task) {
             // 有子进程，则转给init_task
-            task->parent = &task_manager.init_task;       
+            task->parent = &task_manager.first_task;
 
             // 如果子进程中有僵尸进程，唤醒回收资源
             // 并不由自己回收，因为自己将要退出  
@@ -830,9 +830,9 @@ void sys_exit(int status) {
 
     // 如果有移动子进程，则唤醒init进程
     task_t * parent = curr_task->parent;
-    if (move_child && (parent != &task_manager.init_task)) {  // 如果父进程为init进程，在下方唤醒
-        if (task_manager.init_task.state == TASK_WAITING) {
-            task_set_ready(&task_manager.init_task);
+    if (move_child && (parent != &task_manager.first_task)) {  // 如果父进程为init进程，在下方唤醒
+        if (task_manager.first_task.state == TASK_WAITING) {
+            task_set_ready(&task_manager.first_task);
         }
     }
 

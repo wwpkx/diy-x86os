@@ -41,4 +41,19 @@ static inline list_node_t * list_first (list_t * list) {
 static inline list_node_t * list_last (list_t * list) {
     return list->last;
 }
+
+void list_insert_first (list_t * list, list_node_t * node);
+void list_insert_last (list_t * list, list_node_t * node);
+list_node_t * list_remove_first (list_t * list);
+list_node_t * list_remove (list_t * list, list_node_t * node);
+    
+#define offset_in_parent(parnet_type, node_name) \
+    ((uint32_t)&(((parnet_type *)0)->node_name))
+
+#define parent_addr(node, parnet_type, node_name) \
+    ((uint32_t)node - offset_in_parent(parnet_type, node_name))
+
+#define list_node_parent(node, parnet_type, node_name)     \
+    ((parnet_type *)(node ? parent_addr(node, parnet_type, node_name) : 0))
+
 #endif

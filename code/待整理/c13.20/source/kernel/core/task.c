@@ -162,16 +162,16 @@ static void first_task_init (void) {
 
     // 初始进程也是要求传递参数的，只不过传递的参数为空，所以加上下面的设置
     task_args_t * task_args = (task_args_t *)(MEMORY_TASK_BASE + total_size - sizeof(task_args_t));
-    task_init(&task_manager.init_task, "kernel task", 0, 
+    task_init(&task_manager.first_task, "kernel task", 0,
                 MEMORY_TASK_BASE, // init进程从进程空间起点处运行
                 (uint32_t)task_args);     // 里面的值不必要写
-    task_manager.curr_task = (task_t *)&task_manager.init_task;
+    task_manager.curr_task = (task_t *)&task_manager.first_task;
 
     // 这里不正确，bin结尾是bss区。。。。
-    task_manager.init_task.heap_top = (uint32_t)&first_task_end;  // 这里不对
+    task_manager.first_task.heap_top = (uint32_t)&first_task_end;  // 这里不对
 
     // 更新页表地址为自己的
-    mmu_set_page_dir(task_manager.init_task.tss.cr3);
+    mmu_set_page_dir(task_manager.first_task.tss.cr3);
 
     // 分配内存供代码存放使用，然后将代码复制过去
     memory_alloc_page_for(MEMORY_TASK_BASE,  total_size, PTE_P | PTE_W | PTE_U);
@@ -183,7 +183,7 @@ static void first_task_init (void) {
     task_args->ret_addr = 0;
 
     // 启动进程
-    task_start(&task_manager.init_task);
+    task_start(&task_manager.first_task);
 }
 
 /**
@@ -217,11 +217,11 @@ void task_manager_init (void) {
                 TASK_FLAG_SYSTEM,
                 (uint32_t)idle_task_entry,
                 0);     // 运行于内核模式，无需指定特权级3的栈
-    task_manager.curr_task = &task_manager.init_task;
+    task_manager.curr_task = &task_manager.first_task;
     task_start(&task_manager.idle_task);
 
     // 写TR寄存器，指示当前运行的第一个任务
-    write_tr(task_manager.init_task.tss_sel);
+    write_tr(task_manager.first_task.tss_sel);
 }
 
 /**
