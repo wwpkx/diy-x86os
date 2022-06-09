@@ -15,6 +15,7 @@
         "bitmap.h": "c",
         "log.h": "c",
         "fs.h": "c",
-        "os_cfg.h": "c"
+        "os_cfg.h": "c",
+        "setjmp.h": "c"
     },
 }
