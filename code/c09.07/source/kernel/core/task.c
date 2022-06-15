@@ -82,7 +82,7 @@ void task_switch_from_to (task_t * from, task_t * to) {
 }
 
 void task_first_init (void) {
-    task_init(&task_manager.first_task, "init task", 0, 0);
+    task_init(&task_manager.first_task, "first task", 0, 0);
 
     // 写TR寄存器，指示当前运行的第一个任务
     write_tr(task_manager.first_task.tss_sel);
@@ -213,8 +213,9 @@ void task_dispatch (void) {
     task_t * to = task_next_run();
     if (to != task_manager.curr_task) {
         task_t * from = task_manager.curr_task;
-
         task_manager.curr_task = to;
+
+        to->state = TASK_RUNNING;
         task_switch_from_to(from, to);
     }
 }
