@@ -117,7 +117,7 @@ void task_first_init (void) {
 
     // 第一个任务代码量小一些，好和栈放在1个页面呢
     // 这样就不要立即考虑还要给栈分配空间的问题
-    task_init(&task_manager.first_task, "init task", first_start, 0);     // 里面的值不必要写
+    task_init(&task_manager.first_task, "first task", first_start, 0);     // 里面的值不必要写
     task_manager.curr_task = &task_manager.first_task;
 
     // 更新页表地址为自己的

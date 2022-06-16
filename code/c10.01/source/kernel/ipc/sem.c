@@ -16,14 +16,3 @@ void sem_init (sem_t * sem, int init_count) {
     sem->count = init_count;
     list_init(&sem->wait_list);
 }
-
-/**
- * 获取信号量的当前值
- */
-int sem_count (sem_t * sem) {
-    irq_state_t  irq_state = irq_enter_protection();
-    int count = sem->count;
-    irq_leave_protection(irq_state);
-    return count;
-}
-

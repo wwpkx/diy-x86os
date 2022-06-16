@@ -179,7 +179,7 @@ void task_first_init (void) {
 
     // 第一个任务代码量小一些，好和栈放在1个页面呢
     // 这样就不要立即考虑还要给栈分配空间的问题
-    task_init(&task_manager.first_task, "init task", 0, first_start, first_start + alloc_size);
+    task_init(&task_manager.first_task, "first task", 0, first_start, first_start + alloc_size);
     task_manager.first_task.heap_start = (uint32_t)&e_first_task;  // 这里不对
     task_manager.first_task.heap_end = task_manager.first_task.heap_start;
     task_manager.curr_task = &task_manager.first_task;

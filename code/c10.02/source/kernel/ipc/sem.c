@@ -56,13 +56,3 @@ void sem_notify (sem_t * sem) {
     irq_leave_protection(irq_state);
 }
 
-/**
- * 获取信号量的当前值
- */
-int sem_count (sem_t * sem) {
-    irq_state_t  irq_state = irq_enter_protection();
-    int count = sem->count;
-    irq_leave_protection(irq_state);
-    return count;
-}
-

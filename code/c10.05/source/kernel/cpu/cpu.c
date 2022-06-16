@@ -9,10 +9,8 @@
 #include "cpu/cpu.h"
 #include "cpu/irq.h"
 #include "os_cfg.h"
-#include "ipc/mutex.h"
 
 static segment_desc_t gdt_table[GDT_TABLE_SIZE];
-static mutex_t mutex;
 
 /**
  * 设置段描述符
@@ -48,8 +46,9 @@ void gate_desc_set(gate_desc_t * desc, uint16_t selector, uint32_t offset, uint1
 int gdt_alloc_desc (void) {
     int i;
 
+    irq_state_t state = irq_enter_protection();
+    
     // 跳过第0项
-    mutex_lock(&mutex);
     for (i = 1; i < GDT_TABLE_SIZE; i++) {
         segment_desc_t * desc = gdt_table + i;
         if (desc->attr == 0) {
@@ -57,7 +56,7 @@ int gdt_alloc_desc (void) {
             break;
         }
     }
-    mutex_unlock(&mutex);
+    irq_leave_protection(state);
 
     return i >= GDT_TABLE_SIZE ? -1 : i * sizeof(segment_desc_t);;
 }
@@ -97,7 +96,5 @@ void switch_to_tss (uint32_t tss_selector) {
  * CPU初始化
  */
 void cpu_init (void) {
-    mutex_init(&mutex);
-
     init_gdt();
 }

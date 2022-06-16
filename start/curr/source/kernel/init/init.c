@@ -9,6 +9,7 @@
 #include "tools/klib.h"
 #include "core/task.h"
 #include "tools/list.h"
+#include "ipc/sem.h"
 
 void kernel_init (boot_info_t * boot_info) {
    cpu_init();
@@ -22,12 +23,14 @@ void kernel_init (boot_info_t * boot_info) {
 
 static uint32_t init_task_stack[1024];
 static task_t init_task;
+static sem_t sem;
 
 void init_task_entry (void) {
     int count = 0;
     for (;;) {
+        //sem_wait(&sem);
+
         log_printf("init task: %d", count++);
-        sys_sleep(500);
     }
 }
 
@@ -39,10 +42,16 @@ void init_main (void) {
     task_init(&init_task, "init task", (uint32_t)init_task_entry, (uint32_t)&init_task_stack[1024]);
     task_first_init();
 
+    sem_init(&sem, 0);
+    
     irq_enable_global();
+  
+
     int count = 0;
     for (;;) {
         log_printf("first main: %d", count++);
-        sys_sleep(1000);
+        //sem_notify(&sem);
+
+        //sys_sleep(1000);
     }
 }

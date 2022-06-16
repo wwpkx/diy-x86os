@@ -11,19 +11,14 @@
 #include "tools/log.h"
 #include "cpu/irq.h"
 #include "os_cfg.h"
-#include "ipc/mutex.h"
 
 // 目标用串口，参考资料：https://wiki.osdev.org/Serial_Ports
 #define COM1_PORT           0x3F8       // RS232端口0初始化
-
-static mutex_t mutex;
 
 /**
  * @brief 初始化日志输出
  */
 void log_init (void) {
-    mutex_init(&mutex);
-
     outb(COM1_PORT + 1, 0x00);    // Disable all interrupts
     outb(COM1_PORT + 3, 0x80);    // Enable DLAB (set baud rate divisor)
     outb(COM1_PORT + 0, 0x03);    // Set divisor to 3 (lo byte) 38400 baud
@@ -51,7 +46,7 @@ void log_printf(const char * fmt, ...) {
 
     // 显示，如果发送速度太慢，会造成这里关中断太长时间
     // 所以，这里这样做不是好办法
-    mutex_lock(&mutex);
+    irq_state_t state = irq_enter_protection();
     
     const char * p = str_buf;    
     while (*p != '\0') {
@@ -62,6 +57,6 @@ void log_printf(const char * fmt, ...) {
     outb(COM1_PORT, '\r');
     outb(COM1_PORT, '\n');
 
-    mutex_unlock(&mutex);
+    irq_leave_protection(state);
 }
 
