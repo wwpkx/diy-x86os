@@ -13,7 +13,7 @@
  * @brief 初始化地址分配结构
  * 以下不检查start和size的页边界，由上层调用者检查
  */
-static void addr_alloc_init (addr_alloc_t * alloc, uint8_t * bits, 
+static void addr_alloc_init (addr_alloc_t * alloc, uint8_t * bits,
                     uint32_t start, uint32_t size, uint32_t page_size) {
     // start和size应当为页对齐
     ASSERT((start % page_size) == 0);
@@ -58,7 +58,7 @@ static void addr_free_page (addr_alloc_t * alloc, uint32_t addr, int page_count)
 /**
  * @brief 初始化内存管理系统
  * 该函数的主要任务：
- * 1、初始化物理内存分配器：将所有物理内存管理起来
+ * 1、初始化物理内存分配器：将所有物理内存管理起来. 在1MB内存中分配物理位图
  * 2、重新创建内核页表：原loader中创建的页表已经不再合适
  */
 void memory_init (boot_info_t * boot_info) {

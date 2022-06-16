@@ -110,7 +110,8 @@ void create_kernel_table (void) {
         int vstart = down2((uint32_t)map->vstart, MEM_PAGE_SIZE);
         int vend = up2((uint32_t)map->vend, MEM_PAGE_SIZE);
         int page_count = (vend - vstart) / MEM_PAGE_SIZE;
-        
+
+        // 建立映射关系
     }
 }
 

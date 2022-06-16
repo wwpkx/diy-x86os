@@ -25,6 +25,7 @@ typedef struct _task_t {
     char name[TASK_NAME_SIZE];
 
     list_node_t run_node;
+    list_node_t wait_node;
     list_node_t all_node;
 
     tss_t tss;

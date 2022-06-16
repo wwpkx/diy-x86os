@@ -47,7 +47,7 @@ void init_task_entry(void) {
     int count = 0;
 
     for (;;) {
-        // sem_wait(&sem);
+        sem_wait(&sem);
         log_printf("init task: %d", count++);
         //sys_msleep(2000);
     }
@@ -59,15 +59,13 @@ void init_main(void) {
     log_printf("%d %d %x %c", -123, 123456, 0x12345, 'a');
 
     // 初始化任务
-    // 调整下前后位置，让first_task在前，因为其是先运行的
-    // 如果不调换，则当开启中断时，会触发定时，最终调用task_dipatch，立即切换到test_task中运行
-    // 然而此时信号量还未初始化
+    task_init(&init_task, "init task", (uint32_t)init_task_entry, (uint32_t)&init_task_stack[1024]);
     task_first_init();
-    task_init(&init_task, "test task", (uint32_t)init_task_entry, (uint32_t)&init_task_stack[1024]);
+
+    // 放在开中断前，以避免定时中断切换至其它任务，而此时信号量还未初始化
+    sem_init(&sem, 2);
 
     irq_enable_global();
-
-    sem_init(&sem, 0);
 
     //int a = 3 / 0;
     int count = 0;
@@ -75,8 +73,8 @@ void init_main(void) {
         log_printf("first task: %d", count++);
 
         // 发消息给init task，可以打印了
-        //sem_notify(&sem);
+        sem_notify(&sem);
 
-        //sys_msleep(1000);
+        sys_msleep(1000);
     }
 }

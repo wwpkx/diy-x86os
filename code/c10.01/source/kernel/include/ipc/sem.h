@@ -19,6 +19,5 @@ typedef struct _sem_t {
 }sem_t;
 
 void sem_init (sem_t * sem, int init_count);
-int sem_count (sem_t * sem);
 
 #endif //OS_SEM_H
