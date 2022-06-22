@@ -57,6 +57,24 @@ static void die (int  code) {
     for (;;) {}
 }
 
+#define PDE_P           (1 << 0)
+#define PDE_W           (1 << 1)
+#define PDE_PS          (1 << 7)
+#define CR4_PSE         (1 << 4)
+#define CR0_PG          (1 << 31)
+
+void enable_page_mode (void) {
+    static uint32_t page_dir[1024] __attribute__((aligned(4096))) = {
+        [0] = PDE_P | PDE_W | PDE_PS | 0
+    };
+
+    uint32_t cr4 = read_cr4();
+    write_cr4(cr4 | CR4_PSE);
+
+    write_cr3((uint32_t)page_dir);
+    write_cr0(read_cr0() | CR0_PG);
+}
+
 void load_kernel (void) {
     read_disk(100, 500, (uint8_t *)SYS_KERNEL_LOAD_ADDR);
 
@@ -64,6 +82,8 @@ void load_kernel (void) {
     if (kernel_entry == 0) {
         die(-1);
     }
+
+    enable_page_mode();
 
     ((void (*)(boot_info_t *))kernel_entry)(&boot_info);
     for (;;) {}

@@ -23,7 +23,7 @@ void bitmap_init (bitmap_t * bitmap, uint8_t * bits, int count, int init_bit) {
     bitmap->bits = bits;
 
     int bytes = bitmap_byte_count(bitmap->bit_count);
-    kernel_memset(bitmap->bits, init_bit ? 1 : 0, bytes);
+    kernel_memset(bitmap->bits, init_bit ? 0xFF: 0, bytes);
 }
 
 /**
@@ -44,8 +44,6 @@ void bitmap_set_bit (bitmap_t * bitmap, int index, int count, int bit) {
  * @brief 获取指定位的状态
  */
 int bitmap_get_bit (bitmap_t * bitmap, int index) {
-    ASSERT(bitmap->bit_count > 0);
-
     return bitmap->bits[index / 8] & (1 << (index % 8));
 }
 
@@ -91,6 +89,6 @@ int bitmap_alloc_nbits (bitmap_t * bitmap, int bit, int count) {
         }
     }
 
-    return - 1;
+    return -1;
 }
 

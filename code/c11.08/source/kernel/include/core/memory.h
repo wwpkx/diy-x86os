@@ -14,7 +14,6 @@
 
 #define MEM_EBDA_START              0x00080000
 #define MEM_EXT_START               (1024*1024) 
-#define MEM_EXT_END                 (512*1024*1024 - 1)
 #define MEM_PAGE_SIZE               4096        // 和页表大小一致
 
 /**
@@ -28,16 +27,6 @@ typedef struct _addr_alloc_t {
     uint32_t start;             // 起始地址
     uint32_t size;              // 地址大小
 }addr_alloc_t;
-
-/**
- * @brief 虚拟地址到物理地址之间的映射关系表
- */
-typedef struct _memory_map_t {
-    void * vstart;     // 虚拟地址
-    void * vend;
-    void * pstart;       // 物理地址
-    uint32_t perm;      // 访问权限
-}memory_map_t;
 
 void memory_init (boot_info_t * boot_info);
 

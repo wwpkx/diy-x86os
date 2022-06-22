@@ -10,6 +10,7 @@
         "fcntl.h": "c",
         "_default_fcntl.h": "c",
         "loader.h": "c",
-        "elf.h": "c"
+        "elf.h": "c",
+        "fs.h": "c"
     },
 }

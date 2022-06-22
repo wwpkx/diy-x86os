@@ -11,6 +11,8 @@
         "_default_fcntl.h": "c",
         "boot_info.h": "c",
         "cpu_instr.h": "c",
-        "cpu.h": "c"
+        "cpu.h": "c",
+        "bitmap.h": "c",
+        "klib.h": "c"
     },
 }

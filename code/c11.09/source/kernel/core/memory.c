@@ -9,10 +9,8 @@
 #include "tools/log.h"
 #include "core/memory.h"
 #include "tools/klib.h"
-#include "cpu/mmu.h"
 
 static addr_alloc_t paddr_alloc;        // 物理地址分配结构
-static pde_t kernel_page_dir[PDE_CNT] __attribute__((aligned(MEM_PAGE_SIZE))); // 内核页目录表
 
 /**
  * @brief 初始化地址分配结构
@@ -83,66 +81,6 @@ static uint32_t total_mem_size(boot_info_t * boot_info) {
     return mem_size;
 }
 
-pte_t * find_pte (pde_t * page_dir, uint32_t vaddr, int alloc) {
-    pte_t * page_table;
-
-    pde_t *pde = page_dir + pde_index(vaddr);
-    if (pde->present) {
-        page_table = (pte_t *)pde_paddr(pde);
-    } else {
-        // 如果不存在，则考虑分配一个
-        if (alloc == 0) {
-            return (pte_t *)0;
-        }
-
-        // 分配一个物理页表
-        uint32_t pg_paddr = addr_alloc_page(&paddr_alloc, 1);
-        if (pg_paddr == 0) {
-            return (pte_t *)0;
-        }
-
-        // 设置为用户可读写，将被pte中设置所覆盖
-        pde->v = pg_paddr | PTE_P | PTE_W | PTE_U;
-
-        // 为物理页表绑定虚拟地址的映射，这样下面就可以计算出虚拟地址了
-        //kernel_pg_last[pde_index(vaddr)].v = pg_paddr | PTE_P | PTE_W;
-
-        // 清空页表，防止出现异常
-        // 这里虚拟地址和物理地址一一映射，所以直接写入
-        page_table = (pte_t *)(pg_paddr);
-        kernel_memset(page_table, 0, MEM_PAGE_SIZE);
-    }
-
-    return page_table + pte_index(vaddr);
-}
-
-/**
- * @brief 将指定的地址空间进行一页的映射
- */
-int memory_create_map (pde_t * page_dir, uint32_t vaddr, uint32_t paddr, int count, uint32_t perm) {
-    for (int i = 0; i < count; i++) {
-        // log_printf("create map: v-0x%x p-0x%x, perm: 0x%x", vaddr, paddr, perm);
-
-        pte_t * pte = find_pte(page_dir, vaddr, 1);
-        if (pte == (pte_t *)0) {
-            // log_printf("create pte failed. pte == 0");
-            return -1;
-        }
-
-        // 创建映射的时候，这条pte应当是不存在的。
-        // 如果存在，说明可能有问题
-        // log_printf("\tpte addr: 0x%x", (uint32_t)pte);
-        ASSERT(pte->present == 0);
-
-        pte->v = paddr | perm | PTE_P;
-
-        vaddr += MEM_PAGE_SIZE;
-        paddr += MEM_PAGE_SIZE;
-    }
-
-    return 0;
-}
-
 /**
  * @brief 根据内存映射表，构造内核页表
  */
@@ -153,16 +91,10 @@ void create_kernel_table (void) {
     // 地址映射表, 用于建立内核级的地址映射
     // 地址不变，但是添加了属性
     static memory_map_t kernel_map[] = {
-        {kernel_base,   s_text,         0,              PTE_W},         // 内核栈区
+        {kernel_base,   s_text,         0,              0},         // 内核栈区
         {s_text,        e_text,         s_text,         0},         // 内核代码区
-        {s_data,        (void *)(MEM_EBDA_START - 1),   s_data,        PTE_W},      // 内核数据区
-
-        // 扩展存储空间一一映射，方便直接操作
-        {(void *)MEM_EXT_START, (void *)MEM_EXT_END,     (void *)MEM_EXT_START, PTE_W},
+        {s_data,        (void *)(MEM_EBDA_START - 1),   s_data,        0},      // 内核数据区
     };
-
-    // 清空页目录表
-    kernel_memset(kernel_page_dir, 0, sizeof(kernel_page_dir));
 
     // 清空后，然后依次根据映射关系创建映射表
     for (int i = 0; i < sizeof(kernel_map) / sizeof(memory_map_t); i++) {
@@ -174,29 +106,8 @@ void create_kernel_table (void) {
         int vend = up2((uint32_t)map->vend, MEM_PAGE_SIZE);
         int page_count = (vend - vstart) / MEM_PAGE_SIZE;
 
-        memory_create_map(kernel_page_dir, vstart, (uint32_t)map->pstart, page_count, map->perm);
+        // 建立映射关系
     }
-}
-
-/**
- * @brief 创建进程的初始页表
- * 主要的工作创建页目录表，然后从内核页表中复制一部分
- */
-uint32_t memory_create_uvm (void) {
-    pde_t * page_dir = (pde_t *)addr_alloc_page(&paddr_alloc, 1);
-    if (page_dir == 0) {
-        return 0;
-    }
-    kernel_memset((void *)page_dir, 0, MEM_PAGE_SIZE);
-
-    // 复制整个内核空间的页目录项，以便与其它进程共享内核空间
-    // 用户空间的内存映射暂不处理，等加载程序时创建
-    uint32_t user_pde_start = pde_index(MEMORY_TASK_BASE);
-    for (int i = 0; i < user_pde_start; i++) {
-        page_dir[i].v = kernel_page_dir[i].v;
-    }
-
-    return (uint32_t)page_dir;
 }
 
 /**
@@ -230,7 +141,4 @@ void memory_init (boot_info_t * boot_info) {
 
     // 创建内核页表并切换过去
     create_kernel_table();
-
-    // 先切换到当前页表
-    mmu_set_page_dir((uint32_t)kernel_page_dir);
 }
