@@ -1,5 +1,8 @@
 if [ -f "disk1.vhd" ]; then
     mv disk1.vhd disk1.dmg
+else
+    echo "找不到disk1.vhd，请从课程提供的百度网盘链接上下载"
+    exit
 fi
 
 if [ ! -f "disk1.dmg" ]; then
@@ -9,6 +12,9 @@ fi
 
 if [ -f "disk2.vhd" ]; then
     mv disk2.vhd disk2.dmg
+else
+    echo "找不到disk2.vhd，请从课程提供的百度网盘链接上下载"
+    exit
 fi
 
 if [ ! -f "disk2.dmg" ]; then
