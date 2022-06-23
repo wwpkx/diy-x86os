@@ -23,6 +23,5 @@ SECTIONS
 		*(.bss)
 	}
 
-	. = ALIGN(4096);
 	PROVIDE(mem_free_start = .);
 }

@@ -45,6 +45,13 @@ int gdt_alloc_desc() {
     return -1;
 }
 
+void  gdt_free_sel(int sel) {
+    mutex_lock(&mutex);
+    gdt_table[sel/sizeof(segment_desc_t)].attr = 0;
+    mutex_unlock(&mutex);
+}
+
+
 void init_gdt (void) {
     for (int i = 0; i < GDT_TABLE_SIZE; i++) {
         segment_desc_set(i * sizeof(segment_desc_t), 0, 0, 0);

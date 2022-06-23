@@ -18,10 +18,6 @@ static addr_alloc_t paddr_alloc;        // 物理地址分配结构
  */
 static void addr_alloc_init (addr_alloc_t * alloc, uint8_t * bits,
                     uint32_t start, uint32_t size, uint32_t page_size) {
-    // start和size应当为页对齐
-    ASSERT((start % page_size) == 0);
-    ASSERT((size % page_size) == 0);
-
     mutex_init(&alloc->mutex);
     alloc->start = start;
     alloc->size = size;

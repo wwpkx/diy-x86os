@@ -1,6 +1,8 @@
 SECTIONS {
-    . = 0x10000;
+    PROVIDE(kernel_base = .);
+   . = 0x10000;
     
+    PROVIDE(s_text = .);
     .text : {
         *(.text)
     }
@@ -8,8 +10,11 @@ SECTIONS {
     .rodata : {
         *(.rodata)
     }
+    PROVIDE(e_text = .);
 
-   .data : {
+    . = ALIGN(4096);
+    PROVIDE(s_data = .);
+    .data : {
         *(.data)
     }
 

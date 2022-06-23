@@ -13,6 +13,7 @@
         "cpu_instr.h": "c",
         "cpu.h": "c",
         "bitmap.h": "c",
-        "klib.h": "c"
+        "klib.h": "c",
+        "memory.h": "c"
     },
 }

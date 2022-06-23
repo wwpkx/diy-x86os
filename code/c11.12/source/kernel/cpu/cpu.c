@@ -42,12 +42,6 @@ void gate_desc_set(gate_desc_t * desc, uint16_t selector, uint32_t offset, uint1
 	desc->offset31_16 = (offset >> 16) & 0xffff;
 }
 
-void gdt_free_sel (int sel) {
-    mutex_lock(&mutex);
-    gdt_table[sel / sizeof(segment_desc_t)].attr = 0;
-    mutex_unlock(&mutex);
-}
-
 /**
  * 分配一个GDT推荐表符
  */

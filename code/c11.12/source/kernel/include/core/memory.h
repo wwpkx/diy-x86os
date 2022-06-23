@@ -13,11 +13,8 @@
 #include "ipc/mutex.h"
 
 #define MEM_EBDA_START              0x00080000
-#define MEM_EXT_START               (1024*1024) 
-#define MEM_EXT_END                 (512*1024*1024 - 1)
+#define MEM_EXT_START               (1024*1024)
 #define MEM_PAGE_SIZE               4096        // 和页表大小一致
-
-#define MEMORY_TASK_BASE        (0x80000000)        // 进程起始地址空间
 
 /**
  * @brief 地址分配结构
@@ -42,6 +39,5 @@ typedef struct _memory_map_t {
 }memory_map_t;
 
 void memory_init (boot_info_t * boot_info);
-uint32_t memory_create_uvm (void);
 
 #endif // MEMORY_H

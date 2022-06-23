@@ -13,8 +13,7 @@
 #include "ipc/mutex.h"
 
 #define MEM_EBDA_START              0x00080000
-#define MEM_EXT_START               (1024*1024) 
-#define MEM_EXT_END                 (512*1024*1024 - 1)
+#define MEM_EXT_START               (1024*1024)
 #define MEM_PAGE_SIZE               4096        // 和页表大小一致
 
 /**

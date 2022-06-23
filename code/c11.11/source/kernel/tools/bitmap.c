@@ -89,6 +89,6 @@ int bitmap_alloc_nbits (bitmap_t * bitmap, int bit, int count) {
         }
     }
 
-    return - 1;
+    return -1;
 }
 

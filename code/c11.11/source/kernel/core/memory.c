@@ -20,10 +20,6 @@ static pde_t kernel_page_dir[PDE_CNT] __attribute__((aligned(MEM_PAGE_SIZE))); /
  */
 static void addr_alloc_init (addr_alloc_t * alloc, uint8_t * bits,
                     uint32_t start, uint32_t size, uint32_t page_size) {
-    // start和size应当为页对齐
-    ASSERT((start % page_size) == 0);
-    ASSERT((size % page_size) == 0);
-
     mutex_init(&alloc->mutex);
     alloc->start = start;
     alloc->size = size;
@@ -102,7 +98,7 @@ pte_t * find_pte (pde_t * page_dir, uint32_t vaddr, int alloc) {
         }
 
         // 设置为用户可读写，将被pte中设置所覆盖
-        pde->v = pg_paddr | PTE_P | PTE_W | PTE_U;      
+        pde->v = pg_paddr | PTE_P;
 
         // 为物理页表绑定虚拟地址的映射，这样下面就可以计算出虚拟地址了
         //kernel_pg_last[pde_index(vaddr)].v = pg_paddr | PTE_P | PTE_W;
@@ -153,9 +149,9 @@ void create_kernel_table (void) {
     // 地址映射表, 用于建立内核级的地址映射
     // 地址不变，但是添加了属性
     static memory_map_t kernel_map[] = {
-        {kernel_base,   s_text,         0,              PTE_W},         // 内核栈区
+        {kernel_base,   s_text,         0,              0},         // 内核栈区
         {s_text,        e_text,         s_text,         0},         // 内核代码区
-        {s_data,        (void *)(MEM_EBDA_START - 1),   s_data,        PTE_W},      // 内核数据区
+        {s_data,        (void *)(MEM_EBDA_START - 1),   s_data,        0},      // 内核数据区
     };
 
     // 清空后，然后依次根据映射关系创建映射表
