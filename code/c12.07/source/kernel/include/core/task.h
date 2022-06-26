@@ -62,7 +62,7 @@ typedef struct _task_manager_t {
 	list_t task_list;			// 所有已创建任务的队列
 	list_t sleep_list;          // 延时队列
 
-	task_t init_task;			// 内核任务
+	task_t first_task;			// 内核任务
 	task_t idle_task;			// 空闲任务
 
 	int app_code_sel;			// 任务代码段选择子

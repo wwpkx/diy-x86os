@@ -16,13 +16,16 @@
 #include "tools/klib.h"
 #include "tools/list.h"
 #include "ipc/sem.h"
-#include "ipc/bfifo.h"
 #include "core/memory.h"
+
+static boot_info_t * init_boot_info;        // 启动信息
 
 /**
  * 内核入口
  */
 void kernel_init (boot_info_t * boot_info) {
+    init_boot_info = boot_info;
+
     // 初始化CPU，再重新加载
     cpu_init();
     log_init();
@@ -37,15 +40,10 @@ void kernel_init (boot_info_t * boot_info) {
 }
 
 
-
 /**
  * @brief 移至第一个进程运行
  */
 void move_to_first_task(void) {
-    // 不能直接用Jmp far进入，因为当前特权级0，不能跳到低特权级的代码
-    // 下面的iret后，还需要手动加载ds, fs, es等寄存器值，iret不会自动加载
-    // 注意，运行下面的代码可能会产生异常：段保护异常或页保护异常。
-    // 可根据产生的异常类型和错误码，并结合手册来找到问题所在
     task_t * curr = task_current();
     ASSERT(curr != 0);
 

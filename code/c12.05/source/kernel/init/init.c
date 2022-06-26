@@ -16,13 +16,16 @@
 #include "tools/klib.h"
 #include "tools/list.h"
 #include "ipc/sem.h"
-#include "ipc/bfifo.h"
 #include "core/memory.h"
+
+static boot_info_t * init_boot_info;        // 启动信息
 
 /**
  * 内核入口
  */
 void kernel_init (boot_info_t * boot_info) {
+    init_boot_info = boot_info;
+
     // 初始化CPU，再重新加载
     cpu_init();
     log_init();
@@ -35,7 +38,6 @@ void kernel_init (boot_info_t * boot_info) {
 
     task_manager_init();
 }
-
 
 
 /**

@@ -29,7 +29,7 @@ static void dump_core_regs (exception_frame_t * frame) {
     log_printf("CS: %d\nDS: %d\nES: %d\nSS: %d\nFS:%d\nGS:%d",
                frame->cs, frame->ds, frame->es, ss, frame->fs, frame->gs
     );
-    log_printf("EAX:0x%x\n"
+     log_printf("EAX:0x%x\n"
                 "EBX:0x%x\n"
                 "ECX:0x%x\n"
                 "EDX:0x%x\n"

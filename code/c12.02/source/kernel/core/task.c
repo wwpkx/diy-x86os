@@ -243,8 +243,9 @@ void task_dispatch (void) {
     task_t * to = task_next_run();
     if (to != task_manager.curr_task) {
         task_t * from = task_manager.curr_task;
-
         task_manager.curr_task = to;
+
+        to->state = TASK_RUNNING;
         task_switch_from_to(from, to);
     }
 }
