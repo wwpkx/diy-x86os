@@ -6,6 +6,7 @@
 #include "comm/cpu_instr.h"
 #include "cpu/irq.h"
 #include "core/memory.h"
+#include "cpu/mmu.h"
 
 static uint32_t idle_task_stack[IDLE_TASK_SIZE];
 static task_manager_t task_manager;
@@ -22,11 +23,16 @@ static int tss_init (task_t * task, uint32_t entry, uint32_t esp) {
     );
 
     kernel_memset(&task->tss, 0, sizeof(tss_t));
+
+    int code_sel, data_sel;
+    code_sel = task_manager.app_code_sel | SEG_CPL3;
+    data_sel = task_manager.app_data_sel | SEG_CPL3;
+
     task->tss.eip = entry;
     task->tss.esp = task->tss.esp0 = esp;
-    task->tss.ss = task->tss.ss0 = KERNEL_SELECTOR_DS;
-    task->tss.es = task->tss.ds = task->tss.fs = task->tss.gs = KERNEL_SELECTOR_DS;
-    task->tss.cs = KERNEL_SELECTOR_CS;
+    task->tss.ss = task->tss.ss0 = data_sel;
+    task->tss.es = task->tss.ds = task->tss.fs = task->tss.gs = data_sel;
+    task->tss.cs = code_sel;
     task->tss.eflags = EFLAGS_IF | EFLGAGS_DEFAULT;
     uint32_t page_dir = memory_create_uvm();
     if (page_dir == 0) {
@@ -68,9 +74,23 @@ void task_switch_from_to (task_t * from, task_t * to) {
 }
 
 void task_first_init (void) {
-    task_init(&task_manager.first_task, "first task", 0, 0);
+    void first_task_entry (void);
+    extern uint8_t s_first_task[], e_first_task[];
+
+    uint32_t copy_size = (uint32_t)(e_first_task - s_first_task);
+    uint32_t alloc_size = 10 * MEM_PAGE_SIZE;
+    ASSERT(copy_size < alloc_size);
+
+    uint32_t first_start = (uint32_t)first_task_entry;
+
+    task_init(&task_manager.first_task, "first task", first_start, 0);
     write_tr(task_manager.first_task.tss_sel);
     task_manager.curr_task = &task_manager.first_task;
+
+    mmu_set_page_dir(task_manager.first_task.tss.cr3);
+
+    memory_alloc_page_for(first_start, alloc_size, PTE_P | PTE_W);
+    kernel_memcpy((void *)first_start, s_first_task, copy_size);
 }
 
 task_t * task_first_task (void) {
@@ -84,6 +104,18 @@ static void idle_task_entry (void) {
 }
 
 void task_mananger_init (void) {
+    int sel = gdt_alloc_desc();
+    segment_desc_set(sel, 0x000000000, 0xFFFFFFFF,
+        SEG_P_PRESENT | SEG_DPL3 | SEG_S_NORMAL | SEG_TYPE_DATA | SEG_TYPE_RW | SEG_D
+    );
+    task_manager.app_data_sel = sel;
+
+    sel = gdt_alloc_desc();
+    segment_desc_set(sel, 0x000000000, 0xFFFFFFFF,
+        SEG_P_PRESENT | SEG_DPL3 | SEG_S_NORMAL | SEG_TYPE_CODE | SEG_TYPE_RW | SEG_D
+    );
+    task_manager.app_code_sel = sel;
+
     list_init(&task_manager.ready_list);
     list_init(&task_manager.task_list);
     list_init(&task_manager.sleep_list);

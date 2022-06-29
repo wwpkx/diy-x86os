@@ -39,7 +39,7 @@ static int tss_init (task_t * task, uint32_t entry, uint32_t esp) {
 
     task->tss.eip = entry;
     task->tss.esp = task->tss.esp0 = esp;
-    task->tss.ss0 = KERNEL_SELECTOR_DS;
+    task->tss.ss0 = data_sel;
     task->tss.eip = entry;
     task->tss.eflags = EFLAGS_DEFAULT| EFLAGS_IF;
     task->tss.es = task->tss.ss = task->tss.ds = task->tss.fs 
@@ -275,8 +275,9 @@ void task_dispatch (void) {
     task_t * to = task_next_run();
     if (to != task_manager.curr_task) {
         task_t * from = task_manager.curr_task;
-
         task_manager.curr_task = to;
+
+        to->state = TASK_RUNNING;
         task_switch_from_to(from, to);
     }
 }

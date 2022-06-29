@@ -46,6 +46,9 @@ typedef struct _tss_t {
 #define SEG_DPL0    (0 << 5)
 #define SEG_DPL3    (3 << 5)
 
+#define SEG_CPL0    (0 << 0)
+#define SEG_CPL3    (3 << 0)
+
 #define SEG_S_SYSTEM    (0 << 4)
 #define SEG_S_NORMAL    (1 << 4)
 
