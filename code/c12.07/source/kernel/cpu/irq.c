@@ -110,7 +110,7 @@ void do_handler_stack_segment_fault(exception_frame_t * frame) {
 void do_handler_general_protection(exception_frame_t * frame) {
     log_printf("--------------------------------");
     log_printf("IRQ/Exception happend: General Protection.");
-    if (frame->error_code & ERR_PAGE_P) {
+    if (frame->error_code & ERR_EXT) {
         log_printf("the exception occurred during delivery of an "
                 "event external to the program, such as an interrupt"
                 "or an earlier exception.");
