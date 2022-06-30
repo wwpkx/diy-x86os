@@ -22,7 +22,7 @@ SECTIONS
 	.bss : {
 		*(EXCLUDE_FILE(*first_task*) .bss)
 	}
-	PROVIDE(e_data = .);
+	e_data = .;
 
 	/* 初始进程的配置：接紧着在低端1MB内存开始存储，但是运行时搬运到0x80000000处 */
 	. = 0x80000000;

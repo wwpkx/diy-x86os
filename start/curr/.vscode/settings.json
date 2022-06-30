@@ -14,6 +14,7 @@
         "cpu.h": "c",
         "bitmap.h": "c",
         "klib.h": "c",
-        "memory.h": "c"
+        "memory.h": "c",
+        "irq.h": "c"
     },
 }

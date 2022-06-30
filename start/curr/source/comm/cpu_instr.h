@@ -46,7 +46,7 @@ static inline void lgdt (uint32_t start, uint32_t size) {
     __asm__ __volatile__("lgdt %[g]"::[g]"m"(gdt));
 }
 
-static inline uint16_t read_cr0 (void) {
+static inline uint32_t read_cr0 (void) {
     uint32_t cr0;
 
     __asm__ __volatile__("mov %%cr0, %[v]":[v]"=r"(cr0));
@@ -57,7 +57,14 @@ static inline void write_cr0 (uint32_t v) {
     __asm__ __volatile__("mov %[v], %%cr0"::[v]"r"(v));
 }
 
-static inline uint16_t read_cr3 (void) {
+static inline uint32_t read_cr2 (void) {
+    uint32_t cr2;
+
+    __asm__ __volatile__("mov %%cr2, %[v]":[v]"=r"(cr2));
+    return cr2;
+}
+
+static inline uint32_t read_cr3 (void) {
     uint32_t cr3;
 
     __asm__ __volatile__("mov %%cr3, %[v]":[v]"=r"(cr3));
@@ -68,7 +75,7 @@ static inline void write_cr3 (uint32_t v) {
     __asm__ __volatile__("mov %[v], %%cr3"::[v]"r"(v));
 }
 
-static inline uint16_t read_cr4 (void) {
+static inline uint32_t read_cr4 (void) {
     uint32_t cr4;
 
     __asm__ __volatile__("mov %%cr4, %[v]":[v]"=r"(cr4));
