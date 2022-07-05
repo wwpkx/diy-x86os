@@ -15,6 +15,7 @@
         "bitmap.h": "c",
         "klib.h": "c",
         "memory.h": "c",
-        "irq.h": "c"
+        "irq.h": "c",
+        "syscall.h": "c"
     },
 }
