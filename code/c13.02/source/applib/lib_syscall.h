@@ -19,14 +19,12 @@ typedef struct _syscall_args_t {
     int arg3;
 }syscall_args_t;
 
-// 系统调用号
-#define SYS_msleep              0
-
 /**
  * 执行系统调用
  */
 static inline int sys_call (syscall_args_t * args) {
-	const unsigned long sys_gate_addr[] = {0, SELECTOR_SYSCALL | 0};  // 使用特权级0
+    // 使用特权级0,其实比3高即可，偏移量不需要，填0即可。类似于far_jump函数的实现
+	const unsigned long sys_gate_addr[] = {0, SELECTOR_SYSCALL | 0};
     int ret;
 
     // 采用调用门, 这里只支持5个参数
@@ -54,9 +52,6 @@ static inline int msleep (int ms) {
     syscall_args_t args;
     args.id = SYS_msleep;
     args.arg0 = ms;
-    args.arg1 = 0;
-    args.arg2 = 0;
-    args.arg3 = 0;
 	return sys_call(&args);
 }
 

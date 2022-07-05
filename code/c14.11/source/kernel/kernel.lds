@@ -22,17 +22,17 @@ SECTIONS
 	.bss : {
 		*(EXCLUDE_FILE(*first_task*) .bss)
 	}
+	e_data = .;
 
 	/* 初始进程的配置：接紧着在低端1MB内存开始存储，但是运行时搬运到0x80000000处 */
-	. = ALIGN(4096);
-	PROVIDE(s_first_task = .);
-	PROVIDE(e_first_task = . + SIZEOF(.first_task));
-	.first_task 0x80000000: AT(s_first_task) {
-		*first_task_entry*(.text .data .bss)
-		*first_task*(.text .data .bss)
-	}
+	. = 0x80000000;
 
-	/* 重设LMA，并对齐的4KB */
-	. = ALIGN(4096);
-	PROVIDE(mem_free_start = . - 0x80000000);
+	PROVIDE(s_first_task = LOADADDR(.first_task));
+	.first_task : AT(e_data) {
+		*first_task_entry*(.text .data. rodata .data)
+		*first_task*(.text .data. rodata .data)
+	}
+	PROVIDE(e_first_task = LOADADDR(.first_task) + SIZEOF(.first_task));
+
+	PROVIDE(mem_free_start = e_first_task);
 }

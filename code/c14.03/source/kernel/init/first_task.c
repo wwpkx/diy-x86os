@@ -7,31 +7,26 @@
  */
 #include "applib/lib_syscall.h"
 
-int parent = 0, child = 0;
-
 int first_task_main (void) {
+    int count = 3;
+
     int pid = getpid();
     print_msg("first task id=%d", pid);
     
     pid = fork();
     if (pid < 0) {
         print_msg("create child proc failed.", 0);
-        for (;;) {
-            msleep(1000);
-        }
     } else if (pid == 0) {
-        for (;;) {
-            // 子进程
-            print_msg("child=%d", child++);
-            msleep(1000);
-        }
+        print_msg("child: %d", count);
     } else {
         print_msg("child task id=%d", pid);
-        for (;;) {
-            // 父进程
-            print_msg("parent=%d", parent++);
-            msleep(2000);
-        }
+        print_msg("parent: %d", count);
+    }
+
+    pid = getpid();
+    for (;;) {
+        print_msg("task id = %d", pid);
+        msleep(1000);
     }
 
     return 0;

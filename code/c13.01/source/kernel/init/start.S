@@ -149,6 +149,5 @@ simple_switch:
   	ret
 
      .global exception_handler_syscall
-    .extern do_handler_syscall
 exception_handler_syscall:
     ret

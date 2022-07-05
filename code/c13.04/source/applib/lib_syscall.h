@@ -23,7 +23,8 @@ typedef struct _syscall_args_t {
  * 执行系统调用
  */
 static inline int sys_call (syscall_args_t * args) {
-	const unsigned long sys_gate_addr[] = {0, SELECTOR_SYSCALL | 0};  // 使用特权级0
+    // 使用特权级0,其实比3高即可，偏移量不需要，填0即可。类似于far_jump函数的实现
+	const unsigned long sys_gate_addr[] = {0, SELECTOR_SYSCALL | 0};
     int ret;
 
     // 采用调用门, 这里只支持5个参数

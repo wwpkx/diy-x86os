@@ -149,7 +149,6 @@ simple_switch:
   	ret
 
      .global exception_handler_syscall
-    .extern do_handler_syscall
 exception_handler_syscall:
 	// 5个参数，加上5*4，不加会导致返回时ss取不出来，最后返回出现问题
     retf $(5*4)    // CS发生了改变，需要使用远跳转

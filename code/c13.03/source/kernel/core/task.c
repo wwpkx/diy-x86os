@@ -131,10 +131,10 @@ void task_first_init (void) {
     void first_task_entry (void);
 
     // 以下获得的是bin文件在内存中的物理地址
-    extern uint8_t s_first_task, e_first_task;
+    extern uint8_t s_first_task[], e_first_task[];
 
     // 分配的空间比实际存储的空间要大一些，多余的用于放置栈
-    uint32_t copy_size = (uint32_t)(&e_first_task - &s_first_task);
+    uint32_t copy_size = (uint32_t)(e_first_task - s_first_task);
     uint32_t alloc_size = 10 * MEM_PAGE_SIZE;
     ASSERT(copy_size < alloc_size);
 
@@ -150,7 +150,7 @@ void task_first_init (void) {
 
     // 分配一页内存供代码存放使用，然后将代码复制过去
     memory_alloc_page_for(first_start,  alloc_size, PTE_P | PTE_W | PTE_U);
-    kernel_memcpy((void *)first_start, (void *)&s_first_task, copy_size);
+    kernel_memcpy((void *)first_start, (void *)s_first_task, copy_size);
 
     // 写TR寄存器，指示当前运行的第一个任务
     write_tr(task_manager.first_task.tss_sel);
@@ -342,7 +342,7 @@ void task_time_tick (void) {
  * 
  * @param ms 
  */
-int sys_msleep (uint32_t ms) {
+void sys_msleep (uint32_t ms) {
     // 至少延时1个tick
     if (ms < OS_TICK_MS) {
         ms = OS_TICK_MS;
@@ -358,5 +358,4 @@ int sys_msleep (uint32_t ms) {
     task_dispatch();
 
     irq_leave_protection(state);
-    return 0;
 }

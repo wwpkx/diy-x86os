@@ -29,7 +29,7 @@ static void dump_core_regs (exception_frame_t * frame) {
     log_printf("CS: %d\nDS: %d\nES: %d\nSS: %d\nFS:%d\nGS:%d",
                frame->cs, frame->ds, frame->es, ss, frame->fs, frame->gs
     );
-    log_printf("EAX:0x%x\n"
+     log_printf("EAX:0x%x\n"
                 "EBX:0x%x\n"
                 "ECX:0x%x\n"
                 "EDX:0x%x\n"
@@ -110,7 +110,7 @@ void do_handler_stack_segment_fault(exception_frame_t * frame) {
 void do_handler_general_protection(exception_frame_t * frame) {
     log_printf("--------------------------------");
     log_printf("IRQ/Exception happend: General Protection.");
-    if (frame->error_code & ERR_PAGE_P) {
+    if (frame->error_code & ERR_EXT) {
         log_printf("the exception occurred during delivery of an "
                 "event external to the program, such as an interrupt"
                 "or an earlier exception.");

@@ -58,7 +58,7 @@ static inline void write_cr0(uint32_t v) {
 	__asm__ __volatile__("mov %[v], %%cr0"::[v]"r"(v));
 }
 
-static inline uint16_t read_cr2() {
+static inline uint32_t read_cr2() {
 	uint32_t cr2;
 	__asm__ __volatile__("mov %%cr2, %[v]":[v]"=r"(cr2));
 	return cr2;
