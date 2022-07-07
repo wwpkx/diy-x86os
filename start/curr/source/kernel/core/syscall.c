@@ -13,6 +13,7 @@ static const syscall_hanler_t sys_table[] = {
     [SYS_getpid] = (syscall_hanler_t)sys_getpid,
     [SYS_fork] = (syscall_hanler_t)sys_fork,
     [SYS_printmsg] = (syscall_hanler_t)sys_print_msg,
+    [SYS_execve] = (syscall_hanler_t)sys_execve,
 };
 
 void do_handler_syscall (syscall_frame_t * frame) {
