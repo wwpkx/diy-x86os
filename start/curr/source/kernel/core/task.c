@@ -8,6 +8,8 @@
 #include "core/memory.h"
 #include "cpu/mmu.h"
 #include "core/syscall.h"
+#include "comm/elf.h"
+#include "fs/fs.h"
 
 static uint32_t idle_task_stack[IDLE_TASK_SIZE];
 static task_manager_t task_manager;
@@ -363,6 +365,137 @@ fork_failed:
     return -1;
 }
 
+static int load_phdr (int file, Elf32_Phdr * phdr, uint32_t page_dir) {
+    int err = memory_alloc_for_page_dir(page_dir, phdr->p_vaddr, phdr->p_memsz, PTE_P | PTE_U | PTE_W);
+    if (err < 0) {
+        log_printf("no memory");
+        return -1;
+    }
+
+    if (sys_lseek(file, phdr->p_offset, 0) < 0) {
+        log_printf("read file failed");
+        return -1;
+    }
+
+    uint32_t vaddr = phdr->p_vaddr;
+    uint32_t size = phdr->p_filesz;
+    while (size > 0) {
+        int curr_size = (size > MEM_PAGE_SIZE) ? MEM_PAGE_SIZE:size;
+        uint32_t paddr = memory_get_paddr(page_dir, vaddr);
+
+        // 0x1000 - 0x1000
+        if (sys_read(file, (char *)paddr, curr_size) < curr_size) {
+            log_printf("read file failed.");
+            return -1;
+        }
+
+        size -= curr_size;
+        vaddr += curr_size;
+    }
+    
+    return 0;
+}
+
+static uint32_t load_elf_file (task_t * task, const char * name, uint32_t page_dir) {
+    Elf32_Ehdr elf_hdr;
+    Elf32_Phdr elf_phdr;
+
+    int file = sys_open(name, 0);
+    if (file < 0) {
+        log_printf("open failed. %s", name);
+        goto load_failed;
+    }
+
+    int cnt = sys_read(file, (char *)&elf_hdr, sizeof(elf_hdr));
+    if (cnt < sizeof(Elf32_Ehdr)) {
+        log_printf("elf hdr too small. size=%d", cnt);
+        goto load_failed;
+    }
+
+    if ((elf_hdr.e_ident[0] != 0x7F) || (elf_hdr.e_ident[1] != 'E')
+    || (elf_hdr.e_ident[2] != 'L') || (elf_hdr.e_ident[3] != 'F')) {
+        log_printf("check elf ident failed.");
+        goto load_failed;
+    }
+
+    uint32_t e_phoff = elf_hdr.e_phoff;
+    for (int i = 0; i < elf_hdr.e_phnum; i++, e_phoff += elf_hdr.e_phentsize) {
+        if (sys_lseek(file, e_phoff, 0) < 0) {
+            log_printf("read file failed.");
+            goto load_failed;
+        }
+
+        cnt = sys_read(file, (char *)&elf_phdr, sizeof(elf_phdr));
+        if (cnt < sizeof(elf_phdr)) {
+            log_printf("read file failed.");
+            goto load_failed;
+        }
+
+        if ((elf_phdr.p_type != 1) || (elf_phdr.p_vaddr < MEMORY_TASK_BASE)) {
+            continue;
+        }
+
+        int err = load_phdr(file, &elf_phdr, page_dir);
+        if (err < 0) {
+            log_printf("load program failed");
+            goto load_failed;
+        }
+    }
+
+    sys_close(file);
+    return elf_hdr.e_entry;
+
+load_failed:
+    if (file) {
+        sys_close(file);
+    }
+    return 0;
+}
+
 int sys_execve (char * name, char **argv, char ** env) {
+    task_t * task = task_current();
+
+    uint32_t old_page_dir = task->tss.cr3;
+
+    uint32_t new_page_dir = memory_create_uvm();
+    if (!new_page_dir) {
+        goto exec_failed;
+    }
+
+    uint32_t entry = load_elf_file(task, name, new_page_dir);
+    if (entry == 0) {
+        goto exec_failed;
+    }
+
+    uint32_t stack_top = MEM_TASK_STACK_TOP;
+    int err = memory_alloc_for_page_dir(
+        new_page_dir, MEM_TASK_STACK_TOP - MEM_TASK_STACK_SIZE,
+        MEM_TASK_STACK_SIZE, PTE_P | PTE_U | PTE_W
+    );
+    if (err < 0) {
+        goto exec_failed;
+    }
+
+    syscall_frame_t * frame = (syscall_frame_t *)(task->tss.esp0 - sizeof(syscall_frame_t));
+    frame->eip = entry;
+    frame->eax = frame->ebx = frame->ecx = frame->edx = 0;
+    frame->esi = frame->edi = frame->ebp = 0;
+    frame->eflags = EFLAGS_IF | EFLGAGS_DEFAULT;
+    frame->esp = stack_top - sizeof(uint32_t) * SYSCALL_PARAM_COUNT; 
+    
+    
+    task->tss.cr3 = new_page_dir;
+    mmu_set_page_dir(new_page_dir);
+
+    memory_destroy_uvm(old_page_dir);
+    return 0;
+
+exec_failed:
+    if (new_page_dir) {
+        task->tss.cr3 = old_page_dir;
+        mmu_set_page_dir(old_page_dir);
+
+        memory_destroy_uvm(new_page_dir);
+    }
     return -1;
 }

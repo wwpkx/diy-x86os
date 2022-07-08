@@ -11,7 +11,7 @@ dd if=kernel.elf of=%DISK1_NAME% bs=512 conv=notrunc seek=100
 
 @REM  写应用程序init，临时使用
 @REM dd if=init.elf of=%DISK1_NAME% bs=512 conv=notrunc seek=5000
-@REM dd if=shell.elf of=%DISK1_NAME% bs=512 conv=notrunc seek=5000
+dd if=shell.elf of=%DISK1_NAME% bs=512 conv=notrunc seek=5000
 
 @REM 写应用程序，使用系统的挂载命令
 @REM 开始复制
