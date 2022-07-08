@@ -23,7 +23,6 @@ static uint32_t idle_task_stack[IDLE_STACK_SIZE];	// 空闲任务堆栈
 static task_t task_table[TASK_NR];      // 用户进程表
 static mutex_t task_table_mutex;        // 进程表互斥访问锁
 
-// esp: 用户栈
 static int tss_init (task_t * task, int flag, uint32_t entry, uint32_t esp) {
     // 为TSS分配GDT
     int tss_sel = gdt_alloc_desc();
