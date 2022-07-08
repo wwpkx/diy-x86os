@@ -13,7 +13,7 @@ include_directories(
 
 # 将所有的汇编、C文件加入工程
 # 注意保证start.asm在最前头
-file(GLOB C_LIST "*.c" "*.h")
+file(GLOB C_LIST "*.c" "*.h" "*.S")
 add_executable(${PROJECT_NAME} ${C_LIST})
 
 # 不带调试信息的elf生成，何种更小，写入到image目录下

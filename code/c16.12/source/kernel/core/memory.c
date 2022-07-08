@@ -28,10 +28,6 @@ static pde_t * current_page_dir (void) {
  */
 static void addr_alloc_init (addr_alloc_t * alloc, uint8_t * bits,
                     uint32_t start, uint32_t size, uint32_t page_size) {
-    // start和size应当为页对齐
-    ASSERT((start % page_size) == 0);
-    ASSERT((size % page_size) == 0);
-
     mutex_init(&alloc->mutex);
     alloc->start = start;
     alloc->size = size;
@@ -110,7 +106,7 @@ pte_t * find_pte (pde_t * page_dir, uint32_t vaddr, int alloc) {
         }
 
         // 设置为用户可读写，将被pte中设置所覆盖
-        pde->v = pg_paddr | PTE_P | PTE_W | PTE_U;
+        pde->v = pg_paddr | PTE_P | PTE_W | PDE_U;
 
         // 为物理页表绑定虚拟地址的映射，这样下面就可以计算出虚拟地址了
         //kernel_pg_last[pde_index(vaddr)].v = pg_paddr | PTE_P | PTE_W;
@@ -280,7 +276,7 @@ uint32_t memory_copy_uvm (uint32_t page_dir) {
                 goto copy_uvm_failed;
             }
 
-            // 复制内容
+            // 复制内容。
             kernel_memcpy((void *)page, (void *)vaddr, MEM_PAGE_SIZE);
         }
     }

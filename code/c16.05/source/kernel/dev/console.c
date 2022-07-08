@@ -244,7 +244,6 @@ int console_write (int dev, char * data, int size) {
                     show_char(console, c);
                 }
                 break;
-            }
         }
     }
     update_cursor_pos(console);

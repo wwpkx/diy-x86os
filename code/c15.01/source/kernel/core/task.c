@@ -165,10 +165,10 @@ void task_first_init (void) {
     void first_task_entry (void);
 
     // 以下获得的是bin文件在内存中的物理地址
-    extern uint8_t s_first_task, e_first_task;
+    extern uint8_t s_first_task[], e_first_task[];
 
     // 分配的空间比实际存储的空间要大一些，多余的用于放置栈
-    uint32_t copy_size = (uint32_t)(&e_first_task - &s_first_task);
+    uint32_t copy_size = (uint32_t)(e_first_task - s_first_task);
     uint32_t alloc_size = 10 * MEM_PAGE_SIZE;
     ASSERT(copy_size < alloc_size);
 
@@ -411,7 +411,7 @@ static void free_task (task_t * task) {
  * 
  * @param ms 
  */
-int sys_msleep (uint32_t ms) {
+void sys_msleep (uint32_t ms) {
     // 至少延时1个tick
     if (ms < OS_TICK_MS) {
         ms = OS_TICK_MS;
@@ -625,7 +625,7 @@ static int copy_args (char * to, uint32_t page_dir, int argc, char **argv) {
 
     // 复制各项参数, 跳过task_args和参数表
     // 各argv参数写入的内存空间
-    char * dest_arg = to + sizeof(task_args_t) + sizeof(char *) * (argc + 1);   // 留出结束符
+    char * dest_arg = to + sizeof(task_args_t) + sizeof(char *) * (argc);   // 留出结束符
     
     // argv表
     char ** dest_argv_tb = (char **)memory_get_paddr(page_dir, (uint32_t)(to + sizeof(task_args_t)));
@@ -644,11 +644,6 @@ static int copy_args (char * to, uint32_t page_dir, int argc, char **argv) {
 
         // 记录下位置后，复制的位置前移
         dest_arg += len;
-    }
-
-    // 可能存在无参的情况，此时不需要写入
-    if (argc) {
-        dest_argv_tb[argc] = '\0';
     }
 
      // 写入task_args
@@ -701,9 +696,12 @@ int sys_execve(char *name, char **argv, char **env) {
     // 运行地址要设备成整个程序的入口地址
     syscall_frame_t * frame = (syscall_frame_t *)(task->tss.esp0 - sizeof(syscall_frame_t));
     frame->eip = entry;
+    frame->eax = frame->ebx = frame->ecx = frame->edx = 0;
+    frame->esi = frame->edi = frame->ebp = 0;
+    frame->eflags = EFLAGS_DEFAULT| EFLAGS_IF;  // 段寄存器无需修改
 
-    // 内核栈不用设置，保持不变，但用户栈需要更改
-    // 同样要加上调用门的参数压栈空间
+    // 内核栈不用设置，保持不变，后面调用memory_destroy_uvm并不会销毁内核栈的映射。
+    // 但用户栈需要更改, 同样要加上调用门的参数压栈空间
     frame->esp = stack_top - sizeof(uint32_t)*SYSCALL_PARAM_COUNT;
 
     // 切换到新的页表

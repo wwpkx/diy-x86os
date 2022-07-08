@@ -16,14 +16,17 @@
 #include "tools/klib.h"
 #include "tools/list.h"
 #include "ipc/sem.h"
-#include "ipc/bfifo.h"
 #include "core/memory.h"
 #include "dev/console.h"
+
+static boot_info_t * init_boot_info;        // 启动信息
 
 /**
  * 内核入口
  */
 void kernel_init (boot_info_t * boot_info) {
+    init_boot_info = boot_info;
+
     // 初始化CPU，再重新加载
     cpu_init();
     log_init();
@@ -38,7 +41,6 @@ void kernel_init (boot_info_t * boot_info) {
 
     console_init();
 }
-
 
 
 /**
@@ -59,12 +61,13 @@ void move_to_first_task(void) {
     __asm__ __volatile__(
         // 模拟中断返回，切换入第1个可运行应用进程
         // 不过这里并不直接进入到进程的入口，而是先设置好段寄存器，再跳过去
-        "push %0\n\t"			// SS
-        "push %1\n\t"			// ESP
-        "push %2\n\t"           // EFLAGS
-        "push %3\n\t"			// CS
-        "push %4\n\t"		    // ip
-        "iret\n\t"::"r"(tss->ss),  "r"(tss->esp), "r"(tss->eflags),"r"(tss->cs), "r"(tss->eip));
+        "push %[ss]\n\t"			// SS
+        "push %[esp]\n\t"			// ESP
+        "push %[eflags]\n\t"           // EFLAGS
+        "push %[cs]\n\t"			// CS
+        "push %[eip]\n\t"		    // ip
+        "iret\n\t"::[ss]"r"(tss->ss),  [esp]"r"(tss->esp), [eflags]"r"(tss->eflags),
+        [cs]"r"(tss->cs), [eip]"r"(tss->eip));
 }
 
 void init_main(void) {

@@ -154,7 +154,7 @@ void kernel_itoa(char * buf, int num, int base) {
         return;
     }
 
-    // 只支持十进制负数 
+    // 只支持十进制负数
     int signed_num = 0;
     if ((num < 0) && (base == 10)) {
         *p++ = '-';

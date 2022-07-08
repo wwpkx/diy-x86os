@@ -80,6 +80,7 @@ int sys_read(int file, char *ptr, int len) {
  * 写文件
  */
 int sys_write(int file, char *ptr, int len) {
+    ptr[len] = '\0';
     log_printf("%s", ptr);
     return len;
 }

@@ -625,7 +625,7 @@ static int copy_args (char * to, uint32_t page_dir, int argc, char **argv) {
 
     // 复制各项参数, 跳过task_args和参数表
     // 各argv参数写入的内存空间
-    char * dest_arg = to + sizeof(task_args_t) + sizeof(char *) * (argc + 1);   // 留出结束符
+    char * dest_arg = to + sizeof(task_args_t) + sizeof(char *) * (argc);   // 留出结束符
     
     // argv表
     char ** dest_argv_tb = (char **)memory_get_paddr(page_dir, (uint32_t)(to + sizeof(task_args_t)));

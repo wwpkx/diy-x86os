@@ -300,7 +300,6 @@ int console_write (int dev, char * data, int size) {
                 write_esc(console, c);
                 break;
         }
-
     }
     update_cursor_pos(console);
     return len;

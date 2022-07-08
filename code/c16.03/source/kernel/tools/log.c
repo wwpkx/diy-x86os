@@ -52,7 +52,7 @@ void log_printf(const char * fmt, ...) {
     // 显示，如果发送速度太慢，会造成这里关中断太长时间
     // 所以，这里这样做不是好办法
     mutex_lock(&mutex);
-    
+
     const char * p = str_buf;    
     while (*p != '\0') {
         while ((inb(COM1_PORT + 5) & (1 << 6)) == 0);
