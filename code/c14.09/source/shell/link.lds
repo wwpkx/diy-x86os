@@ -1,7 +1,7 @@
 ENTRY(_start)
 SECTIONS
 {
-    // 为了方便调试，没有从0x80000000开始，以免与first_task冲突
+    /* 涓轰簡鏂逛究璋冭瘯锛屾病鏈変粠0x80000000寮�濮嬶紝浠ュ厤涓巉irst_task鍐茬獊 */
 	. = 0x81000000;
 	.text : {
 		*(*.text)

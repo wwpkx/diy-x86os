@@ -498,6 +498,10 @@ int sys_execve(char *name, char **argv, char **env) {
         goto exec_failed;
     }
 
+    // 切换到新的页表
+    task->tss.cr3 = new_page_dir;
+    mmu_set_page_dir(new_page_dir);   // 切换至新的页表。由于不用访问原栈及数据，所以并无问题
+
     // 当从系统调用中返回时，将切换至新进程的入口地址运行，并且进程能够获取参数
     // 注意，如果用户栈设置不当，可能导致返回后运行出现异常。可在gdb中使用nexti单步观察运行流程
     return  0;

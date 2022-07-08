@@ -646,11 +646,6 @@ static int copy_args (char * to, uint32_t page_dir, int argc, char **argv) {
         dest_arg += len;
     }
 
-    // 可能存在无参的情况，此时不需要写入
-    if (argc) {
-        dest_argv_tb[argc] = '\0';
-    }
-
      // 写入task_args
     return memory_copy_uvm_data((uint32_t)to, page_dir, (uint32_t)&task_args, sizeof(task_args_t));
 }
@@ -701,9 +696,12 @@ int sys_execve(char *name, char **argv, char **env) {
     // 运行地址要设备成整个程序的入口地址
     syscall_frame_t * frame = (syscall_frame_t *)(task->tss.esp0 - sizeof(syscall_frame_t));
     frame->eip = entry;
+    frame->eax = frame->ebx = frame->ecx = frame->edx = 0;
+    frame->esi = frame->edi = frame->ebp = 0;
+    frame->eflags = EFLAGS_DEFAULT| EFLAGS_IF;  // 段寄存器无需修改
 
-    // 内核栈不用设置，保持不变，但用户栈需要更改
-    // 同样要加上调用门的参数压栈空间
+    // 内核栈不用设置，保持不变，后面调用memory_destroy_uvm并不会销毁内核栈的映射。
+    // 但用户栈需要更改, 同样要加上调用门的参数压栈空间
     frame->esp = stack_top - sizeof(uint32_t)*SYSCALL_PARAM_COUNT;
 
     // 切换到新的页表
