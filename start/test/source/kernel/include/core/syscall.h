@@ -13,7 +13,7 @@
 // 系统调用号
 #define SYS_msleep              0
 #define SYS_getpid              1
-#define SYS_sched_yield         3
+#define SYS_yield         3
 #define SYS_fork                4
 #define SYS_execve              5
 #define SYS_wait                6

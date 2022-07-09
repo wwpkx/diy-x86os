@@ -73,9 +73,9 @@ int execve(const char *name, char * const *argv, char * const *env) {
     return sys_call(&args);
 }
 
-int sched_yield (void) {
+int yield (void) {
     syscall_args_t args;
-    args.id = SYS_sched_yield;
+    args.id = SYS_yield;
     return sys_call(&args);
 }
 

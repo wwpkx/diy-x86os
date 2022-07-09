@@ -179,7 +179,7 @@ void task_first_init (void) {
     // 第一个任务代码量小一些，好和栈放在1个页面呢
     // 这样就不要立即考虑还要给栈分配空间的问题
     task_init(&task_manager.first_task, "first task", 0, first_start, first_start + alloc_size);
-    task_manager.first_task.heap_start = (uint32_t)&e_first_task;  // 这里不对
+    task_manager.first_task.heap_start = (uint32_t)e_first_task;  // 这里不对
     task_manager.first_task.heap_end = task_manager.first_task.heap_start;
     task_manager.curr_task = &task_manager.first_task;
 
@@ -313,7 +313,7 @@ task_t * task_current (void) {
 /**
  * @brief 当前任务主动放弃CPU
  */
-int sys_sched_yield (void) {
+int sys_yield (void) {
     irq_state_t state = irq_enter_protection();
 
     if (list_count(&task_manager.ready_list) > 1) {

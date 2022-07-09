@@ -48,8 +48,8 @@ int getpid() {
 	return sys_call(SYS_getpid, 0, 0, 0, 0);
 }
 
-int sched_yield (void) {
-    return sys_call(SYS_sched_yield, 0, 0, 0, 0);
+int yield (void) {
+    return sys_call(SYS_yield, 0, 0, 0, 0);
 }
 
 char **environ;     // 当前的环境变量

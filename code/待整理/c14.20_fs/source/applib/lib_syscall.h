@@ -20,7 +20,7 @@
 int msleep (int ms);
 int fork(void);
 int getpid(void);
-int sched_yield (void);
+int yield (void);
 int execve(const char *name, char * const *argv, char * const *env);
 int wait(int* status);
 void exit(int status);

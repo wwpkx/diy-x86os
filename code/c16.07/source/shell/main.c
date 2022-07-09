@@ -34,7 +34,7 @@ int main (int argc, char **argv) {
     // 创建一个自己的副本
     fork();
 
-    sched_yield();
+    yield();
 
     for (;;) {
         print_msg("pid=%d", getpid());

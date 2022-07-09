@@ -326,7 +326,7 @@ void task_remove_fd (int fd) {
 /**
  * @brief 当前任务主动放弃CPU
  */
-int sys_sched_yield (void) {
+int sys_yield (void) {
     task_t * curr_task = task_current();
 
     irq_state_t state = irq_enter_protection();

@@ -269,7 +269,7 @@ task_t * task_current (void) {
 /**
  * @brief 当前任务主动放弃CPU
  */
-int sys_sched_yield (void) {
+int sys_yield (void) {
     irq_state_t state = irq_enter_protection();
 
     if (list_count(&task_manager.ready_list) > 1) {

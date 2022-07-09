@@ -19,7 +19,7 @@ typedef int (*syscall_handler_t)(uint32_t arg0, uint32_t arg1, uint32_t arg2, ui
 static const syscall_handler_t sys_table[] = {
 	[SYS_msleep] = (syscall_handler_t)sys_msleep,
     [SYS_getpid] =(syscall_handler_t)sys_getpid,
-    [SYS_sched_yield] = (syscall_handler_t)sys_sched_yield,
+    [SYS_yield] = (syscall_handler_t)sys_yield,
 	[SYS_fork] = (syscall_handler_t)sys_fork,
 	[SYS_execve] = (syscall_handler_t)sys_execve,
 	[SYS_wait] = (syscall_handler_t)sys_wait,

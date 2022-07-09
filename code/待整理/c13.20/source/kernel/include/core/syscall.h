@@ -14,7 +14,7 @@
 #define SYS_getpid              1
 #define SYS_fork				2
 #define SYS_execve				3
-#define SYS_sched_yield         4
+#define SYS_yield         4
 
 #define SYS_open                50
 #define SYS_read                51

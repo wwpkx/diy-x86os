@@ -43,7 +43,7 @@ int task_init (task_t *task, const char * name, uint32_t entry, uint32_t esp);
 void task_switch_from_to (task_t * from, task_t * to);
 void task_set_ready(task_t *task);
 void task_set_block (task_t *task);
-int sys_sched_yield (void);
+int sys_yield (void);
 void task_dispatch (void);
 task_t * task_current (void);
 void task_time_tick (void);

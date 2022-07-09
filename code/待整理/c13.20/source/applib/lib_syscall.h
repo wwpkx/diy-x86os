@@ -20,7 +20,7 @@
 // 系统调用号
 #define SYS_msleep              0
 #define SYS_getpid              1
-#define SYS_sched_yield         3
+#define SYS_yield         3
 #define SYS_fork                4
 #define SYS_execve              5
 #define SYS_wait                6
@@ -42,7 +42,7 @@
 int msleep (int ms);
 int fork(void);
 int getpid(void);
-int sched_yield (void);
+int yield (void);
 int execve(const char *name, char * const *argv, char * const *env);
 int wait(int* status);
 void exit(int status);

@@ -203,7 +203,7 @@ task_t * task_current (void) {
     return task_manager.curr_task;
 }
 
-int sys_sched_yield (void) {
+int sys_yield (void) {
     irq_state_t state = irq_enter_protection();
 
     if (list_count(&task_manager.ready_list) > 1) {

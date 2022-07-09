@@ -39,8 +39,8 @@ typedef enum _cclor_t {
     COLOR_Light_Cyan	= 11,
     COLOR_Light_Red		= 12,
     COLOR_Light_Magenta	= 13,
-    COLOR_Yellow  = 14,
-    COLOR_White	= 15
+    COLOR_Yellow		= 14,
+    COLOR_White			= 15
 }cclor_t;
 
 /**
