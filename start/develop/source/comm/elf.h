@@ -45,6 +45,8 @@ typedef struct {
     Elf32_Half e_shstrndx;
 }Elf32_Ehdr;
 
+#define PT_LOAD         1
+
 typedef struct {
     Elf32_Word p_type;
     Elf32_Off p_offset;

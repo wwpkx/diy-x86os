@@ -43,14 +43,6 @@ static void read_disk(int sector, int sector_count, uint8_t * buf) {
 }
 
 /**
- * 死机
- */
-static void die (int code) {
-    for (;;) {
-    }
-}
-
-/**
  * 解析elf文件，提取内容到相应的内存中
  * https://wiki.osdev.org/ELF
  * @param file_buffer
@@ -68,6 +60,9 @@ static uint32_t reload_elf_file (uint8_t * file_buffer) {
     // 然后从中加载程序头，将内容拷贝到相应的位置
     for (int i = 0; i < elf_hdr->e_phnum; i++) {
         Elf32_Phdr * phdr = (Elf32_Phdr *)(file_buffer + elf_hdr->e_phoff) + i;
+        if (phdr->p_type != PT_LOAD) {
+            continue;
+        }
 
 		// 全部使用物理地址，此时分页机制还未打开
         uint8_t * src = file_buffer + phdr->p_offset;
@@ -87,33 +82,41 @@ static uint32_t reload_elf_file (uint8_t * file_buffer) {
 }
 
 /**
+ * 死机
+ */
+static void die (int code) {
+    for (;;) {}
+}
+
+
+/**
  * @brief 开启分页机制
  * 将0-4M空间映射到0-4M和SYS_KERNEL_BASE_ADDR~+4MB空间
  * 0-4MB的映射主要用于保护loader自己还能正常工作
  * SYS_KERNEL_BASE_ADDR+4MB则用于为内核提供正确的虚拟地址空间
  */
 void enable_page_mode (void) {
-    #define PDE_P			(1 << 0)
-    #define PDE_PS			(1 << 7)
-    #define PDE_W			(1 << 1)
-	#define CR4_PSE		    (1 << 4)
-	#define CR0_PG		    (1 << 31)
+#define PDE_P			(1 << 0)
+#define PDE_PS			(1 << 7)
+#define PDE_W			(1 << 1)
+#define CR4_PSE		    (1 << 4)
+#define CR0_PG		    (1 << 31)
 
-	// 使用4MB页块，这样构造页表就简单很多，只需要1个表即可。
-	// 以下表为临时使用，用于帮助内核正常运行，在内核运行起来之后，将重新设置
-	static uint32_t page_dir[1024] __attribute__((aligned(4096))) = {
-		[0] = PDE_P | PDE_PS | PDE_W,			// PDE_PS，开启4MB的页
-	};
+    // 使用4MB页块，这样构造页表就简单很多，只需要1个表即可。
+    // 以下表为临时使用，用于帮助内核正常运行，在内核运行起来之后，将重新设置
+    static uint32_t page_dir[1024] __attribute__((aligned(4096))) = {
+        [0] = PDE_P | PDE_PS | PDE_W,			// PDE_PS，开启4MB的页
+    };
 
-	// 设置PSE，以便启用4M的页，而不是4KB
-	uint32_t cr4 = read_cr4();
-	write_cr4(cr4 | CR4_PSE);
+    // 设置PSE，以便启用4M的页，而不是4KB
+    uint32_t cr4 = read_cr4();
+    write_cr4(cr4 | CR4_PSE);
 
-	// 设置页表地址
-	write_cr3((uint32_t)page_dir);
+    // 设置页表地址
+    write_cr3((uint32_t)page_dir);
 
-	// 开启分页机制
-	write_cr0(read_cr0() | CR0_PG);
+    // 开启分页机制
+    write_cr0(read_cr0() | CR0_PG);
 }
 
 /**
@@ -130,10 +133,10 @@ void load_kernel(void) {
 	if (kernel_entry == 0) {
 		die(-1);
 	}
-	
+
 	// 开启分页机制
 	enable_page_mode();
 
-	// 转换为函数指针，然后跳进内核
     ((void (*)(boot_info_t *))kernel_entry)(&boot_info);
+    for (;;) {}
 }

@@ -66,13 +66,3 @@ int sem_count (sem_t * sem) {
     return count;
 }
 
-/**
- * @brief 等待信号量的进程数
- */
-int sem_wait_count (sem_t * sem) {
-    irq_state_t  irq_state = irq_enter_protection();
-    int count = list_count(&sem->wait_list);
-    irq_leave_protection(irq_state);
-    return count;
-}
-

@@ -18,7 +18,6 @@ boot_info_t boot_info;			// 启动参数信息
 
 /**
  * BIOS下显示字符串
- * @param msg
  */
 static void show_msg (const char * msg) {
     char c;
