@@ -5,45 +5,40 @@
  * 作者：李述铜
  * 联系邮箱: 527676163@qq.com
  */
+#include "tools/klib.h"
+#include "tools/log.h"
 #include "core/memory.h"
 #include "tools/klib.h"
 #include "cpu/mmu.h"
 #include "dev/console.h"
 
-extern uint8_t mem_free_start[];        // 内核末端空闲ram
-
 static addr_alloc_t paddr_alloc;        // 物理地址分配结构
-
 static pde_t kernel_page_dir[PDE_CNT] __attribute__((aligned(MEM_PAGE_SIZE))); // 内核页目录表
 
 /**
  * @brief 获取当前页表地址
  */
-uint32_t memory_current_page_dir (void) {
-    return task_current()->tss.cr3;
-}
-
-uint32_t memory_kernel_page_dir (void) {
-    return (uint32_t)kernel_page_dir;
+static pde_t * current_page_dir (void) {
+    return (pde_t *)task_current()->tss.cr3;
 }
 
 /**
  * @brief 初始化地址分配结构
- * 以下不检查页边界，由上层调用者检查
+ * 以下不检查start和size的页边界，由上层调用者检查
  */
-void addr_alloc_init (addr_alloc_t * alloc, uint8_t * bitmap_bis, uint32_t start, uint32_t size, uint32_t page_size) {
-    mutex_init(&paddr_alloc.mutex);
-
+static void addr_alloc_init (addr_alloc_t * alloc, uint8_t * bits,
+                    uint32_t start, uint32_t size, uint32_t page_size) {
+    mutex_init(&alloc->mutex);
     alloc->start = start;
-    alloc->size = size / page_size * page_size;     // 不够一页的丢掉
+    alloc->size = size;
     alloc->page_size = page_size;
-    bitmap_init(&alloc->bitmap, bitmap_bis, alloc->size / page_size, 0);
+    bitmap_init(&alloc->bitmap, bits, alloc->size / page_size, 0);
 }
 
 /**
  * @brief 分配多页内存
  */
-uint32_t addr_alloc_page (addr_alloc_t * alloc, int page_count) {
+static uint32_t addr_alloc_page (addr_alloc_t * alloc, int page_count) {
     uint32_t addr = 0;
 
     mutex_lock(&alloc->mutex);
@@ -60,13 +55,23 @@ uint32_t addr_alloc_page (addr_alloc_t * alloc, int page_count) {
 /**
  * @brief 释放多页内存
  */
-void addr_free_page (addr_alloc_t * alloc, uint32_t addr, int page_count) {
+static void addr_free_page (addr_alloc_t * alloc, uint32_t addr, int page_count) {
     mutex_lock(&alloc->mutex);
 
-    uint32_t page_addr = (addr - alloc->start) / alloc->page_size;
-    bitmap_set_bit(&alloc->bitmap, page_addr, page_count, 0);
+    uint32_t pg_idx = (addr - alloc->start) / alloc->page_size;
+    bitmap_set_bit(&alloc->bitmap, pg_idx, page_count, 0);
 
     mutex_unlock(&alloc->mutex);
+}
+
+static void show_mem_info (boot_info_t * boot_info) {
+    log_printf("mem region:");
+    for (int i = 0; i < boot_info->ram_region_count; i++) {
+        log_printf("[%d]: 0x%x - 0x%x", i,
+                    boot_info->ram_region_cfg[i].start,
+                    boot_info->ram_region_cfg[i].size);
+    }
+    log_printf("\n");
 }
 
 /**
@@ -74,10 +79,11 @@ void addr_free_page (addr_alloc_t * alloc, uint32_t addr, int page_count) {
  */
 static uint32_t total_mem_size(boot_info_t * boot_info) {
     int mem_size = 0;
+
+    // 简单起见，暂不考虑中间有空洞的情况
     for (int i = 0; i < boot_info->ram_region_count; i++) {
         mem_size += boot_info->ram_region_cfg[i].size;
     }
-
     return mem_size;
 }
 
@@ -98,7 +104,9 @@ pte_t * find_pte (pde_t * page_dir, uint32_t vaddr, int alloc) {
         if (pg_paddr == 0) {
             return (pte_t *)0;
         }
-        pde->v = pg_paddr | PTE_P | PTE_W | PTE_U;      // 暂设置为用户可读写
+
+        // 设置为用户可读写，将被pte中设置所覆盖
+        pde->v = pg_paddr | PTE_P | PTE_W | PDE_U;
 
         // 为物理页表绑定虚拟地址的映射，这样下面就可以计算出虚拟地址了
         //kernel_pg_last[pde_index(vaddr)].v = pg_paddr | PTE_P | PTE_W;
@@ -117,13 +125,17 @@ pte_t * find_pte (pde_t * page_dir, uint32_t vaddr, int alloc) {
  */
 int memory_create_map (pde_t * page_dir, uint32_t vaddr, uint32_t paddr, int count, uint32_t perm) {
     for (int i = 0; i < count; i++) {
+        // log_printf("create map: v-0x%x p-0x%x, perm: 0x%x", vaddr, paddr, perm);
+
         pte_t * pte = find_pte(page_dir, vaddr, 1);
         if (pte == (pte_t *)0) {
+            // log_printf("create pte failed. pte == 0");
             return -1;
         }
 
         // 创建映射的时候，这条pte应当是不存在的。
         // 如果存在，说明可能有问题
+        // log_printf("\tpte addr: 0x%x", (uint32_t)pte);
         ASSERT(pte->present == 0);
 
         pte->v = paddr | perm | PTE_P;
@@ -139,17 +151,18 @@ int memory_create_map (pde_t * page_dir, uint32_t vaddr, uint32_t paddr, int cou
  * @brief 根据内存映射表，构造内核页表
  */
 void create_kernel_table (void) {
-    extern uint8_t text_start[], text_end[], data_start[], data_end[];
-    extern uint8_t kernel_base_addr[];
+    extern uint8_t s_text[], e_text[], s_data[], e_data[];
+    extern uint8_t kernel_base[];
 
     // 地址映射表, 用于建立内核级的地址映射
+    // 地址不变，但是添加了属性
     static memory_map_t kernel_map[] = {
-        {kernel_base_addr,  text_start - 1,     0,                  PTE_W},        // 内核栈区
-        {text_start,        text_end - 1,       text_start,         0},             // 代码区
-        {data_start,        (void *)(MEM_EBDA_START - 1),   data_start,        PTE_W},      // 数据区
-        {(void *)CONSOLE_VIDEO_BASE, (void *)(CONSOLE_VIDEO_END - 1), (void *)CONSOLE_VIDEO_BASE, PTE_W},
+        {kernel_base,   s_text,         0,              PTE_W},         // 内核栈区
+        {s_text,        e_text,         s_text,         0},         // 内核代码区
+        {s_data,        (void *)(MEM_EBDA_START - 1),   s_data,        PTE_W},      // 内核数据区
+        {(void *)CONSOLE_DISP_ADDR, (void *)(CONSOLE_DISP_END - 1), (void *)CONSOLE_VIDEO_BASE, PTE_W},
 
-        // // 扩展存储空间一一映射，方便直接操作
+        // 扩展存储空间一一映射，方便直接操作
         {(void *)MEM_EXT_START, (void *)MEM_EXT_END,     (void *)MEM_EXT_START, PTE_W},
     };
 
@@ -162,11 +175,11 @@ void create_kernel_table (void) {
 
         // 可能有多个页，建立多个页的配置
         // 简化起见，不考虑4M的情况
-        int vstart = down_2bound((uint32_t)map->vaddr_start, MEM_PAGE_SIZE);
-        int vend = up_2bound((uint32_t)map->vaddr_end, MEM_PAGE_SIZE);
-        int page_count = down_2bound((uint32_t)(vend - vstart), MEM_PAGE_SIZE) / MEM_PAGE_SIZE;
+        int vstart = down2((uint32_t)map->vstart, MEM_PAGE_SIZE);
+        int vend = up2((uint32_t)map->vend, MEM_PAGE_SIZE);
+        int page_count = (vend - vstart) / MEM_PAGE_SIZE;
 
-        memory_create_map(kernel_page_dir, vstart, (uint32_t)map->paddr, page_count, map->perm);
+        memory_create_map(kernel_page_dir, vstart, (uint32_t)map->pstart, page_count, map->perm);
     }
 }
 
@@ -263,7 +276,7 @@ uint32_t memory_copy_uvm (uint32_t page_dir) {
                 goto copy_uvm_failed;
             }
 
-            // 复制内容
+            // 复制内容。
             kernel_memcpy((void *)page, (void *)vaddr, MEM_PAGE_SIZE);
         }
     }
@@ -298,10 +311,10 @@ int memory_copy_uvm_data(uint32_t to, uint32_t page_dir, uint32_t from, uint32_t
 
     while(size > 0){
         // 获取目标的物理地址, 也即其另一个虚拟地址
-        uint32_t to_paddr = memory_get_paddr(page_dir, to);  
+        uint32_t to_paddr = memory_get_paddr(page_dir, to);
         if (to_paddr == 0) {
             return -1;
-        }    
+        }
 
         // 计算当前可拷贝的大小
         uint32_t offset_in_page = to_paddr & (MEM_PAGE_SIZE - 1);
@@ -322,16 +335,22 @@ int memory_copy_uvm_data(uint32_t to, uint32_t page_dir, uint32_t from, uint32_t
 
 uint32_t memory_alloc_for_page_dir (uint32_t page_dir, uint32_t vaddr, uint32_t size, int perm) {
     uint32_t curr_vaddr = vaddr;
-    int page_count = up_2bound(size, MEM_PAGE_SIZE) / MEM_PAGE_SIZE;
+    int page_count = up2(size, MEM_PAGE_SIZE) / MEM_PAGE_SIZE;
+    vaddr = down2(vaddr, MEM_PAGE_SIZE);
 
+    // 逐页分配内存，然后建立映射关系
     for (int i = 0; i < page_count; i++) {
+        // 分配需要的内存
         uint32_t paddr = addr_alloc_page(&paddr_alloc, 1);
         if (paddr == 0) {
+            log_printf("mem alloc failed. no memory");
             return 0;
         }
 
+        // 建立分配的内存与指定地址的关联
         int err = memory_create_map((pde_t *)page_dir, curr_vaddr, paddr, 1, perm);
         if (err < 0) {
+            log_printf("create memory map failed. err = %d", err);
             addr_free_page(&paddr_alloc, vaddr, i + 1);
             return -1;
         }
@@ -368,7 +387,7 @@ void memory_free_page (uint32_t addr) {
         addr_free_page(&paddr_alloc, addr, 1);
     } else {
         // 进程空间，还要释放页表
-        pte_t * pte = find_pte((pde_t *)memory_current_page_dir(), addr, 0);
+        pte_t * pte = find_pte(current_page_dir(), addr, 0);
         ASSERT((pte == (pte_t *)0) && pte->present);
 
         // 释放内存页
@@ -382,20 +401,30 @@ void memory_free_page (uint32_t addr) {
 /**
  * @brief 初始化内存管理系统
  * 该函数的主要任务：
- * 1、初始化物理内存分配器：将所有物理内存管理起来
+ * 1、初始化物理内存分配器：将所有物理内存管理起来. 在1MB内存中分配物理位图
  * 2、重新创建内核页表：原loader中创建的页表已经不再合适
  */
 void memory_init (boot_info_t * boot_info) {
+    // 1MB内存空间起始，在链接脚本中定义
+    extern uint8_t * mem_free_start;
+
+    log_printf("mem init.");
+    show_mem_info(boot_info);
+
     // 在内核数据后面放物理页位图
-    uint8_t * mem_free =(uint8_t *)mem_free_start;
-    uint32_t total_mem = total_mem_size(boot_info) - MEM_EXT_START;
-    total_mem = down_2bound(total_mem, MEM_PAGE_SIZE);   // 对齐到4KB页
+    uint8_t * mem_free = (uint8_t *)mem_free_start;
+
+    // 计算1MB以上空间的空闲内存容量，并对齐的页边界
+    uint32_t mem_up1MB_free = total_mem_size(boot_info) - MEM_EXT_START;
+    mem_up1MB_free = down2(mem_up1MB_free, MEM_PAGE_SIZE);   // 对齐到4KB页
+    log_printf("Free memory: 0x%x, size: 0x%x", MEM_EXT_START, mem_up1MB_free);
 
     // 4GB大小需要总共4*1024*1024*1024/4096/8=128KB的位图, 使用低1MB的RAM空间中足够
-    addr_alloc_init(&paddr_alloc, mem_free, MEM_EXT_START, total_mem, MEM_PAGE_SIZE);
+    // 该部分的内存仅跟在mem_free_start开始放置
+    addr_alloc_init(&paddr_alloc, mem_free, MEM_EXT_START, mem_up1MB_free, MEM_PAGE_SIZE);
     mem_free += bitmap_byte_count(paddr_alloc.size / MEM_PAGE_SIZE);
 
-    // 后面再放点什么
+    // 到这里，mem_free应该比EBDA地址要小
     ASSERT(mem_free < (uint8_t *)MEM_EBDA_START);
 
     // 创建内核页表并切换过去
@@ -407,47 +436,49 @@ void memory_init (boot_info_t * boot_info) {
 
 /**
  * @brief 调整堆的内存分配，返回堆之前的指针
- * 
- * @param incr 
- * @return char* 
  */
 char * sys_sbrk(int incr) {
     task_t * task = task_current();
+    char * pre_heap_end = (char * )task->heap_end;
+    int pre_incr = incr;
 
+    ASSERT(incr >= 0);
+
+    // 如果地址为0，则返回有效的heap区域的顶端
     if (incr == 0) {
-        return (char * )task->heap_top;
-    } else if (incr > 0) {
-        // 需要分配新内存，且要考虑是否跨页面
-        uint32_t end = task->heap_top + incr;
-        uint32_t start = task->heap_top;
+        log_printf("sbrk(0): end = 0x%x", pre_heap_end);
+        return pre_heap_end;
+    } 
+    
+    uint32_t start = task->heap_end;
+    uint32_t end = start + incr;
 
-        int size_in_page = start % MEM_PAGE_SIZE;
-        if (size_in_page) {
-            // 不足一页，调整一下bss就可以了
-            if (size_in_page + incr < MEM_PAGE_SIZE) {
-                task->heap_top += incr;
-                return (char * )start;
-            } else {
-                // 超过一页，则调整本页内的, 接下来再调整后面页对齐的
-                uint32_t curr_size = MEM_PAGE_SIZE - size_in_page;
-                incr -= curr_size;
-                start += curr_size;
-            }
+    // 起始偏移非0
+    int start_offset = start % MEM_PAGE_SIZE;
+    if (start_offset) {
+        // 不超过1页，只调整
+        if (start_offset + incr <= MEM_PAGE_SIZE) {
+            task->heap_end = end;
+            return pre_heap_end;
+        } else {
+            // 超过1页，先只调本页的
+            uint32_t curr_size = MEM_PAGE_SIZE - start_offset;
+            start += curr_size;
+            incr -= curr_size;
         }
-
-        if (start % MEM_PAGE_SIZE == 0) {
-            // 刚好一页, 则分配新页
-            int err = memory_alloc_page_for(start, incr, PTE_P | PTE_U | PTE_W);
-            if (err < 0) {
-                return (char *)0;
-            }
-
-            // 实际分配得到的可能会比要求的多，因为页对齐
-            uint32_t pre_top = task->heap_top;
-            task->heap_top = start + up_2bound(incr, MEM_PAGE_SIZE);
-            return (char * )pre_top;
-        }
-    } else {
-
     }
+
+    // 处理其余的，起始对齐的页边界的
+    if (incr) {
+        uint32_t curr_size = end - start;
+        int err = memory_alloc_page_for(start, curr_size, PTE_P | PTE_U | PTE_W);
+        if (err < 0) {
+            log_printf("sbrk: alloc mem failed.");
+            return (char *)-1;
+        }
+    }
+
+    log_printf("sbrk(%d): end = 0x%x", pre_incr, end);
+    task->heap_end = end;
+    return (char * )pre_heap_end;        
 }

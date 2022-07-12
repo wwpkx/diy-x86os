@@ -44,10 +44,6 @@ void bitmap_set_bit (bitmap_t * bitmap, int index, int count, int bit) {
  * @brief 获取指定位的状态
  */
 int bitmap_get_bit (bitmap_t * bitmap, int index) {
-    if (index >= bitmap->bit_count) {
-        return 0;
-    }
-
     return bitmap->bits[index / 8] & (1 << (index % 8));
 }
 
@@ -93,6 +89,6 @@ int bitmap_alloc_nbits (bitmap_t * bitmap, int bit, int count) {
         }
     }
 
-    return - 1;
+    return -1;
 }
 

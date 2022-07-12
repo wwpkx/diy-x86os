@@ -73,13 +73,3 @@ void mutex_unlock (mutex_t * mutex) {
     irq_leave_protection(irq_state);
 }
 
-/**
- * @brief 等待锁的进程数
- */
-int mutex_wait_count (mutex_t * mutex) {
-    irq_state_t  irq_state = irq_enter_protection();
-    int count = list_count(&mutex->wait_list);
-    irq_leave_protection(irq_state);
-    return count;
-}
-

@@ -12,6 +12,4 @@
 #ifndef BOOT_H
 #define BOOT_H
 
-#include "os_cfg.h"
-
 #endif

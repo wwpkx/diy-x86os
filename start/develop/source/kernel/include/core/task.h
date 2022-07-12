@@ -11,9 +11,7 @@
 #include "comm/types.h"
 #include "cpu/cpu.h"
 #include "tools/list.h"
-#include "fs/file.h"
 
-#define TASK_OFILE_NR				32			// 任务最多打开的文件数量
 #define TASK_NAME_SIZE				32			// 任务名字长度
 #define TASK_TIME_SLICE_DEFAULT		10			// 时间片计数
 
@@ -29,27 +27,24 @@ typedef struct _task_args_t {
  * @brief 任务控制块结构
  */
 typedef struct _task_t {
-	enum {
+    enum {
 		TASK_CREATED,
 		TASK_RUNNING,
 		TASK_SLEEP,
 		TASK_READY,
 		TASK_WAITING,
-		TASK_ZOMBIE,
 	}state;
 
     char name[TASK_NAME_SIZE];		// 任务名字
 
     int pid;				// 进程的pid
     struct _task_t * parent;		// 父进程
-	uint32_t heap_top;		// 堆的顶层地址
-	int status;				// 进程执行结果
-
+	uint32_t heap_start;		// 堆的顶层地址
+	uint32_t heap_end;			// 堆结束地址
+	
     int sleep_ticks;		// 睡眠时间
-	int time_slice;			// 时间片
+    int time_slice;			// 时间片
 	int slice_ticks;		// 递减时间片计数
-
-    file_t * file_table[TASK_OFILE_NR];	// 任务最多打开的文件数量
 
 	tss_t tss;				// 任务的TSS段
 	uint16_t tss_sel;		// tss选择子
@@ -60,25 +55,16 @@ typedef struct _task_t {
 }task_t;
 
 int task_init (task_t *task, const char * name, int flag, uint32_t entry, uint32_t esp);
-void task_first_init (void);
-void task_start(task_t * task);
-void task_switch_to (task_t * task);
+void task_switch_from_to (task_t * from, task_t * to);
 void task_set_ready(task_t *task);
 void task_set_block (task_t *task);
 void task_set_sleep(task_t *task, uint32_t ticks);
 void task_set_wakeup (task_t *task);
 int sys_yield (void);
 void task_dispatch (void);
+task_t * task_current (void);
 void task_time_tick (void);
 void sys_msleep (uint32_t ms);
-int sys_fork (void);
-int sys_execve(char *name, char **argv, char **env);
-int sys_wait(int* status);
-void sys_exit(int status);
-task_t * task_current (void);
-file_t * task_file (int fd);
-int task_alloc_fd (file_t * file);
-void task_remove_fd (int fd);
 
 typedef struct _task_manager_t {
     task_t * curr_task;         // 当前运行的任务
@@ -87,7 +73,7 @@ typedef struct _task_manager_t {
 	list_t task_list;			// 所有已创建任务的队列
 	list_t sleep_list;          // 延时队列
 
-	task_t init_task;			// 内核任务
+	task_t first_task;			// 内核任务
 	task_t idle_task;			// 空闲任务
 
 	int app_code_sel;			// 任务代码段选择子
@@ -95,8 +81,12 @@ typedef struct _task_manager_t {
 }task_manager_t;
 
 void task_manager_init (void);
+void task_first_init (void);
+task_t * task_first_task (void);
 
 int sys_getpid (void);
+int sys_fork (void);
+int sys_execve(char *name, char **argv, char **env);
 
 #endif
 
