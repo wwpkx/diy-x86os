@@ -309,3 +309,48 @@ int memory_copy_uvm_data (uint32_t to, uint32_t page_dir, uint32_t from, uint32_
 
     return 0;
 }
+
+char * sys_sbrk (int incr) {
+    task_t * task = task_current();
+    char * pre_heap_end = (char *)task->heap_end;
+    
+    int pre_inc = incr;
+
+    ASSERT(incr >= 0);
+    if (incr == 0) {
+        log_printf("sbrk(0): end=0x%x", pre_heap_end);
+        return pre_heap_end;
+    } 
+
+    uint32_t start = task->heap_end;
+    uint32_t end = start + incr;
+    
+    // 64 - 4893
+    // 0x81001024 - 0x81002048
+    // 0x81001000 - 0x81001FFF
+    int start_offset = start % MEM_PAGE_SIZE;  // 0x24 + 0x24
+    if (start_offset) {
+        if (start_offset + incr <= MEM_PAGE_SIZE) {
+            task->heap_end = end;  // 0x81001048
+            return pre_heap_end;
+        } else {
+            uint32_t curr_size = MEM_PAGE_SIZE - start_offset;
+            start += curr_size;
+            incr -= curr_size;
+        }
+    }
+
+    // inc = 32   4096-32
+    if (incr) {
+        uint32_t curr_size = end - start;
+        int err = memory_alloc_page_for(start, curr_size, PTE_P | PTE_U | PTE_W);
+        if (err < 0) {
+            log_printf("sbrk: alloc mem failed.");
+            return (char *)-1;
+        }
+    }
+
+    log_printf("sbrk(%d): end=0x%x", pre_inc, end);
+    task->heap_end = end;
+    return (char *)pre_heap_end;
+}

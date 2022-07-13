@@ -16,6 +16,7 @@
         "klib.h": "c",
         "memory.h": "c",
         "irq.h": "c",
-        "syscall.h": "c"
+        "syscall.h": "c",
+        "stat.h": "c"
     },
 }

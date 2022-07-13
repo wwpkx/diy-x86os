@@ -271,7 +271,7 @@ static void write_esc (console_t * console, char c) {
             restore_cursor(console);
             console->write_state = CONSOLE_WRITE_NORMAL;
             break;
-        case '[':      // ESC [ 序列
+        case '[':
             clear_esc_param(console);
             console->write_state = CONSOLE_WRITE_SQUARE;
             break;

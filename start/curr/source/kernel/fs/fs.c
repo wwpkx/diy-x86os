@@ -3,6 +3,9 @@
 #include "comm/boot_info.h"
 #include "comm/cpu_instr.h"
 
+#include <sys/stat.h>
+
+
 static uint8_t TEMP_ADDR[100*1024];
 static uint8_t * temp_pos;
 #define TEMP_FILE_ID 100
@@ -51,7 +54,13 @@ int sys_read(int file, char * ptr, int len) {
     return -1;
 }
 
+#include "tools/log.h"
+
 int sys_write(int file, char * ptr, int len) {
+    if (file == 1) {
+        ptr[len] = '\0';
+        log_printf("%s", ptr);
+    }
     return -1;
 }
 
@@ -66,4 +75,12 @@ int sys_lseek(int file, int ptr, int dir) {
 
 int sys_close (int file) {
     return 0;
+}
+
+int sys_isatty (int file) {
+    return -1;
+}
+
+int sys_fstat (int file, struct stat * st) {
+    return -1;
 }

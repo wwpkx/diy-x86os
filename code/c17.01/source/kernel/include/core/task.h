@@ -55,7 +55,7 @@ typedef struct _task_t {
 }task_t;
 
 int task_init (task_t *task, const char * name, int flag, uint32_t entry, uint32_t esp);
-void task_switch_to (task_t * task);
+void task_switch_from_to (task_t * from, task_t * to);
 void task_set_ready(task_t *task);
 void task_set_block (task_t *task);
 void task_set_sleep(task_t *task, uint32_t ticks);
@@ -64,7 +64,7 @@ int sys_yield (void);
 void task_dispatch (void);
 task_t * task_current (void);
 void task_time_tick (void);
-int sys_msleep (uint32_t ms);
+void sys_msleep (uint32_t ms);
 
 typedef struct _task_manager_t {
     task_t * curr_task;         // 当前运行的任务
@@ -73,7 +73,7 @@ typedef struct _task_manager_t {
 	list_t task_list;			// 所有已创建任务的队列
 	list_t sleep_list;          // 延时队列
 
-	task_t init_task;			// 内核任务
+	task_t first_task;			// 内核任务
 	task_t idle_task;			// 空闲任务
 
 	int app_code_sel;			// 任务代码段选择子

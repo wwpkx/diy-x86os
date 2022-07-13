@@ -77,6 +77,8 @@ int task_init (task_t * task, const char * name, int flag, uint32_t entry, uint3
     task->state = TASK_CREATED;
     task->sleep_ticks = 0;
     task->parent = (task_t *)0;
+    task->heap_start = 0;
+    task->heap_end = 0;
     task->time_ticks = TASK_TIME_SLICE_DEFAULT;
     task->slice_ticks =  task->time_ticks;
     list_node_init(&task->all_node);
@@ -85,10 +87,15 @@ int task_init (task_t * task, const char * name, int flag, uint32_t entry, uint3
 
     irq_state_t state = irq_enter_protection();
     task->pid = (uint32_t)task;
-    task_set_ready(task);
     list_insert_last(&task_manager.task_list, &task->all_node);
     irq_leave_protection(state);
     return 0;
+}
+
+void task_start (task_t * task) {
+    irq_state_t state = irq_enter_protection();
+    task_set_ready(task);
+    irq_leave_protection(state);
 }
 
 void task_uninit (task_t * task) {
@@ -125,6 +132,8 @@ void task_first_init (void) {
     uint32_t first_start = (uint32_t)first_task_entry;
 
     task_init(&task_manager.first_task, "first task", 0, first_start, first_start + alloc_size);
+    task_manager.first_task.heap_start = (uint32_t)e_first_task;
+    task_manager.first_task.heap_end = (uint32_t)e_first_task;;
     write_tr(task_manager.first_task.tss_sel);
     task_manager.curr_task = &task_manager.first_task;
 
@@ -132,6 +141,8 @@ void task_first_init (void) {
 
     memory_alloc_page_for(first_start, alloc_size, PTE_P | PTE_W | PTE_U);
     kernel_memcpy((void *)first_start, s_first_task, copy_size);
+
+    task_start(&task_manager.first_task);
 }
 
 task_t * task_first_task (void) {
@@ -171,6 +182,7 @@ void task_mananger_init (void) {
         (uint32_t)idle_task_entry,
         (uint32_t)(idle_task_stack + IDLE_TASK_SIZE)
     );
+    task_start(&task_manager.idle_task);
 }
 
 void task_set_ready(task_t * task) {
@@ -355,6 +367,7 @@ int sys_fork (void) {
         goto fork_failed;
     }
 
+    task_start(child_task);
     return child_task->pid;
 
 fork_failed:
@@ -440,6 +453,9 @@ static uint32_t load_elf_file (task_t * task, const char * name, uint32_t page_d
             log_printf("load program failed");
             goto load_failed;
         }
+
+        task->heap_start = elf_phdr.p_vaddr + elf_phdr.p_memsz;
+        task->heap_end = task->heap_start;
     }
 
     sys_close(file);
