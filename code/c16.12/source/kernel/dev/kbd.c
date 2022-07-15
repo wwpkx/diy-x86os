@@ -70,23 +70,6 @@ static const key_map_t map_table[256] = {
         [0x33] = {',', '<'},
         [0x34] = {'.', '>'},
         [0x35] = {'/', '?'},
-
-        // 小键盘
-        [0x37] = {'*', '*'},		// keypad
-        [0x39] = {' ', ' '},
-        [0x47] = {'7', },
-        [0x48] = {'8', },
-        [0x49] = {'9', },
-        [0x4A] = {'-', '-'},
-        [0x4B] = {'4', },
-        [0x4C] = {'5', '+'},
-        [0x4D] = {'6', },
-        [0x4E] = {'+', '+'},
-        [0x4F] = {'1', },
-        [0x50] = {'2', },
-        [0x51] = {'3', },
-        [0x52] = {'0', },
-        [0x53] = {'.', },
 };
 
 static inline char get_key(uint8_t key_code) {
@@ -143,9 +126,7 @@ uint8_t kbd_read(void) {
 static void update_led_status (void) {
     int data = 0;
 
-    // qemu不支持0xed命令，所以这里的设置看起来没用
-    data |= kbd_state.num_lock << 1;
-    data |= kbd_state.caps_lock << 0;
+    data = (kbd_state.caps_lock ? 1 : 0) << 0;
     kbd_write(KBD_PORT_DATA, KBD_CMD_RW_LED);
     kbd_write(KBD_PORT_DATA, data);
     kbd_read();
@@ -170,12 +151,6 @@ static void do_normal_key (uint8_t raw_code) {
     case KEY_CAPS:  // 大小写键，设置大小写状态
 		if (is_make) {
 			kbd_state.caps_lock = ~kbd_state.caps_lock;
-			update_led_status();
-		}
-		break;
-	case KEY_NUMLOCK:  // 小键盘
-		if (is_make) {
-			kbd_state.num_lock = ~kbd_state.num_lock;
 			update_led_status();
 		}
 		break;
@@ -223,10 +198,10 @@ static void do_normal_key (uint8_t raw_code) {
             if (kbd_state.caps_lock) {
                 if ((key >= 'A') && (key <= 'Z')) {
                     // 大写转小写
-                    key += 0x20;
+                    key = key - 'A' + 'a';
                 } else if ((key >= 'a') && (key <= 'z')) {
                     // 小写转大小
-                    key -= 0x20;
+                    key = key - 'a' + 'A';
                 }
             }
 

@@ -18,16 +18,12 @@
 #define KBD_STAT_RECV_READY		(1 << 0)
 #define KBD_STAT_SEND_FULL		(1 << 1)
 
-#define KBD_CMD_READ_CONFIG		0x20
-#define KBD_CMD_WRITE_CONFIG	0x60
-
 // https://wiki.osdev.org/PS/2_Keyboard
 #define KBD_CMD_RW_LED			0xED   // 写按键
 
 #define KEY_RSHIFT		0x36
 #define KEY_LSHIFT 		0x2A
 
-#define KEY_NUMLOCK			0x45
 #define KEY_CAPS			0x3A
 
 /**
@@ -46,7 +42,6 @@ typedef struct _key_map_t {
  */
 typedef struct _kbd_state_t {
     int caps_lock : 1;			// 大写状态
-    int num_lock : 1;			// 数字键盘启用
     int lshift_press : 1;       // 左shift按下
     int rshift_press : 1;       // 右shift按下
 }kbd_state_t;

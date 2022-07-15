@@ -15,8 +15,10 @@ int main (int argc, char **argv) {
     sbrk(4096*2 + 200);
     sbrk(4096*5 + 1234);
 
-    printf("ab\b\bcd\n");    // \b: 输出cd
+    printf("abef\b\b\b\bcd\n");    // \b: 输出cdef
     printf("abcd\x7f;fg\n");   // 7f: 输出 abc;fg
+    printf("1\t12\t123\t1234\t12345\t123456\t1234567\n");
+    printf("1\t2\t3\t4\t5\t6\t7\n");
     printf("\0337Hello,word!\0338123\n");  // ESC 7,8 输出123lo,word!
     printf("\033[31;42mHello,word!\033[39;49m123\n");  // ESC [pn m, Hello,world红色，其余绿色
 

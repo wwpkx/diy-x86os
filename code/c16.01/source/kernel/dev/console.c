@@ -19,9 +19,9 @@ int console_init (void) {
     for (int i = 0; i < CONSOLE_NR; i++) {
         console_t *console = console_buf + i;
 
-        console->disp_base = (disp_char_t *) CONSOLE_DISP_ADDR;
         console->display_cols = CONSOLE_COL_MAX;
         console->display_rows = CONSOLE_ROW_MAX;
+        console->disp_base = (disp_char_t *)CONSOLE_DISP_ADDR + i * (CONSOLE_COL_MAX * CONSOLE_ROW_MAX);
     }
 
 	return 0;

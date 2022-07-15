@@ -11,9 +11,8 @@
 #define CONSOLE_H
 
 // https://wiki.osdev.org/Printing_To_Screen
-#define CONSOLE_VIDEO_BASE			0xb8000		// 控制台显存起始地址,共32KB
 #define CONSOLE_DISP_ADDR           0xb8000
-#define CONSOLE_VIDEO_END			(0xb8000 + 32*1024)	// 显存的结束地址
+#define CONSOLE_DISP_END			(0xb8000 + 32*1024)	// 显存的结束地址
 #define CONSOLE_ROW_MAX				25			// 行数
 #define CONSOLE_COL_MAX				80			// 最大列数
 
@@ -21,7 +20,7 @@
  * @brief 显示字符
  */
 typedef struct _disp_char_t {
-    char c;
+	uint16_t v;
 }disp_char_t;
 
 /**

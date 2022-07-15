@@ -18,9 +18,6 @@
 #define KBD_STAT_RECV_READY		(1 << 0)
 #define KBD_STAT_SEND_FULL		(1 << 1)
 
-#define KBD_CMD_READ_CONFIG		0x20
-#define KBD_CMD_WRITE_CONFIG	0x60
-
 void kbd_init(void);
 
 void exception_handler_kbd (void);
