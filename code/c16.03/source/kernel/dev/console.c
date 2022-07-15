@@ -33,20 +33,16 @@ static void erase_rows (console_t * console, int start, int end) {
  * 整体屏幕上移若干行
  */
 static void scroll_up(console_t * console, int lines) {
-    if (console->cursor_row <= 0) {
-        return;
-    }
-
     // 整体上移
     disp_char_t * dest = console->disp_base;
-    disp_char_t * src = dest + console->display_cols;
-    uint32_t size = (console->display_rows - 1) * console->display_cols * sizeof(disp_char_t);
+    disp_char_t * src = console->disp_base + console->display_cols * lines;
+    uint32_t size = (console->display_rows - lines) * console->display_cols * sizeof(disp_char_t);
     kernel_memcpy(dest, src, size);
 
     // 擦除最后一行
-    erase_rows(console, console->display_rows - 1, console->display_rows - 1);
+    erase_rows(console, console->display_rows - lines, console->display_rows - 1);
 
-    console->cursor_row--;
+    console->cursor_row -= lines;
 }
 
 static void move_to_col0 (console_t * console) {
@@ -96,10 +92,10 @@ static void show_char(console_t * console, char c) {
 }
 
 static void clear_display (console_t * console) {
-    int size = console->display_cols * console->display_rows * sizeof(disp_char_t);
+    int size = console->display_cols * console->display_rows;
 
     disp_char_t * start = console->disp_base;
-    for (int i = 0; i < console->display_cols * console->display_rows; i++, start++) {
+    for (int i = 0; i < size; i++, start++) {
         // 为便于理解，以下分开三步写一个字符，速度慢一些
         start->c = ' ';
         start->background = console->background;

@@ -59,20 +59,16 @@ static void erase_rows (console_t * console, int start, int end) {
  * 整体屏幕上移若干行
  */
 static void scroll_up(console_t * console, int lines) {
-    if (console->cursor_row <= 0) {
-        return;
-    }
-
     // 整体上移
     disp_char_t * dest = console->disp_base;
-    disp_char_t * src = dest + console->display_cols;
-    uint32_t size = (console->display_rows - 1) * console->display_cols * sizeof(disp_char_t);
+    disp_char_t * src = console->disp_base + console->display_cols * lines;
+    uint32_t size = (console->display_rows - lines) * console->display_cols * sizeof(disp_char_t);
     kernel_memcpy(dest, src, size);
 
     // 擦除最后一行
-    erase_rows(console, console->display_rows - 1, console->display_rows - 1);
+    erase_rows(console, console->display_rows - lines, console->display_rows - 1);
 
-    console->cursor_row--;
+    console->cursor_row -= lines;
 }
 
 static void move_to_col0 (console_t * console) {
@@ -145,25 +141,14 @@ static int move_backword (console_t * console, int n) {
 }
 
 static void clear_display (console_t * console) {
-    int size = console->display_cols * console->display_rows * sizeof(disp_char_t);
+    int size = console->display_cols * console->display_rows;
 
     disp_char_t * start = console->disp_base;
-    for (int i = 0; i < console->display_cols * console->display_rows; i++, start++) {
+    for (int i = 0; i < size; i++, start++) {
         // 为便于理解，以下分开三步写一个字符，速度慢一些
         start->c = ' ';
         start->background = console->background;
         start->foreground = console->foreground;
-    }
-}
-
-/**
- * 擦除前一字符
- * @param console
- */
-static void erase_backword (console_t * console) {
-    if (move_backword(console, 1) == 0) {
-        show_char(console, ' ');
-        move_backword(console, 1);
     }
 }
 
@@ -231,10 +216,6 @@ static void write_normal (console_t * console, char c) {
     switch (c) {
         case ASCII_ESC:
             console->write_state = CONSOLE_WRITE_ESC;
-            break;
-        case 0x7F:
-            // del左移，现有终端不支持，后续改成按键处理
-            erase_backword(console);
             break;
         case '\b':		// 左移一个字符
             move_backword(console, 1);
@@ -364,7 +345,6 @@ int console_write (int dev, char * data, int size) {
                 write_esc_square(console, c);
                 break;
         }
-
     }
     update_cursor_pos(console);
     return len;

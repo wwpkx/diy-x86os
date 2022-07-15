@@ -13,14 +13,14 @@ int main (int argc, char ** argv) {
     printf("%d %d %d\n", 1, 2, 3);
 
     for (int i = 0; i < argc; i++) {
-        print_msg("arg: %s", argv[i]);
+        printf("arg: %s\n", argv[i]);
     }
 
     fork();
     yield();
 
     for (;;) {
-        print_msg("shell pid=%d", getpid());
+        printf("shell pid=%d\n", getpid());
         msleep(1000);
     }
 }
