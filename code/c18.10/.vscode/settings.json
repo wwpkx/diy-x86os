@@ -19,6 +19,8 @@
         "setjmp.h": "c",
         "dev.h": "c",
         "console.h": "c",
-        "tty.h": "c"
+        "tty.h": "c",
+        "stat.h": "c",
+        "main.h": "c"
     },
 }

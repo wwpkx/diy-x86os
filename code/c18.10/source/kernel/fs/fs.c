@@ -15,10 +15,12 @@
 #include "fs/file.h"
 #include "tools/log.h"
 #include "dev/dev.h"
+#include "ipc/mutex.h"
 
 #define TEMP_FILE_ID		100
 #define TEMP_ADDR        	(8*1024*1024)      // 在0x800000处缓存原始
 
+static mutex_t fs_mutex;
 static uint8_t * temp_pos;       // 当前位置
 
 /**
@@ -57,6 +59,8 @@ static void read_disk(int sector, int sector_count, uint8_t * buf) {
  */
 void fs_init (void) {
     file_table_init();
+
+	mutex_init(&fs_mutex);
 }
 
 /**
@@ -74,22 +78,22 @@ static int is_path_valid (const char * path) {
  * 打开文件
  */
 int sys_open(const char *name, int flags, ...) {
-	if (!is_path_valid(name)) {
-        log_printf("path is not valid.");
-		return -1;
-	}
-
-	// 分配文件描述符链接。这个过程中可能会被释放
-	int fd = -1;
-	file_t * file = file_alloc();
-	if (file) {
-		fd = task_alloc_fd(file);
-		if (fd < 0) {
-			goto sys_open_failed;
-		}
-	}
-
 	if (kernel_strncmp(name, "tty", 3) == 0) {
+		if (!is_path_valid(name)) {
+			log_printf("path is not valid.");
+			return -1;
+		}
+
+		// 分配文件描述符链接。这个过程中可能会被释放
+		int fd = -1;
+		file_t * file = file_alloc();
+		if (file) {
+			fd = task_alloc_fd(file);
+			if (fd < 0) {
+				goto sys_open_failed;
+			}
+		}
+
 		if (kernel_strlen(name) < 5) {
 			goto sys_open_failed;
 		}
@@ -105,6 +109,18 @@ int sys_open(const char *name, int flags, ...) {
 		file->pos = 0;
 		file->ref = 1;
 		file->type = FILE_TTY;
+		kernel_strncpy(file->file_name, name, FILE_NAME_SIZE);
+		return fd;
+
+sys_open_failed:
+		if (file) {
+			file_free(file);
+		}
+
+		if (fd >= 0) {
+			task_remove_fd(fd);
+		}
+		return -1;
 	} else {
 		if (name[0] == '/') {
             // 暂时直接从扇区1000上读取, 读取大概40KB，足够了
@@ -113,18 +129,6 @@ int sys_open(const char *name, int flags, ...) {
             return TEMP_FILE_ID;
         }
 	}
-
-	kernel_strncpy(file->file_name, name, FILE_NAME_SIZE);
-	return fd;
-sys_open_failed:
-	if (file) {
-		file_free(file);
-	}
-
-	if (fd >= 0) {
-		task_remove_fd(fd);
-	}
-	return -1;
 }
 
 /**
@@ -204,6 +208,7 @@ int sys_lseek(int file, int ptr, int dir) {
  * 关闭文件
  */
 int sys_close(int file) {
+	
 }
 
 
@@ -228,3 +233,13 @@ int sys_fstat(int file, struct stat *st) {
     st->st_size = 0;
     return 0;
 }
+
+/**
+ * @brief 增加file的引用计数
+ */
+void fs_add_ref (file_t * file) {
+    mutex_lock(&fs_mutex);
+	file->ref++;
+    mutex_unlock(&fs_mutex);
+}
+

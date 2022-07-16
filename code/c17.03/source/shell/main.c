@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include "lib_syscall.h"
 
+char cmd_buf[256];
 int main (int argc, char **argv) {
 #if 0
     sbrk(0);
@@ -34,8 +35,8 @@ int main (int argc, char **argv) {
     }
 #endif
 
-	open("tty0", O_RDWR);
-
+	open("tty:0", O_RDWR);
+    
     puts("hello from x86 os");
     printf("os version: %s\n", OS_VERSION);
     puts("author: lishutong");
@@ -43,17 +44,11 @@ int main (int argc, char **argv) {
 
     puts("sh >>");
 
-    for (int i = 0; i < argc; i++) {
-        print_msg("arg: %s", (int)argv[i]);
-    }
-
-    // 创建一个自己的副本
-    fork();
-
-    yield();
-
     for (;;) {
-        print_msg("pid=%d", getpid());
-        msleep(1000);
+        gets(cmd_buf);
+        puts(cmd_buf);
+
+        // print_msg("pid=%d", getpid());
+        // msleep(1000);
     }
 }

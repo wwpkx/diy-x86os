@@ -10,8 +10,7 @@
 #include "tools/klib.h"
 #include "comm/cpu_instr.h"
 #include "dev/tty.h"
-
-#define CONSOLE_NR          8           // 控制台的数量
+#include "cpu/irq.h"
 
 static console_t console_buf[CONSOLE_NR];
 
@@ -32,12 +31,15 @@ static int read_cursor_pos (void) {
  * @brief 更新鼠标的位置
  */
 static void update_cursor_pos (console_t * console) {
-	uint16_t pos = console->cursor_row *  console->display_cols + console->cursor_col;
+	uint16_t pos = (console - console_buf) * (console->display_cols * console->display_rows);
+    pos += console->cursor_row *  console->display_cols + console->cursor_col;
 
+    irq_state_t state = irq_enter_protection();
 	outb(0x3D4, 0x0F);		// 写低地址
 	outb(0x3D5, (uint8_t) (pos & 0xFF));
 	outb(0x3D4, 0x0E);		// 写高地址
 	outb(0x3D5, (uint8_t) ((pos >> 8) & 0xFF));
+    irq_leave_protection(state);
 }
 
 void console_select(int idx) {
@@ -53,6 +55,9 @@ void console_select(int idx) {
 	outb(0x3D5, (uint8_t) ((pos >> 8) & 0xFF));
 	outb(0x3D4, 0xD);		// 写低地址
 	outb(0x3D5, (uint8_t) (pos & 0xFF));
+
+    // 更新光标到当前屏幕
+    update_cursor_pos(console);
 }
 /**
  * @brief 擦除从start到end的行
@@ -417,11 +422,11 @@ int console_init (int idx) {
         int cursor_pos = read_cursor_pos();
         console->cursor_row = cursor_pos / console->display_cols;
         console->cursor_col = cursor_pos % console->display_cols;
-    } else {
+        update_cursor_pos(console);
+   } else {
         console->cursor_row = 0;
         console->cursor_col = 0;    
         clear_display(console);
-        update_cursor_pos(console);
     }
 
     console->old_cursor_row = console->cursor_row;

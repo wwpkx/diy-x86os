@@ -13,6 +13,8 @@
 #include "comm/types.h"
 #include "dev/tty.h"
 
+#define CONSOLE_NR          4           // 控制台的数量
+
 // https://wiki.osdev.org/Printing_To_Screen
 #define CONSOLE_VIDEO_BASE			0xb8000		// 控制台显存起始地址,共32KB
 #define CONSOLE_DISP_ADDR           0xb8000
