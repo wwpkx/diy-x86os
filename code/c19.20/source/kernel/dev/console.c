@@ -205,7 +205,6 @@ void restore_cursor(console_t * console) {
     console->cursor_row = console->old_cursor_row;
 }
 
-
 /**
  * 初始化控制台及键盘
  */
@@ -222,8 +221,7 @@ int console_init (int idx) {
         int cursor_pos = read_cursor_pos();
         console->cursor_row = cursor_pos / console->display_cols;
         console->cursor_col = cursor_pos % console->display_cols;
-        update_cursor_pos(console);
-   } else {
+    } else {
         console->cursor_row = 0;
         console->cursor_col = 0;
         clear_display(console);
@@ -391,7 +389,7 @@ static void erase_in_display(console_t * console) {
 	int param = console->esc_param[0];
 	if (param == 2) {
 		// 擦除整个屏幕
-		erase_rows(console, 0, console->display_rows);
+		erase_rows(console, 0, console->display_rows - 1);
         console->cursor_col = console->cursor_row = 0;
 	}
 }
@@ -448,7 +446,7 @@ int console_write (tty_t * tty) {
     int len = 0;
     do {
         char c;
-       
+
         // 取字节数据
         int err = tty_fifo_get(&tty->ofifo, &c);
         if (err < 0) {
@@ -472,8 +470,8 @@ int console_write (tty_t * tty) {
         len++;
     }while (1);
 
-    mutex_lock(&console->mutex);
-   
+    mutex_unlock(&console->mutex);
+
     update_cursor_pos(console);
     return len;
 }

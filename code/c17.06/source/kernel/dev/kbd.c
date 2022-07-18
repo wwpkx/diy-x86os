@@ -70,6 +70,7 @@ static const key_map_t map_table[256] = {
         [0x33] = {',', '<'},
         [0x34] = {'.', '>'},
         [0x35] = {'/', '?'},
+        [0x39] = {' ', ' '},
 };
 
 static inline char get_key(uint8_t key_code) {

@@ -6,15 +6,13 @@
  * 联系邮箱: 527676163@qq.com
  */
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
-#include <getopt.h>
-#include <sys/stat.h>
+#include "lib_syscall.h"
 #include "main.h"
-#include "applib/lib_syscall.h"
+#include <getopt.h>
+#include <stdlib.h>
 
 static cli_t cli;
-//static const char * bin_path = "/bin";       // 可执行文件搜索路径
 static const char * promot = "sh >>";       // 命令行提示符
 
 /**
@@ -106,7 +104,7 @@ static int do_echo (int argc, char ** argv) {
  * 程序退出命令
  */
 static int do_exit (int argc, char ** argv) {
-    //exit(0);
+    exit(0);
     return 0;
 }
 
@@ -154,7 +152,7 @@ static const cli_cmd_t * find_builtin (const char * name) {
         if (strcmp(cmd->name, name) != 0) {
             continue;
         }
-        
+
         return cmd;
     }
     
@@ -217,6 +215,7 @@ static void run_exec_file (const char * path, int argc, char ** argv) {
     } else if (pid == 0) {
         // 以下供测试exit使用
         for (int i = 0; i < argc; i++) {
+            msleep(1000);
             printf("arg %d = %s\n", i, argv[i]);
         }
         exit(-1);
@@ -236,8 +235,7 @@ static void run_exec_file (const char * path, int argc, char ** argv) {
 }
 
 int main (int argc, char **argv) {
- 	// 打开标准输入输出设备，临时用,后续删除
-	open(argv[0], O_RDWR);
+	open(argv[0], 0);
     dup(0);     // 标准输出
     dup(0);     // 标准错误输出
 
@@ -253,7 +251,7 @@ int main (int argc, char **argv) {
             // 读不到错误，或f发生错误，则退出
             break;
         }
-        
+
         // 读取的字符串中结尾可能有换行符，去掉之
         char * cr = strchr(cli.curr_input, '\n');
         if (cr) {
@@ -304,6 +302,6 @@ int main (int argc, char **argv) {
         // 找不到命令，提示错误
         fprintf(stderr, ESC_COLOR_ERROR"Unknown command: %s\n"ESC_COLOR_DEFAULT, cli.curr_input);
     }
-    
+
     return 0;
 }

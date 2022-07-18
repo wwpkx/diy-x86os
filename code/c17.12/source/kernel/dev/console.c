@@ -385,7 +385,7 @@ static void erase_in_display(console_t * console) {
 	int param = console->esc_param[0];
 	if (param == 2) {
 		// 擦除整个屏幕
-		erase_rows(console, 0, console->display_rows);
+		erase_rows(console, 0, console->display_rows - 1);
         console->cursor_col = console->cursor_row = 0;
 	}
 }

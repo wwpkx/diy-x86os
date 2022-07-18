@@ -11,6 +11,7 @@
 #include "dev/kbd.h"
 #include "dev/dev.h"
 #include "tools/log.h"
+#include "cpu/irq.h"
 
 static tty_t tty_devs[TTY_NR];
 static int curr_tty = 0;
@@ -228,8 +229,9 @@ void tty_close (device_t * dev) {
 /**
  * @brief 输入tty字符
  */
-void tty_in (int idx, char ch) {
-	tty_t * tty = tty_devs + idx;
+void tty_in (char ch) {
+	tty_t * tty = tty_devs + curr_tty;
+
 	// 辅助队列要有空闲空间可代写入
 	if (sem_count(&tty->isem) >= TTY_IBUF_SIZE) {
 		return;
