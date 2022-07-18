@@ -205,8 +205,6 @@ void do_handler_kbd(exception_frame_t *frame) {
  * 键盘硬件初始化
  */
 void kbd_init(void) {
-    // 其实可以不用清零，loader会帮助清零
-    kernel_memset(&kbd_state, 0, sizeof(kbd_state));
     update_led_status();
 
     irq_install(IRQ1_KEYBOARD, (irq_handler_t)exception_handler_kbd);

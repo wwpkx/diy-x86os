@@ -140,7 +140,7 @@ int tty_read (struct _dev_desc_t * desc, char * buf, int size) {
 		char ch;
 		tty_fifo_get(&tty->ififo, &ch);
 		switch (ch) {
-			case '\b':
+			case ASCII_DEL:
 				if (len == 0) {
 					continue;
 				}
@@ -246,15 +246,14 @@ void tty_close (struct _dev_desc_t * desc) {
  * @brief 输入tty字符
  */
 void tty_in (int idx, char ch) {
-	tty_t * tty = tty_devs + curr_tty;
-
+	tty_t * tty = tty_devs + idx;
 	// 辅助队列要有空闲空间可代写入
-	if (sem_count(&tty->isem) >= TTY_ICOOKED_SIZE) {
+	if (sem_count(&tty->isem) >= TTY_IBUF_SIZE) {
 		return;
 	}
 	
 	// 写入辅助队列，通知数据到达
-	tty_fifo_put(&tty->ififo, ch);	
+	tty_fifo_put(&tty->ififo, ch);
 	sem_notify(&tty->isem);
 }
 

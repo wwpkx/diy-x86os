@@ -209,6 +209,18 @@ int console_init (void) {
 	return 0;
 }
 
+
+/**
+ * 擦除前一字符
+ * @param console
+ */
+static void erase_backword (console_t * console) {
+    if (move_backword(console, 1) == 0) {
+        show_char(console, ' ');
+        move_backword(console, 1);
+    }
+}
+
 /**
  * 普通状态下的字符的写入处理
  */
@@ -216,6 +228,9 @@ static void write_normal (console_t * console, char c) {
     switch (c) {
         case ASCII_ESC:
             console->write_state = CONSOLE_WRITE_ESC;
+            break;
+        case 0x7F:
+            erase_backword(console);
             break;
         case '\b':		// 左移一个字符
             move_backword(console, 1);

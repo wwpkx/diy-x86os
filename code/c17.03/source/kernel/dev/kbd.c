@@ -10,7 +10,6 @@
 #include "dev/kbd.h"
 #include "tools/log.h"
 #include "tools/klib.h"
-#include "dev/tty.h"
 
 static kbd_state_t kbd_state;	// 键盘状态
 
@@ -71,23 +70,6 @@ static const key_map_t map_table[256] = {
         [0x33] = {',', '<'},
         [0x34] = {'.', '>'},
         [0x35] = {'/', '?'},
-
-        // 小键盘
-        [0x37] = {'*', '*'},		// keypad
-        [0x39] = {' ', ' '},
-        [0x47] = {'7', },
-        [0x48] = {'8', },
-        [0x49] = {'9', },
-        [0x4A] = {'-', '-'},
-        [0x4B] = {'4', },
-        [0x4C] = {'5', '+'},
-        [0x4D] = {'6', },
-        [0x4E] = {'+', '+'},
-        [0x4F] = {'1', },
-        [0x50] = {'2', },
-        [0x51] = {'3', },
-        [0x52] = {'0', },
-        [0x53] = {'.', },
 };
 
 static inline char get_key(uint8_t key_code) {
@@ -144,19 +126,10 @@ uint8_t kbd_read(void) {
 static void update_led_status (void) {
     int data = 0;
 
-    // qemu不支持0xed命令，所以这里的设置看起来没用
-    data |= kbd_state.num_lock << 1;
-    data |= kbd_state.caps_lock << 0;
+    data = (kbd_state.caps_lock ? 1 : 0) << 0;
     kbd_write(KBD_PORT_DATA, KBD_CMD_RW_LED);
     kbd_write(KBD_PORT_DATA, data);
     kbd_read();
-}
-
-static void do_fx_key (int key) {
-    int index = key - KEY_F1;
-    if (kbd_state.lctrl_press || kbd_state.rctrl_press) {
-        tty_select(index);
-    }
 }
 
 /**
@@ -181,12 +154,6 @@ static void do_normal_key (uint8_t raw_code) {
 			update_led_status();
 		}
 		break;
-	case KEY_NUMLOCK:  // 小键盘
-		if (is_make) {
-			kbd_state.num_lock = ~kbd_state.num_lock;
-			update_led_status();
-		}
-		break;
     case KEY_ALT:
         kbd_state.lalt_press = is_make;  // 仅设置标志位
         break;
@@ -198,8 +165,6 @@ static void do_normal_key (uint8_t raw_code) {
     case KEY_F2:
     case KEY_F3:
     case KEY_F4:
-        do_fx_key(key);
-        break;
     case KEY_F5:
     case KEY_F6:
     case KEY_F7:
@@ -209,8 +174,6 @@ static void do_normal_key (uint8_t raw_code) {
     case KEY_F11:
     case KEY_F12:
     case KEY_SCROLL_LOCK:
-    case KEY_END:
-        break;
     default:
         if (is_make) {
             // 根据shift控制取相应的字符，这里有进行大小写转换或者shif转换
@@ -224,16 +187,15 @@ static void do_normal_key (uint8_t raw_code) {
             if (kbd_state.caps_lock) {
                 if ((key >= 'A') && (key <= 'Z')) {
                     // 大写转小写
-                    key += 0x20;
+                    key = key - 'A' + 'a';
                 } else if ((key >= 'a') && (key <= 'z')) {
                     // 小写转大小
-                    key -= 0x20;
+                    key = key - 'a' + 'A';
                 }
             }
 
             // 最后，不管是否是控制字符，都会被写入
-            //log_printf("key=%c", key);
-            tty_in(0, key);
+            log_printf("key=%c", key);
         }
         break;
     }
@@ -254,17 +216,6 @@ static void do_e0_key (uint8_t raw_code) {
             break;
         case KEY_ALT:
             kbd_state.ralt_press = is_make;  // 仅设置标志位
-            break;
-            case KEY_HOME:
-        case KEY_PAGE_UP:
-        case KEY_PAGE_DOWN:
-        case KEY_CURSOR_UP:
-        case KEY_CURSOR_DOWN:
-        case KEY_CURSOR_RIGHT:
-        case KEY_CURSOR_LEFT:
-            break;
-        case KEY_INSERT:
-        case KEY_DELETE:
             break;
     }
 }
@@ -322,16 +273,8 @@ void do_handler_kbd(exception_frame_t *frame) {
  * 键盘硬件初始化
  */
 void kbd_init(void) {
-    static int inited = 0;
+    update_led_status();
 
-    if (!inited) {
-        // 其实可以不用清零，loader会帮助清零
-        kernel_memset(&kbd_state, 0, sizeof(kbd_state));
-        update_led_status();
-
-        irq_install(IRQ1_KEYBOARD, (irq_handler_t)exception_handler_kbd);
-        irq_enable(IRQ1_KEYBOARD);    
-
-        inited = 1;
-    }
+    irq_install(IRQ1_KEYBOARD, (irq_handler_t)exception_handler_kbd);
+    irq_enable(IRQ1_KEYBOARD);
 }

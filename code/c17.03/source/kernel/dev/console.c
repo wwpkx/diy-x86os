@@ -9,9 +9,8 @@
 #include "dev/console.h"
 #include "tools/klib.h"
 #include "comm/cpu_instr.h"
-#include "dev/tty.h"
 
-#define CONSOLE_NR          8           // 控制台的数量
+#define CONSOLE_NR          1           // 控制台的数量
 
 static console_t console_buf[CONSOLE_NR];
 
@@ -40,20 +39,6 @@ static void update_cursor_pos (console_t * console) {
 	outb(0x3D5, (uint8_t) ((pos >> 8) & 0xFF));
 }
 
-void console_select(int idx) {
-    console_t * console = console_buf + idx;
-    if (console->disp_base == 0) {
-        // 可能没有初始化，先初始化一下
-        console_init(idx);
-    }
-
-	uint16_t pos = idx * console->display_cols * console->display_rows;
-
-	outb(0x3D4, 0xC);		// 写高地址
-	outb(0x3D5, (uint8_t) ((pos >> 8) & 0xFF));
-	outb(0x3D4, 0xD);		// 写低地址
-	outb(0x3D5, (uint8_t) (pos & 0xFF));
-}
 /**
  * @brief 擦除从start到end的行
  */
@@ -74,20 +59,16 @@ static void erase_rows (console_t * console, int start, int end) {
  * 整体屏幕上移若干行
  */
 static void scroll_up(console_t * console, int lines) {
-    if (console->cursor_row <= 0) {
-        return;
-    }
-
     // 整体上移
     disp_char_t * dest = console->disp_base;
-    disp_char_t * src = dest + console->display_cols;
-    uint32_t size = (console->display_rows - 1) * console->display_cols * sizeof(disp_char_t);
+    disp_char_t * src = console->disp_base + console->display_cols * lines;
+    uint32_t size = (console->display_rows - lines) * console->display_cols * sizeof(disp_char_t);
     kernel_memcpy(dest, src, size);
 
     // 擦除最后一行
-    erase_rows(console, console->display_rows - 1, console->display_rows - 1);
+    erase_rows(console, console->display_rows - lines, console->display_rows - 1);
 
-    console->cursor_row--;
+    console->cursor_row -= lines;
 }
 
 static void move_to_col0 (console_t * console) {
@@ -159,14 +140,15 @@ static int move_backword (console_t * console, int n) {
     return status;
 }
 
-/**
- * 擦除前一字符
- * @param console
- */
-static void erase_backword (console_t * console) {
-    if (move_backword(console, 1) == 0) {
-        show_char(console, ' ');
-        move_backword(console, 1);
+static void clear_display (console_t * console) {
+    int size = console->display_cols * console->display_rows;
+
+    disp_char_t * start = console->disp_base;
+    for (int i = 0; i < size; i++, start++) {
+        // 为便于理解，以下分开三步写一个字符，速度慢一些
+        start->c = ' ';
+        start->background = console->background;
+        start->foreground = console->foreground;
     }
 }
 
@@ -202,6 +184,44 @@ void restore_cursor(console_t * console) {
 }
 
 /**
+ * 初始化控制台及键盘
+ */
+int console_init (void) {
+    for (int i = 0; i < CONSOLE_NR; i++) {
+        console_t *console = console_buf + i;
+
+        console->disp_base = (disp_char_t *) CONSOLE_DISP_ADDR;
+        console->display_cols = CONSOLE_COL_MAX;
+        console->display_rows = CONSOLE_ROW_MAX;
+
+        int cursor_pos = read_cursor_pos();
+        console->cursor_row = cursor_pos / console->display_cols;
+        console->cursor_col = cursor_pos % console->display_cols;
+        console->old_cursor_row = console->cursor_row;
+        console->old_cursor_col = console->cursor_col;
+        console->foreground = COLOR_White;
+        console->background = COLOR_Black;
+
+        // clear_display(console);
+        // update_cursor_pos(console);
+    }
+
+	return 0;
+}
+
+
+/**
+ * 擦除前一字符
+ * @param console
+ */
+static void erase_backword (console_t * console) {
+    if (move_backword(console, 1) == 0) {
+        show_char(console, ' ');
+        move_backword(console, 1);
+    }
+}
+
+/**
  * 普通状态下的字符的写入处理
  */
 static void write_normal (console_t * console, char c) {
@@ -210,9 +230,10 @@ static void write_normal (console_t * console, char c) {
             console->write_state = CONSOLE_WRITE_ESC;
             break;
         case 0x7F:
-        case '\b':
-            // del左移，现有终端不支持，后续改成按键处理
             erase_backword(console);
+            break;
+        case '\b':		// 左移一个字符
+            move_backword(console, 1);
             break;
             // 换行处理
         case '\t':		// 对齐的下一制表符
@@ -221,7 +242,8 @@ static void write_normal (console_t * console, char c) {
         case '\r':
             move_to_col0(console);
             break;
-        case '\n':
+        case '\n':  // 暂时这样处理
+            move_to_col0(console);
             move_next_line(console);
             break;
             // 普通字符显示
@@ -333,18 +355,6 @@ static void move_cursor(console_t * console) {
 	}
 }
 
-static void clear_display (console_t * console) {
-    int size = console->display_cols * console->display_rows * sizeof(disp_char_t);
-
-    disp_char_t * start = console->disp_base;
-    for (int i = 0; i < console->display_cols * console->display_rows; i++, start++) {
-        // 为便于理解，以下分开三步写一个字符，速度慢一些
-        start->c = ' ';
-        start->background = COLOR_Black;
-        start->foreground = COLOR_White;
-    }
-}
-
 /**
  * 擦除字符操作
  */
@@ -379,7 +389,7 @@ static void write_esc_square (console_t * console, char c) {
 
         // 已经接收到所有的字符，继续处理
         switch (c) {
-        case 'm': // 设置字符属性 ESC [pn;pn m
+        case 'm': // 设置字符属性
             set_font_style(console);
             break;
         case 'D':	// 光标左移n个位置 ESC [Pn D
@@ -400,54 +410,16 @@ static void write_esc_square (console_t * console, char c) {
     }
 }
 
-
-/**
- * 初始化控制台及键盘
- */
-int console_init (int idx) {
-    console_t *console = console_buf + idx;
-
-    console->display_cols = CONSOLE_COL_MAX;
-    console->display_rows = CONSOLE_ROW_MAX;
-    console->disp_base = (disp_char_t *) CONSOLE_DISP_ADDR + idx * console->display_cols * console->display_rows;
-
-    console->foreground = COLOR_White;
-    console->background = COLOR_Black;
-    if (idx == 0) {
-        int cursor_pos = read_cursor_pos();
-        console->cursor_row = cursor_pos / console->display_cols;
-        console->cursor_col = cursor_pos % console->display_cols;
-    } else {
-        console->cursor_row = 0;
-        console->cursor_col = 0;    
-        clear_display(console);
-        update_cursor_pos(console);
-    }
-
-    console->old_cursor_row = console->cursor_row;
-    console->old_cursor_col = console->cursor_col;
-	return 0;
-}
-
 /**
  * 实现pwdget作为tty的输出
  * 可能有多个进程在写，注意保护
  */
-int console_write (tty_t * tty) {
-	console_t * console = console_buf + tty->console_idx;
+int console_write (int dev, char * data, int size) {
+	console_t * console = console_buf + dev;
 
-    int len = 0;
-    do {
-        char c;
-       
-        // 取字节数据
-        int err = tty_fifo_get(&tty->ofifo, &c);
-        if (err < 0) {
-            break;
-        }
-        sem_notify(&tty->osem);
-
-        // 显示出来
+    int len;
+	for (len = 0; len < size; len++){
+        char c = *data++;
         switch (console->write_state) {
             case CONSOLE_WRITE_NORMAL: {
                 write_normal(console, c);
@@ -460,9 +432,7 @@ int console_write (tty_t * tty) {
                 write_esc_square(console, c);
                 break;
         }
-        len++;
-    }while (1);
-    
+    }
     update_cursor_pos(console);
     return len;
 }
@@ -473,5 +443,3 @@ int console_write (tty_t * tty) {
 void console_close (int dev) {
 	// 似乎不太需要做点什么
 }
-
-

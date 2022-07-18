@@ -140,6 +140,18 @@ static int move_backword (console_t * console, int n) {
     return status;
 }
 
+static void clear_display (console_t * console) {
+    int size = console->display_cols * console->display_rows;
+
+    disp_char_t * start = console->disp_base;
+    for (int i = 0; i < size; i++, start++) {
+        // 为便于理解，以下分开三步写一个字符，速度慢一些
+        start->c = ' ';
+        start->background = console->background;
+        start->foreground = console->foreground;
+    }
+}
+
 /**
  * 将光标对齐到8的倍数位置上
  */
@@ -197,6 +209,18 @@ int console_init (void) {
 	return 0;
 }
 
+
+/**
+ * 擦除前一字符
+ * @param console
+ */
+static void erase_backword (console_t * console) {
+    if (move_backword(console, 1) == 0) {
+        show_char(console, ' ');
+        move_backword(console, 1);
+    }
+}
+
 /**
  * 普通状态下的字符的写入处理
  */
@@ -204,6 +228,9 @@ static void write_normal (console_t * console, char c) {
     switch (c) {
         case ASCII_ESC:
             console->write_state = CONSOLE_WRITE_ESC;
+            break;
+        case 0x7F:
+            erase_backword(console);
             break;
         case '\b':		// 左移一个字符
             move_backword(console, 1);
@@ -328,18 +355,6 @@ static void move_cursor(console_t * console) {
 	}
 }
 
-static void clear_display (console_t * console) {
-    int size = console->display_cols * console->display_rows * sizeof(disp_char_t);
-
-    disp_char_t * start = console->disp_base;
-    for (int i = 0; i < console->display_cols * console->display_rows; i++, start++) {
-        // 为便于理解，以下分开三步写一个字符，速度慢一些
-        start->c = ' ';
-        start->background = COLOR_Black;
-        start->foreground = COLOR_White;
-    }
-}
-
 /**
  * 擦除字符操作
  */
@@ -374,7 +389,7 @@ static void write_esc_square (console_t * console, char c) {
 
         // 已经接收到所有的字符，继续处理
         switch (c) {
-        case 'm': // 设置字符属性 ESC [pn;pn m
+        case 'm': // 设置字符属性
             set_font_style(console);
             break;
         case 'D':	// 光标左移n个位置 ESC [Pn D

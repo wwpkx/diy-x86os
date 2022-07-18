@@ -20,10 +20,12 @@ static console_t console_buf[CONSOLE_NR];
 static int read_cursor_pos (void) {
     int pos;
 
+    irq_state_t state = irq_enter_protection();
  	outb(0x3D4, 0x0F);		// 写低地址
 	pos = inb(0x3D5);
 	outb(0x3D4, 0x0E);		// 写高地址
 	pos |= inb(0x3D5) << 8;   
+    irq_leave_protection(state);
     return pos;
 }
 
@@ -42,6 +44,9 @@ static void update_cursor_pos (console_t * console) {
     irq_leave_protection(state);
 }
 
+/**
+ * @brief 选择指定端口
+ */
 void console_select(int idx) {
     console_t * console = console_buf + idx;
     if (console->disp_base == 0) {
@@ -79,20 +84,16 @@ static void erase_rows (console_t * console, int start, int end) {
  * 整体屏幕上移若干行
  */
 static void scroll_up(console_t * console, int lines) {
-    if (console->cursor_row <= 0) {
-        return;
-    }
-
     // 整体上移
     disp_char_t * dest = console->disp_base;
-    disp_char_t * src = dest + console->display_cols;
-    uint32_t size = (console->display_rows - 1) * console->display_cols * sizeof(disp_char_t);
+    disp_char_t * src = console->disp_base + console->display_cols * lines;
+    uint32_t size = (console->display_rows - lines) * console->display_cols * sizeof(disp_char_t);
     kernel_memcpy(dest, src, size);
 
     // 擦除最后一行
-    erase_rows(console, console->display_rows - 1, console->display_rows - 1);
+    erase_rows(console, console->display_rows - lines, console->display_rows - 1);
 
-    console->cursor_row--;
+    console->cursor_row -= lines;
 }
 
 static void move_to_col0 (console_t * console) {
@@ -164,14 +165,15 @@ static int move_backword (console_t * console, int n) {
     return status;
 }
 
-/**
- * 擦除前一字符
- * @param console
- */
-static void erase_backword (console_t * console) {
-    if (move_backword(console, 1) == 0) {
-        show_char(console, ' ');
-        move_backword(console, 1);
+static void clear_display (console_t * console) {
+    int size = console->display_cols * console->display_rows;
+
+    disp_char_t * start = console->disp_base;
+    for (int i = 0; i < size; i++, start++) {
+        // 为便于理解，以下分开三步写一个字符，速度慢一些
+        start->c = ' ';
+        start->background = console->background;
+        start->foreground = console->foreground;
     }
 }
 
@@ -215,9 +217,10 @@ static void write_normal (console_t * console, char c) {
             console->write_state = CONSOLE_WRITE_ESC;
             break;
         case 0x7F:
-        case '\b':
-            // del左移，现有终端不支持，后续改成按键处理
             erase_backword(console);
+            break;
+        case '\b':		// 左移一个字符
+            move_backword(console, 1);
             break;
             // 换行处理
         case '\t':		// 对齐的下一制表符
@@ -338,18 +341,6 @@ static void move_cursor(console_t * console) {
 	}
 }
 
-static void clear_display (console_t * console) {
-    int size = console->display_cols * console->display_rows * sizeof(disp_char_t);
-
-    disp_char_t * start = console->disp_base;
-    for (int i = 0; i < console->display_cols * console->display_rows; i++, start++) {
-        // 为便于理解，以下分开三步写一个字符，速度慢一些
-        start->c = ' ';
-        start->background = COLOR_Black;
-        start->foreground = COLOR_White;
-    }
-}
-
 /**
  * 擦除字符操作
  */
@@ -384,7 +375,7 @@ static void write_esc_square (console_t * console, char c) {
 
         // 已经接收到所有的字符，继续处理
         switch (c) {
-        case 'm': // 设置字符属性 ESC [pn;pn m
+        case 'm': // 设置字符属性
             set_font_style(console);
             break;
         case 'D':	// 光标左移n个位置 ESC [Pn D
@@ -431,6 +422,8 @@ int console_init (int idx) {
 
     console->old_cursor_row = console->cursor_row;
     console->old_cursor_col = console->cursor_col;
+
+    mutex_init(&console->mutex);
 	return 0;
 }
 
@@ -440,6 +433,9 @@ int console_init (int idx) {
  */
 int console_write (tty_t * tty) {
 	console_t * console = console_buf + tty->console_idx;
+
+    // 下面的写序列涉及到状态机，还有多进程同时写，因此加上锁
+    mutex_lock(&console->mutex);
 
     int len = 0;
     do {
@@ -467,7 +463,9 @@ int console_write (tty_t * tty) {
         }
         len++;
     }while (1);
-    
+
+    mutex_lock(&console->mutex);
+   
     update_cursor_pos(console);
     return len;
 }
@@ -478,5 +476,3 @@ int console_write (tty_t * tty) {
 void console_close (int dev) {
 	// 似乎不太需要做点什么
 }
-
-

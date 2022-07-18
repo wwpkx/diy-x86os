@@ -276,7 +276,7 @@ uint32_t memory_copy_uvm (uint32_t page_dir) {
                 goto copy_uvm_failed;
             }
 
-            // 复制内容
+            // 复制内容。
             kernel_memcpy((void *)page, (void *)vaddr, MEM_PAGE_SIZE);
         }
     }

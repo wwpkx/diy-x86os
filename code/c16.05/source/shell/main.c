@@ -17,9 +17,6 @@ int main (int argc, char **argv) {
 
     printf("abef\b\b\b\bcd\n");    // \b: 输出cdef
     printf("abcd\x7f;fg\n");   // 7f: 输出 abc;fg
-    printf("1\t12\t123\t1234\t12345\t123456\t1234567\n");
-    printf("1\t2\t3\t4\t5\t6\t7\n");
-    printf("\0337Hello,word!\0338123\n");  // ESC 7,8 输出123lo,word!
 
     puts("hello from x86 os");
     printf("os version: %s\n", OS_VERSION);

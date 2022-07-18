@@ -8,16 +8,14 @@
 #include <stdio.h>
 #include "lib_syscall.h"
 
-char cmd_buf[256];
 int main (int argc, char **argv) {
-#if 0
     sbrk(0);
     sbrk(100);
     sbrk(200);
     sbrk(4096*2 + 200);
     sbrk(4096*5 + 1234);
 
-    printf("ab\b\bcd\n");    // \b: 输出cd
+    printf("abef\b\b\b\bcd\n");    // \b: 输出cdef
     printf("abcd\x7f;fg\n");   // 7f: 输出 abc;fg
     printf("\0337Hello,word!\0338123\n");  // ESC 7,8 输出123lo,word!
     printf("\033[31;42mHello,word!\033[39;49m123\n");  // ESC [pn m, Hello,world红色，其余绿色
@@ -30,13 +28,7 @@ int main (int argc, char **argv) {
     printf("\033[32;25;39m123\n");  // ESC [pn m, Hello,world红色，其余绿色  
 
     printf("\033[2J\n");   // clear screen
-    for (;;) {
-        msleep(1);
-    }
-#endif
 
-	open("tty:0", O_RDWR);
-    
     puts("hello from x86 os");
     printf("os version: %s\n", OS_VERSION);
     puts("author: lishutong");
@@ -44,11 +36,17 @@ int main (int argc, char **argv) {
 
     puts("sh >>");
 
-    for (;;) {
-        gets(cmd_buf);
-        puts(cmd_buf);
+    for (int i = 0; i < argc; i++) {
+        print_msg("arg: %s", (int)argv[i]);
+    }
 
-        // print_msg("pid=%d", getpid());
-        // msleep(1000);
+    // 创建一个自己的副本
+    fork();
+
+    yield();
+
+    for (;;) {
+        print_msg("pid=%d", getpid());
+        msleep(1000);
     }
 }
