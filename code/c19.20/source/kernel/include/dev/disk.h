@@ -92,7 +92,6 @@ typedef struct _partinfo_t {
         FS_FAT16_1 = 0x0E,
     }type;
 
-    int device;                 // 设备号
 	int start_sector;           // 起始扇区
 	int total_sector;           // 总扇区
 }partinfo_t;
@@ -117,9 +116,8 @@ typedef struct _disk_t {
     uint16_t port_base;             // 端口起始地址
     int irq_num;                    // 中断序号
 
-    uint32_t sector_cnt;            // 通道大小
     int sector_size;                // 块大小
-	partinfo_t partinfo[DISK_PRIMARY_PART_CNT];	// 分区表
+	partinfo_t partinfo[DISK_PRIMARY_PART_CNT + 1];	// 分区表, 包含一个描述整个磁盘的假分区信息
 
     mutex_t * mutex;              // 访问该通知的互斥信号量
 
@@ -133,7 +131,9 @@ int disk_write_sector(int device, uint8_t *buffer, int start_sector, int count);
 int part_to_device (disk_t * disk, int part_no);
 partinfo_t * device_to_part (int device);
 
-void handler_ide_primary (void);
-void handler_ide_secondary (void);
+void exception_handler_ide_primary (void);
+void exception_handler_ide_secondary (void);
+
+extern dev_desc_t dev_disk_desc;
 
 #endif // DISK_H

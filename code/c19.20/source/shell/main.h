@@ -11,13 +11,7 @@
 #define CLI_INPUT_SIZE              1024            // 输入缓存区
 #define	CLI_MAX_ARG_COUNT		    10			    // 最大接收的参数数量
 
-#define	ESC_CMD1(cmd)			    "\x1b"#cmd		// ESC n命令
-#define	ESC_SAVE_CURSOR			    ESC_CMD1(7)		// 保存光标命令
-#define	ESC_RESTORE_CURSOR		    ESC_CMD1(8)		// 恢复光标命令
-
 #define ESC_CMD2(Pn, cmd)		    "\x1b["#Pn#cmd
-#define	ESC_CURSOR_MOV_LEFT		    ESC_CMD2(1, D)	// 光标左移
-#define	ESC_CURSOR_MOV_RIGHT	    ESC_CMD2(1, C)	// 光标右移
 #define	ESC_COLOR_ERROR			    ESC_CMD2(31, m)	// 红色错误
 #define	ESC_COLOR_DEFAULT		    ESC_CMD2(39, m)	// 默认颜色
 #define ESC_CLEAR_SCREEN		    ESC_CMD2(2, J)	// 擦除整屏幕

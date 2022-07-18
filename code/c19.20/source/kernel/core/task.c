@@ -484,7 +484,7 @@ static void copy_opened_files(task_t * child_task) {
     for (int i = 0; i < TASK_OFILE_NR; i++) {
         file_t * file = parent->file_table[i];
         if (file) {
-            fs_add_ref(file);
+            file_inc_ref(file);
             child_task->file_table[i] = parent->file_table[i];
         }
     }

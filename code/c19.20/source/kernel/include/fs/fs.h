@@ -9,14 +9,9 @@
 #define FILE_H
 
 #include <sys/stat.h>
-#include "fs/file.h"
-
-#define O_RDONLY        (0 << 0)            // 只读
-#define O_WRONLY        (1 << 0)            // 只写
-#define O_RDWR          (2 << 0)            // 读写
 
 void fs_init (void);
-void fs_add_ref (file_t * file);
+void fs_inc_ref (file_t * file);
 
 int sys_open(const char *name, int flags, ...);
 int sys_read(int file, char *ptr, int len);

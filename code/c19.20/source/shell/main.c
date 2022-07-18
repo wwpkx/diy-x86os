@@ -28,7 +28,7 @@ static void show_promot(void) {
  */
 static int do_help(int argc, char **argv) {
     const cli_cmd_t * start = cli.cmd_start;
-    
+
     // 循环打印名称及用法
     while (start < cli.cmd_end) {
         printf("%s\t\t%s\n",  start->name, start->useage);
@@ -53,13 +53,13 @@ static int do_echo (int argc, char ** argv) {
     // 只有一个参数，需要先手动输入，再输出
     if (argc == 1) {
         char msg_buf[128];
-        
+
         fgets(msg_buf, sizeof(msg_buf), stdin);
         msg_buf[sizeof(msg_buf) - 1] = '\0';
         puts(msg_buf);
         return 0;
     }
-    
+
     // https://www.cnblogs.com/yinghao-liu/p/7123622.html
     // optind是下一个要处理的元素在argv中的索引
     // 当没有选项时，变为argv第一个不是选项元素的索引。
@@ -83,14 +83,14 @@ static int do_echo (int argc, char ** argv) {
                 return -1;
         }
     }
-    
+
     // 索引已经超过了最后一个参数的位置，意味着没有传入要发送的信息
     if (optind > argc - 1) {
         fprintf(stderr, "Message is empty \n");
         optind = 1;        // getopt需要多次调用，需要重置
         return -1;
     }
-    
+
     // 循环打印消息
     char * msg = argv[optind];
     for (int i = 0; i < count; i++) {
@@ -155,7 +155,7 @@ static const cli_cmd_t * find_builtin (const char * name) {
 
         return cmd;
     }
-    
+
     return (const cli_cmd_t *)0;
 }
 
@@ -265,23 +265,23 @@ int main (int argc, char **argv) {
         int argc = 0;
         char * argv[CLI_MAX_ARG_COUNT];
         memset(argv, 0, sizeof(argv));
-        
+
         // 提取出命令，找命令表
         const char * space = " \t";  // 字符分割器
         char *token = strtok(cli.curr_input, space);
         while (token) {
             // 记录参数
             argv[argc++] = token;
-            
+
             // 先获取下一位置
             token = strtok(NULL, space);
         }
-        
+
         // 没有任何输入，则x继续循环
         if (argc == 0) {
             continue;
         }
-        
+
         // 试图作为内部命令加载执行
         const cli_cmd_t * cmd = find_builtin(argv[0]);
         if (cmd) {
@@ -298,7 +298,7 @@ int main (int argc, char **argv) {
         //     run_exec_file(path, argc, argv);
         //     continue;
         // }
-        
+
         // 找不到命令，提示错误
         fprintf(stderr, ESC_COLOR_ERROR"Unknown command: %s\n"ESC_COLOR_DEFAULT, cli.curr_input);
     }

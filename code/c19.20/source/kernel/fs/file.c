@@ -44,6 +44,15 @@ void file_free (file_t * file) {
 }
 
 /**
+ * @brief 增加file的引用计数
+ */
+void file_inc_ref (file_t * file) {
+    mutex_lock(&file_alloc_mutex);
+	file->ref++;
+    mutex_unlock(&file_alloc_mutex);
+}
+
+/**
  * @brief 文件表初始化
  */
 void file_table_init (void) {

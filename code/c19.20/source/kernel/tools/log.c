@@ -72,11 +72,11 @@ void log_printf(const char * fmt, ...) {
     outb(COM1_PORT, '\n');
 #else
     //console_write(0, str_buf, kernel_strlen(str_buf));
-    dev_write(log_dev_id, str_buf, kernel_strlen(str_buf));
+    dev_write(log_dev_id, 0, str_buf, kernel_strlen(str_buf));
 
     char c = '\n';
     //console_write(0, &c, 1);
-    dev_write(log_dev_id, &c, 1);
+    dev_write(log_dev_id, 0, &c, 1);
 
 #endif
     mutex_unlock(&mutex);

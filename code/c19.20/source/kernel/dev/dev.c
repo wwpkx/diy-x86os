@@ -2,6 +2,7 @@
 #include "dev/dev.h"
 #include "dev/tty.h"
 #include "tools/klib.h"
+#include "dev/disk.h"
 
 #define DEV_TABLE_SIZE          128     // 支持的设备数量
 
@@ -10,6 +11,7 @@ extern dev_desc_t dev_tty_desc;
 // 设备描述表
 static dev_desc_t * dev_desc_tbl[] = {
     &dev_tty_desc,
+    &dev_disk_desc,
 };
 
 // 设备表
@@ -78,25 +80,25 @@ int dev_open (int major, int minor, void * data) {
 /**
  * @brief 读取指定字节的数据
  */
-int dev_read (int dev_id, char * buf, int size) {
+int dev_read (int dev_id, int addr, char * buf, int size) {
     if (is_devid_bad(dev_id)) {
         return -1;
     }
 
     device_t * dev = dev_tbl + dev_id;
-    return dev->desc->read(dev, buf, size);
+    return dev->desc->read(dev, addr, buf, size);
 }
 
 /**
  * @brief 写指定字节的数据
  */
-int dev_write (int dev_id, char * buf, int size) {
+int dev_write (int dev_id, int addr, char * buf, int size) {
     if (is_devid_bad(dev_id)) {
         return -1;
     }
 
     device_t * dev = dev_tbl + dev_id;
-    return dev->desc->write(dev, buf, size);
+    return dev->desc->write(dev, addr, buf, size);
 }
 
 /**
