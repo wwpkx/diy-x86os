@@ -125,8 +125,7 @@ int console_init (void) {
 }
 
 /**
- * 实现pwdget作为tty的输出
- * 可能有多个进程在写，注意保护
+ * 普通状态下的字符的写入处理
  */
 int console_write (int dev, char * data, int size) {
 	console_t * console = console_buf + dev;

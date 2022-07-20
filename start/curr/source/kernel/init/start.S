@@ -90,6 +90,7 @@ exception_handler virtual_exception, 20, 0
 exception_handler control_exception, 21, 1
 
 exception_handler time, 0x20, 0
+exception_handler kbd, 0x21, 0
 
     // simple_switch(&from, to)
     .text

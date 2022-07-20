@@ -32,6 +32,17 @@ typedef struct _device_t {
     int open_count;                 // 打开次数
 }device_t;
 
+static inline int devid_make(int major, int minor) {
+    return (major << 16) | minor;
+}
+
+static inline int devid_major (int dev_id) {
+    return dev_id >> 16;
+}
+
+static inline int devid_minor (int dev_id) {
+    return dev_id & 0xFF;
+}
 
 /**
  * @brief 设备描述结构

@@ -134,6 +134,4 @@ partinfo_t * device_to_part (int device);
 void exception_handler_ide_primary (void);
 void exception_handler_ide_secondary (void);
 
-extern dev_desc_t dev_disk_desc;
-
 #endif // DISK_H

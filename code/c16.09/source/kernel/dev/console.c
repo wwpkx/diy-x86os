@@ -346,20 +346,15 @@ static void move_right (console_t * console, int n) {
  * 移动光标
  */
 static void move_cursor(console_t * console) {
-	if (console->curr_param_index >= 1) {
-		console->cursor_row = console->esc_param[0];
-	}
-
-	if (console->curr_param_index >= 2) {
-		console->cursor_col = console->esc_param[1];
-	}
+    console->cursor_row = console->esc_param[0];
+    console->cursor_col = console->esc_param[1];
 }
 
 /**
  * 擦除字符操作
  */
 static void erase_in_display(console_t * console) {
-	if (console->curr_param_index <= 0) {
+	if (console->curr_param_index < 0) {
 		return;
 	}
 

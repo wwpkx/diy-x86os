@@ -92,6 +92,31 @@ static void clear_display (console_t * console) {
     }
 }
 
+
+static int move_backword (console_t * console, int n) {
+    int status = -1;
+
+    for (int i = 0; i < n; i++) {
+        if (console->cursor_col > 0) {
+            console->cursor_col--;
+            status = 0;
+        } else if (console->cursor_row > 0) {
+            console->cursor_row--;
+            console->cursor_col = console->display_cols - 1;
+            status = 0;
+        }
+    }
+
+    return status;
+}
+
+static void erase_backword (console_t * console) {
+    if (move_backword(console, 1) == 0) {
+        show_char(console, ' ');
+        move_backword(console, 1);
+    }
+}
+
 int console_init (void) {
     for (int i = 0; i < CONSOLE_NR; i++) {
         console_t * console = console_buf + i;
@@ -104,6 +129,9 @@ int console_init (void) {
         int cursor_pos = read_cursor_pos();
         console->cursor_row = cursor_pos / console->display_cols;
         console->cursor_col = cursor_pos % console->display_cols;
+        console->old_cursor_col = console->cursor_col;
+        console->old_cursor_row = console->cursor_col;
+        console->write_state = CONSOLE_WRITE_NORMAL;
 
         console->disp_base = (disp_char_t *)CONSOLE_DISP_ADDR + i *(CONSOLE_COL_MAX * CONSOLE_ROW_MAX);
    
@@ -113,23 +141,184 @@ int console_init (void) {
     return 0;
 }
 
+static void write_normal(console_t * console, char c) {
+    switch (c) {
+        case ASCII_ESC:
+            console->write_state = CONSOLE_WRITE_ESC;
+            break;
+        case 0x7F:
+            erase_backword(console);
+            break;
+        case '\b':
+            move_backword(console, 1);
+            break;
+        case '\r':
+            move_to_col0(console);
+            break;
+        case '\n':
+            move_to_col0(console);
+            move_next_line(console);
+            break;
+        default:
+            if ((c >= ' ') && (c <= '~')) {
+                show_char(console, c);
+            }
+            break;
+    }
+}
+
+void save_cursor (console_t * console) {
+    console->old_cursor_col = console->cursor_col;
+    console->old_cursor_row = console->cursor_row;
+}
+
+void restore_cursor (console_t * console) {
+    console->cursor_col = console->old_cursor_col;
+    console->cursor_row = console->old_cursor_row;
+}
+
+static void clear_esc_param (console_t * console) {
+    kernel_memset(console->esc_param, 0, sizeof(console->esc_param));
+    console->curr_param_index = 0;
+}
+
+// ESC 7/8
+// ESC [pn;pn1
+static void write_esc (console_t * console, char c) {
+    switch (c) {
+    case '7':
+        save_cursor(console);
+        console->write_state = CONSOLE_WRITE_NORMAL;
+        break;
+    case '8':
+        restore_cursor(console);
+        console->write_state = CONSOLE_WRITE_NORMAL;
+        break;
+    case '[':
+        clear_esc_param(console);
+        console->write_state = CONSOLE_WRITE_SQUARE;
+        break;
+    default:
+        console->write_state = CONSOLE_WRITE_NORMAL;
+        break;
+    }
+}
+
+static void set_font_style (console_t * console) {
+    static const color_t color_table[] = {
+        COLOR_Black, COLOR_Red, COLOR_Green, COLOR_Yellow,
+        COLOR_Blue, COLOR_Magenta, COLOR_Cyan, COLOR_White
+    };
+
+    for (int i = 0; i <= console->curr_param_index; i++) {
+        int param = console->esc_param[i];
+        if ((param >= 30) && (param <= 37)) {
+            console->foreground = color_table[param - 30];
+        } else if ((param >= 40) && (param <= 47)) {
+            console->background = color_table[param - 40];
+        } else if (param == 39) {
+            console->foreground = COLOR_White;
+        } else if (param == 49) {
+            console->background = COLOR_Black;
+        }
+    }
+}
+
+static void move_left (console_t * console, int n) {
+    if (n == 0) {
+        n = 1;
+    }
+
+    int col = console->cursor_col - n;
+    console->cursor_col = (col >= 0) ? col : 0;
+}
+
+static void move_right (console_t * console, int n) {
+    if (n == 0) {
+        n = 1;
+    }
+
+    int col = console->cursor_col + n;
+    if (col >= console->display_cols) {
+        console->cursor_col = console->display_cols - 1;
+    } else {
+        console->cursor_col = col;
+    }
+}
+
+static void move_cursor (console_t * console) {
+    console->cursor_row = console->esc_param[0];
+    console->cursor_col = console->esc_param[1];
+}
+
+static void erase_in_display (console_t * console) {
+    if (console->curr_param_index < 0) {
+        return;
+    }
+
+    int param = console->esc_param[0];
+    if (param == 2) {
+        erase_rows(console, 0, console->display_cols - 1);
+        console->cursor_col = console->cursor_row = 0;
+    }
+}
+
+// ESC [p0;p1  m 31,39
+static void write_esc_square(console_t * console, char c) {
+    if ((c >= '0') && (c <='9')) {
+        int *param = &console->esc_param[console->curr_param_index];
+        *param = *param * 10 + c - '0';
+    } else if ((c == ';') && (console->curr_param_index < ESC_PARAM_MAX)) {
+        console->curr_param_index++;
+    } else {
+        switch (c) {
+        case 'm':
+            set_font_style(console);
+            break;
+        case 'D':
+            move_left(console, console->esc_param[0]);
+            break;
+        case 'C':
+            move_right(console, console->esc_param[0]);
+            break;
+        case 'H':
+        case 'f':
+            move_cursor(console);
+            break;
+        case 'J':
+            erase_in_display(console);
+            break;
+        default:
+            break;
+        }
+
+        console->write_state = CONSOLE_WRITE_NORMAL;
+    }
+}
+
+
 // hello, world
+// ESC 7/8
 int console_write (int console, char * data, int size) {
     console_t * c = console_buf + console;
     int len;
 
     for (len = 0; len < size; len++) {
         char ch = *data++;
-        switch (ch) {
-            case '\n':
-                move_to_col0(c);
-                move_next_line(c);
-                break;
-            default:
-                show_char(c, ch);
-                break;
+        switch (c->write_state) {
+        case CONSOLE_WRITE_NORMAL:
+            write_normal(c, ch);
+            break;
+        case CONSOLE_WRITE_ESC:
+            write_esc(c, ch);
+            break;
+        case CONSOLE_WRITE_SQUARE:
+            write_esc_square(c, ch);
+            break;
+        default:
+            break;
         }
-    }
+     }
 
     update_cursor_pos(c);
     return len;

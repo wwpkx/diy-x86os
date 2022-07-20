@@ -153,24 +153,6 @@ static void clear_display (console_t * console) {
 }
 
 /**
- * 将光标对齐到8的倍数位置上
- */
-static void move_next_tab(console_t * console) {
-    int col = console->cursor_col;
-
-    col = (col + 7) / 8 * 8;		// 下一显示位置
-    if (col >= console->display_cols) {
-        col = 0;
-        console->cursor_row++;
-        if (console->cursor_row >= console->display_rows) {
-            // 超出末端，上移
-            scroll_up(console, 1);
-        }
-    }
-    console->cursor_col = col;
-}
-
-/**
  * 只支持保存光标
  */
 void save_cursor(console_t * console) {
@@ -234,10 +216,6 @@ static void write_normal (console_t * console, char c) {
             break;
         case '\b':		// 左移一个字符
             move_backword(console, 1);
-            break;
-            // 换行处理
-        case '\t':		// 对齐的下一制表符
-            move_next_tab(console);
             break;
         case '\r':
             move_to_col0(console);

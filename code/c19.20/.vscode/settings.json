@@ -21,6 +21,8 @@
         "console.h": "c",
         "tty.h": "c",
         "stat.h": "c",
-        "main.h": "c"
+        "main.h": "c",
+        "disk.h": "c",
+        "devfs.h": "c"
     },
 }
