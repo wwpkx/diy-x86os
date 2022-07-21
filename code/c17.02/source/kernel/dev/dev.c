@@ -13,14 +13,14 @@ int dev_open (int major, int minor, void * data) {
 /**
  * @brief 读取指定字节的数据
  */
-int dev_read (int dev_id, char * buf, int size) {
+int dev_read (int dev_id, int addr, char * buf, int size) {
     return size;
 }
 
 /**
  * @brief 写指定字节的数据
  */
-int dev_write (int dev_id, char * buf, int size) {
+int dev_write (int dev_id, int addr, char * buf, int size) {
     return size;
 }
 

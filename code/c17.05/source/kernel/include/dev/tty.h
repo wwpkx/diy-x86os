@@ -21,18 +21,14 @@ typedef struct _tty_fifo_t {
 	int count;				// 当前已有的数据量
 }tty_fifo_t;
 
-#define TTY_OCRLF			(1 << 0)		// 输出是否将\n转换成\r\n
-
 /**
  * tty设备
  */
 typedef struct _tty_t {
 	char obuf[TTY_OBUF_SIZE];
 	tty_fifo_t ofifo;				// 输出队列
-	sem_t osem;
 	char ibuf[TTY_IBUF_SIZE];
 	tty_fifo_t ififo;				// 输入处理后的队列
-	sem_t isem;
 	int console_idx;				// 控制台索引号
 }tty_t;
 

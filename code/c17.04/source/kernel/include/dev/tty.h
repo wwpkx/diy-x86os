@@ -27,10 +27,8 @@ typedef struct _tty_fifo_t {
 typedef struct _tty_t {
 	char obuf[TTY_OBUF_SIZE];
 	tty_fifo_t ofifo;				// 输出队列
-	sem_t osem;
 	char ibuf[TTY_IBUF_SIZE];
 	tty_fifo_t ififo;				// 输入处理后的队列
-	sem_t isem;
 }tty_t;
 
 #endif /* TTY_H */

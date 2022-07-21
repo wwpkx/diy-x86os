@@ -87,8 +87,7 @@ int tty_open (device_t * dev)  {
 	tty_fifo_init(&tty->ififo, tty->ibuf, TTY_IBUF_SIZE);
 	sem_init(&tty->isem, 0);
 
-	tty->iflags = TTY_INLCR | TTY_IEOF | TTY_IECHO;
-    tty->ch_eof = -1;			// EOF = -1
+	tty->iflags = TTY_INLCR | TTY_IECHO;
 	tty->oflags = TTY_OCRLF;
 
 	tty->console_idx = idx;
@@ -101,7 +100,7 @@ int tty_open (device_t * dev)  {
 /**
  * @brief 从tty读取数据
  */
-int tty_read (device_t * dev, char * buf, int size) {
+int tty_read (device_t * dev, int addr, char * buf, int size) {
 	if (size < 0) {
 		return -1;
 	}
@@ -152,11 +151,6 @@ int tty_read (device_t * dev, char * buf, int size) {
 			console_write(tty);
 		}
 
-		// 检查是否为文件结束符，如果是的话则退出
-		if ((tty->iflags & TTY_IEOF) && (tty->ch_eof == ch)) {
-			break;
-		}
-
 		// 遇到一行结束，也直接跳出
 		if ((ch == '\r') || (ch == '\n')) {
 			break;
@@ -169,7 +163,7 @@ int tty_read (device_t * dev, char * buf, int size) {
 /**
  * @brief 向tty写入数据
  */
-int tty_write (device_t * dev, char * buf, int size) {
+int tty_write (device_t * dev, int addr, char * buf, int size) {
 	if (size < 0) {
 		return -1;
 	}
@@ -224,8 +218,9 @@ void tty_close (device_t * dev) {
 /**
  * @brief 输入tty字符
  */
-void tty_in (int idx, char ch) {
-	tty_t * tty = tty_devs + idx;
+void tty_in (char ch) {
+	tty_t * tty = tty_devs + curr_tty;
+
 	// 辅助队列要有空闲空间可代写入
 	if (sem_count(&tty->isem) >= TTY_IBUF_SIZE) {
 		return;

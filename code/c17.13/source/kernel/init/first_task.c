@@ -30,12 +30,12 @@ int first_task_main (void) {
 
     pid = getpid();
     for (;;) {
-        //print_msg("task id = %d", pid);
+        print_msg("task id = %d", pid);
         msleep(1000);
     }
 #endif
 
-    for (int i = 0; i < CONSOLE_NR; i++) {
+    for (int i = 0; i < 4; i++) {
         int pid = fork();
         if (pid < 0) {
             print_msg("create shell proc failed", 0);

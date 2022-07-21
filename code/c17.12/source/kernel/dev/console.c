@@ -15,6 +15,8 @@
 
 static console_t console_buf[CONSOLE_NR];
 
+static void show_char(console_t * console, char c);
+
 /**
  * @brief 读取当前光标的位置
  */
@@ -57,6 +59,10 @@ void console_select(int idx) {
 
     // 更新光标到当前屏幕
     update_cursor_pos(console);
+
+    // 测试代码
+    char num = idx + '0';
+    show_char(console, num);
 }
 /**
  * @brief 擦除从start到end的行
@@ -125,7 +131,7 @@ static void move_forward (console_t * console, int n) {
 /**
  * 在当前位置显示一个字符
  */
-static void show_char(console_t * console, char c) {
+void show_char(console_t * console, char c) {
     // 每显示一个字符，都进行计算，效率有点低。不过这样直观简单
     int offset = console->cursor_col + console->cursor_row * console->display_cols;
 
@@ -229,6 +235,7 @@ int console_init (int idx) {
     console->old_cursor_col = console->cursor_col;
 	return 0;
 }
+
 
 /**
  * 擦除前一字符

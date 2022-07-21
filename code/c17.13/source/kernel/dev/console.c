@@ -234,6 +234,7 @@ int console_init (int idx) {
 	return 0;
 }
 
+
 /**
  * 擦除前一字符
  * @param console

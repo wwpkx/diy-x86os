@@ -152,7 +152,7 @@ int sys_write(int file, char *ptr, int len) {
 		return -1;
 	}
 
-	return dev_write(p_file->dev_id, ptr, len);
+	return dev_write(p_file->dev_id, 0, ptr, len);
 }
 
 /**

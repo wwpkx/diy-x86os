@@ -14,7 +14,7 @@
 #define DEV_NAME_SIZE               32      // 设备名称长度
 
 enum {
-    DEV_TTY,                // TTY设备
+    DEV_UNKNOWN = 0,            // 未知类型
 };
 
 struct _dev_desc_t;
@@ -24,7 +24,7 @@ struct _dev_desc_t;
  */
 struct _dev_desc_t;
 typedef struct _device_t {
-    struct _dev_desc_t * desc;              // 设备特性描述符
+    struct _dev_desc_t * desc;      // 设备特性描述符
     int mode;                       // 操作模式
     int minor;                      // 次设备号
     void * data;                    // 设备参数
@@ -40,8 +40,8 @@ typedef struct _dev_desc_t {
     int major;                          // 主设备号
 
     int (*open) (device_t * dev) ;
-    int (*read) (device_t * dev, char * buf, int size);
-    int (*write) (device_t * dev, char * buf, int size);
+    int (*read) (device_t * dev, int addr, char * buf, int size);
+    int (*write) (device_t * dev, int addr, char * buf, int size);
     int (*control) (device_t * dev, int cmd, int arg0, int arg1);
     void (*close) (device_t * dev);
 }dev_desc_t;

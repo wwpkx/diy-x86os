@@ -96,14 +96,14 @@ int tty_open (device_t * dev)  {
 /**
  * @brief 从tty读取数据
  */
-int tty_read (device_t * dev, char * buf, int size) {
+int tty_read (device_t * dev, int addr, char * buf, int size) {
 	return size;
 }
 
 /**
  * @brief 向tty写入数据
  */
-int tty_write (device_t * dev, char * buf, int size) {
+int tty_write (device_t * dev, int addr, char * buf, int size) {
 	if (size < 0) {
 		return -1;
 	}

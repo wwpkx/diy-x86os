@@ -207,7 +207,7 @@ static void do_normal_key (uint8_t raw_code) {
 
             // 最后，不管是否是控制字符，都会被写入
             //log_printf("key=%c", key);
-            tty_in(0, key);
+            tty_in(key);
         }
         break;
     }

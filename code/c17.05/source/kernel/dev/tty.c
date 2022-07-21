@@ -36,9 +36,7 @@ int tty_open (device_t * dev)  {
 
 	tty_t * tty = tty_devs + idx;
 	tty_fifo_init(&tty->ofifo, tty->obuf, TTY_OBUF_SIZE);
-	sem_init(&tty->osem, TTY_OBUF_SIZE);
 	tty_fifo_init(&tty->ififo, tty->ibuf, TTY_IBUF_SIZE);
-	sem_init(&tty->isem, 0);
 	tty->console_idx = 0;
 
 	kbd_init();
@@ -49,14 +47,14 @@ int tty_open (device_t * dev)  {
 /**
  * @brief 从tty读取数据
  */
-int tty_read (device_t * dev, char * buf, int size) {
+int tty_read (device_t * dev, int addr, char * buf, int size) {
 	return size;
 }
 
 /**
  * @brief 向tty写入数据
  */
-int tty_write (device_t * dev, char * buf, int size) {
+int tty_write (device_t * dev, int addr, char * buf, int size) {
 	return size;
 }
 
