@@ -29,7 +29,7 @@ static int do_help(int argc, char **argv) {
 
     // 循环打印名称及用法
     while (start < cli.cmd_end) {
-        printf("%s\t\t%s\n",  start->name, start->useage);
+        printf("%s %s\n",  start->name, start->useage);
         start++;
     }
     return 0;

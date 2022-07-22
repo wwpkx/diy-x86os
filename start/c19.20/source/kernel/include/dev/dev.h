@@ -26,7 +26,7 @@ struct _dev_desc_t;
  */
 struct _dev_desc_t;
 typedef struct _device_t {
-    struct _dev_desc_t * desc;              // 设备特性描述符
+    struct _dev_desc_t * desc;      // 设备特性描述符
     int mode;                       // 操作模式
     int minor;                      // 次设备号
     void * data;                    // 设备参数

@@ -92,8 +92,7 @@ int tty_open (device_t * dev)  {
 	tty_fifo_init(&tty->ififo, tty->ibuf, TTY_IBUF_SIZE);
 	sem_init(&tty->isem, 0);
 
-	tty->iflags = TTY_INLCR | TTY_IEOF | TTY_IECHO;
-    tty->ch_eof = -1;			// EOF = -1
+	tty->iflags = TTY_INLCR | TTY_IECHO;
 	tty->oflags = TTY_OCRLF;
 
 	tty->console_idx = idx;
@@ -155,11 +154,6 @@ int tty_read (device_t * dev, int addr, char * buf, int size) {
 				tty_fifo_put(&tty->ofifo, ch);
 			}
 			console_write(tty);
-		}
-
-		// 检查是否为文件结束符，如果是的话则退出
-		if ((tty->iflags & TTY_IEOF) && (tty->ch_eof == ch)) {
-			break;
 		}
 
 		// 遇到一行结束，也直接跳出

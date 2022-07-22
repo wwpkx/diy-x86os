@@ -25,7 +25,6 @@ int tty_fifo_get (tty_fifo_t * fifo, char * c);
 int tty_fifo_put (tty_fifo_t * fifo, char c);
 
 #define TTY_INLCR			(1 << 0)		// 将\n转成\r\n
-#define TTY_IEOF			(1 << 1)		// 遇到EOF也退出
 #define TTY_IECHO			(1 << 2)		// 是否回显
 
 #define TTY_OCRLF			(1 << 0)		// 输出是否将\n转换成\r\n
