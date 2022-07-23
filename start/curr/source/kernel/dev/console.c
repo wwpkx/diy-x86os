@@ -1,8 +1,9 @@
 #include "dev/console.h"
 #include "tools/klib.h"
 #include "comm/cpu_instr.h"
+#include "dev/tty.h"
 
-#define CONSOLE_NR      1
+#define CONSOLE_NR      8
 
 static console_t console_buf[CONSOLE_NR];
 
@@ -117,26 +118,31 @@ static void erase_backword (console_t * console) {
     }
 }
 
-int console_init (void) {
-    for (int i = 0; i < CONSOLE_NR; i++) {
-        console_t * console = console_buf + i;
+int console_init (int idx) {
+    console_t * console = console_buf + idx;
 
-        console->display_cols = CONSOLE_COL_MAX;
-        console->display_rows = CONSOLE_ROW_MAX;
-        console->foreground = COLOR_White;
-        console->background = COLOR_Black;
+    console->display_cols = CONSOLE_COL_MAX;
+    console->display_rows = CONSOLE_ROW_MAX;
 
+    console->disp_base = (disp_char_t *)CONSOLE_DISP_ADDR + idx *(CONSOLE_COL_MAX * CONSOLE_ROW_MAX);
+
+    console->foreground = COLOR_White;
+    console->background = COLOR_Black;
+
+    if (idx == 0) {
         int cursor_pos = read_cursor_pos();
         console->cursor_row = cursor_pos / console->display_cols;
         console->cursor_col = cursor_pos % console->display_cols;
-        console->old_cursor_col = console->cursor_col;
-        console->old_cursor_row = console->cursor_col;
-        console->write_state = CONSOLE_WRITE_NORMAL;
-
-        console->disp_base = (disp_char_t *)CONSOLE_DISP_ADDR + i *(CONSOLE_COL_MAX * CONSOLE_ROW_MAX);
-   
-        // clear_display(console);
+    } else {
+        console->cursor_row = 0;
+        console->cursor_col = 0;
+        clear_display(console);
+        update_cursor_pos(console);
     }
+    console->old_cursor_col = console->cursor_col;
+    console->old_cursor_row = console->cursor_col;
+    console->write_state = CONSOLE_WRITE_NORMAL;
+        // clear_display(console);
 
     return 0;
 }
@@ -156,7 +162,6 @@ static void write_normal(console_t * console, char c) {
             move_to_col0(console);
             break;
         case '\n':
-            move_to_col0(console);
             move_next_line(console);
             break;
         default:
@@ -299,12 +304,18 @@ static void write_esc_square(console_t * console, char c) {
 
 // hello, world
 // ESC 7/8
-int console_write (int console, char * data, int size) {
-    console_t * c = console_buf + console;
-    int len;
+int console_write (tty_t * tty) {
+    console_t * c = console_buf + tty->console_idx;
+    int len = 0;
 
-    for (len = 0; len < size; len++) {
-        char ch = *data++;
+    do {
+        char ch;
+        int err = tty_fifo_get(&tty->ofifo, &ch);
+        if (err < 0) {
+            break;
+        }
+        sem_notify(&tty->osem);
+
         switch (c->write_state) {
         case CONSOLE_WRITE_NORMAL:
             write_normal(c, ch);
@@ -318,7 +329,8 @@ int console_write (int console, char * data, int size) {
         default:
             break;
         }
-     }
+        len++;
+     }while (1);
 
     update_cursor_pos(c);
     return len;
