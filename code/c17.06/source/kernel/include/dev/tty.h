@@ -35,7 +35,6 @@ typedef struct _tty_t {
 	sem_t osem;
 	char ibuf[TTY_IBUF_SIZE];
 	tty_fifo_t ififo;				// 输入处理后的队列
-	sem_t isem;
 
     int oflags;						// 输出标志
 	int console_idx;				// 控制台索引号

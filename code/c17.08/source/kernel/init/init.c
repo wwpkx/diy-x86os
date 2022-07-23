@@ -41,9 +41,6 @@ void kernel_init (boot_info_t * boot_info) {
     time_init();
 
     task_manager_init();
-
-    // 注意，放在irq_init之后
-    kbd_init();
 }
 
 

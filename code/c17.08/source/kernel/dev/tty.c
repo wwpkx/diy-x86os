@@ -84,7 +84,6 @@ int tty_open (device_t * dev)  {
 	tty_fifo_init(&tty->ofifo, tty->obuf, TTY_OBUF_SIZE);
 	sem_init(&tty->osem, TTY_OBUF_SIZE);
 	tty_fifo_init(&tty->ififo, tty->ibuf, TTY_IBUF_SIZE);
-	sem_init(&tty->isem, 0);
 	tty->oflags = TTY_OCRLF;
 	tty->console_idx = 0;
 
