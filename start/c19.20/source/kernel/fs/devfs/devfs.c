@@ -4,10 +4,12 @@
 #include "tools/klib.h"
 #include "tools/log.h"
 
+// 设备文件系统中支持的设备
 static devfs_type_t devfs_type_list[] = {
     {
         .name = "tty",
-        .type = DEV_TTY,
+        .dev_type = DEV_TTY,
+        .file_type = FILE_TTY,
     }
 };
 /**
@@ -38,7 +40,6 @@ int devfs_open (struct _fs_t * fs, const char * path, file_t * file) {
         int type_name_len = kernel_strlen(type->name);
 
         // 如果存在挂载点路径，则跳过该路径，取下级子目录
-        path = path_skip_header(fs->mount_point);
         if (kernel_strncmp(path, type->name, type_name_len) == 0) {
             int minor;
 
@@ -49,14 +50,18 @@ int devfs_open (struct _fs_t * fs, const char * path, file_t * file) {
             }
 
             // 打开设备
-            int dev_id = dev_open(type->type, minor, (void *)0);
+            int dev_id = dev_open(type->dev_type, minor, (void *)0);
             if (dev_id < 0) {
                 log_printf("Open device failed:%s", path);
                 break;
             }
 
             // 纪录所在的设备号
-            file->dev_id = devid_make(type->type, minor);
+            file->dev_id = dev_id;
+            file->fs = fs;
+            file->pos = 0;
+            file->size = 0;
+            file->type = type->file_type;
             return 0;
         }
     }
@@ -67,36 +72,35 @@ int devfs_open (struct _fs_t * fs, const char * path, file_t * file) {
 /**
  * @brief 读写指定的文件系统
  */
-int devfs_read (char * buf, int size, struct _file_t * file) {
+int devfs_read (char * buf, int size, file_t * file) {
     return dev_read(file->dev_id, file->pos, buf, size);
 }
 
 /**
  * @brief 写设备文件系统
  */
-int devfs_write (char * buf, int size, struct _file_t * file) {
+int devfs_write (char * buf, int size, file_t * file) {
     return dev_write(file->dev_id, file->pos, buf, size);
 }
 
 /**
  * @brief 关闭设备文件
  */
-int devfs_close (struct _file_t * file) {
+void devfs_close (file_t * file) {
     dev_close(file->dev_id);
-    return 0;
 }
 
 /**
  * @brief 文件读写定位
  */
 int devfs_seek (file_t * file, uint32_t offset, int dir) {
-    return -1;
+    return -1;  // 不支持定位
 }
 
 /**
  * @brief 获取文件信息
  */
-int devfs_stat(struct _fs_t * fs, const char *file, struct stat *st) {
+int devfs_stat(file_t * file, struct stat *st) {
     return -1;
 }
 
@@ -109,4 +113,5 @@ fs_op_t devfs_op = {
     .write = devfs_write,
     .seek = devfs_seek,
     .stat = devfs_stat,
+    .close = devfs_close,
 };

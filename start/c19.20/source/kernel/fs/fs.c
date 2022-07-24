@@ -24,6 +24,7 @@
 static list_t mounted_list;			// 已挂载的文件系统
 static list_t free_list;				// 空闲fs列表
 static fs_t fs_tbl[FS_TABLE_SIZE];		// 空闲文件系统列表大小
+static fs_t * root_fs;				// 根文件系统
 
 static fs_op_t fat16_op;
 extern fs_op_t devfs_op;
@@ -90,9 +91,9 @@ static fs_op_t * get_fs_op (fs_type_t type, int major) {
 }
 
 /**
- * @brief 加载根文件系统
+ * @brief 挂载文件系统
  */
-static int mount (fs_type_t type, char * mount_point, int dev_major, int dev_minor) {
+static fs_t * mount (fs_type_t type, char * mount_point, int dev_major, int dev_minor) {
 	fs_t * fs = (fs_t *)0;
 
 	log_printf("mount file system, name: %s, dev: %x", mount_point, dev_major);
@@ -123,44 +124,56 @@ static int mount (fs_type_t type, char * mount_point, int dev_major, int dev_min
 		goto mount_failed;
 	}
 
-	// 初始化并进行实际的挂载并加入到已挂载列表
+	// 给定数据一些缺省的值
 	kernel_strncpy(fs->mount_point, mount_point, FS_MOUNTP_SIZE);
-
 	fs->dev_id = 0;
 	fs->op = op;
 	fs->data = (void *)0;
+	fs->type = FILE_UNKNOWN;
+
+	// 挂载文件系统
 	if (op->mount(fs, devid_make(dev_major, dev_minor)) < 0) {
 		log_printf("mount fs %s failed", mount_point);
 		goto mount_failed;
 	}
 	list_insert_last(&mounted_list, &fs->node);
-	return 0;
+	return fs;
 mount_failed:
 	if (fs) {
 		// 回收fs
 		list_insert_first(&free_list, &fs->node);
 	}
-	return -1;
+	return (fs_t *)0;
+}
+
+/**
+ * @brief 初始化挂载列表
+ */
+static void mount_list_init (void) {
+	list_init(&free_list);
+	for (int i = 0; i < FS_TABLE_SIZE; i++) {
+		list_insert_first(&free_list, &fs_tbl[i].node);
+	}
+	list_init(&mounted_list);
 }
 
 /**
  * @brief 文件系统初始化
  */
 void fs_init (void) {
-	list_init(&mounted_list);
-	list_init(&free_list);
-	for (int i = 0; i < FS_TABLE_SIZE; i++) {
-		list_insert_first(&free_list, &fs_tbl[i].node);
-	}
-
+	mount_list_init();
     file_table_init();
+	
+	// 磁盘检查
 	disk_init();
 
 	// 挂载根文件系统
-	//ASSERT(mount(FS_FAT16, "/", ROOT_DEV) >= 0);
+	// root_fs = mount(FS_FAT16, "/", ROOT_DEV);
+	// ASSERT(root_fs != (fs_t *)0);
 
-	// 设备文件系统，待后续完成
-	ASSERT(mount(FS_DEVFS, "/dev", 0, 0) >= 0);
+	// 挂载设备文件系统，待后续完成。挂载点名称可随意
+	fs_t * fs = mount(FS_DEVFS, "/dev", 0, 0);
+	ASSERT(fs != (fs_t *)0);
 }
 
 /**
@@ -191,13 +204,6 @@ int path_to_num (const char * path, int * num) {
 }
 
 /**
- * @brief 合并文件名与当前所在的路径，生成到相应的路径到path中
- */
-static void create_path (char * path, char * name) {
-	kernel_strncpy(path, name, 256);
-}
-
-/**
  * @brief 判断路径是否以xx开头
  */
 int path_begin_with (const char * path, const char * str) {
@@ -215,9 +221,21 @@ int path_begin_with (const char * path, const char * str) {
 }
 
 /**
+ * @brief 获取下一级子目录
+ */
+const char * path_next_child (const char * path) {
+   const char * c = path;
+
+    while (*c && (*c++ == '/')) {}
+    while (*c && (*c++ != '/')) {}
+    return *c ? c : (const char *)0;
+}
+
+/**
  * 打开文件
  */
 int sys_open(const char *name, int flags, ...) {
+	// 临时使用，保留shell加载的功能
 	if (kernel_strncmp(name, "/dev", 4) != 0) {
         // 暂时直接从扇区1000上读取, 读取大概40KB，足够了
         read_disk(5000, 80, (uint8_t *)TEMP_ADDR);
@@ -225,41 +243,46 @@ int sys_open(const char *name, int flags, ...) {
         return TEMP_FILE_ID;
     }
 
-	int fd = -1;
-
 	// 分配文件描述符链接
 	file_t * file = file_alloc();
 	if (!file) {
-		goto sys_open_failed;
+		return -1;
 	}
-	fd = task_alloc_fd(file);
+
+	int fd = task_alloc_fd(file);
 	if (fd < 0) {
 		goto sys_open_failed;
 	}
 
-	// name可能为绝对或相对路径
-	// 相对路径：需要同当前所在的路径合并，并在当前文件系统下打开
-	// 绝对路径：直接使用该路径，找到对应的文件系统并打开该文件下的文件
-
-	// 分离出mp名称和剩余路径
+	// 检查名称是否以挂载点开头，如果没有，则认为name在根目录下
+	// 即只允许根目录下的遍历
 	fs_t * fs = (fs_t *)0;
 	list_node_t * node = list_first(&mounted_list);
 	while (node) {
 		fs_t * curr = list_node_parent(node, fs_t, node);
-		if (path_begin_with(name, fs->mount_point)) {
+		if (path_begin_with(name, curr->mount_point)) {
 			fs = curr;
 			break;
 		}
 		node = list_node_next(node);
 	}
+
+	if (fs) {
+		name = path_next_child(name);
+	} else {
+		fs = root_fs;
+	}
 	
-	return fs ? fs->op->open(fs, name, file) : -1;
+	file->mode = flags;
+	int err = fs->op->open(fs, name, file);
+	if (err < 0) {
+		log_printf("open %s failed.", name);
+		return -1;
+	}
+	return 0;
 
 sys_open_failed:
-	if (file) {
-		file_free(file);
-	}
-
+	file_free(file);
 	if (fd >= 0) {
 		task_remove_fd(fd);
 	}
@@ -284,7 +307,7 @@ int sys_dup (int file) {
 
 	int fd = task_alloc_fd(p_file);	// 新fd指向同一描述符
 	if (fd >= 0) {
-		p_file->ref++;		// 增加引用
+		file_inc_ref(p_file);
 		return fd;
 	}
 
@@ -302,7 +325,7 @@ int sys_read(int file, char *ptr, int len) {
         return len;
     }
 
-    if (is_fd_bad(file) || !ptr || len) {
+    if (is_fd_bad(file) || !ptr || !len) {
 		return 0;
 	}
 
@@ -317,11 +340,6 @@ int sys_read(int file, char *ptr, int len) {
 		return -1;
 	}
 
-	if (p_file->size == 0) {
-		log_printf("file size is 0");
-		return -1;
-	}
-
 	// 读取文件
 	fs_t * fs = p_file->fs;
 	return fs->op->read(ptr, len, p_file);
@@ -331,7 +349,7 @@ int sys_read(int file, char *ptr, int len) {
  * 写文件
  */
 int sys_write(int file, char *ptr, int len) {
-	if (is_fd_bad(file) || !ptr || len) {
+	if (is_fd_bad(file) || !ptr || !len) {
 		return 0;
 	}
 
@@ -355,13 +373,14 @@ int sys_write(int file, char *ptr, int len) {
  * 文件访问位置定位
  */
 int sys_lseek(int file, int ptr, int dir) {
+	// 临时保留，用于shell加载
     if (file == TEMP_FILE_ID) {
         temp_pos = (uint8_t *)(ptr + TEMP_ADDR);
         return 0;
     }
 
 	if (is_fd_bad(file)) {
-		return 0;
+		return -1;
 	}
 
 	file_t * p_file = task_file(file);
@@ -396,12 +415,12 @@ int sys_close(int file) {
 
 	ASSERT(p_file->ref > 0);
 
-	if (--p_file->ref == 0) {
+	if (p_file->ref == 1) {
 		fs_t * fs = p_file->fs;
 		fs->op->close(p_file);
-		
-		file_free(p_file);
 	}
+
+	file_free(p_file);
 	task_remove_fd(file);
 	return 0;
 }
@@ -427,7 +446,15 @@ int sys_isatty(int file) {
  * @brief 获取文件状态
  */
 int sys_fstat(int file, struct stat *st) {
-    kernel_memset(st, 0, sizeof(struct stat));
-    st->st_size = 0;
-    return 0;
+	if (is_fd_bad(file)) {
+		return -1;
+	}
+
+	file_t * p_file = task_file(file);
+	if (p_file == (file_t *)0) {
+		return -1;
+	}
+
+	fs_t * fs = p_file->fs;
+	return fs->op->stat(p_file, st);
 }

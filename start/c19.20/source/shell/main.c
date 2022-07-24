@@ -11,6 +11,7 @@
 #include "main.h"
 #include <getopt.h>
 #include <stdlib.h>
+#include <sys/file.h>
 
 static cli_t cli;
 static const char * promot = "sh >>";       // 命令行提示符
@@ -235,7 +236,7 @@ static void run_exec_file (const char * path, int argc, char ** argv) {
 }
 
 int main (int argc, char **argv) {
-	open(argv[0], 0);
+	open(argv[0], O_RDWR);
     dup(0);     // 标准输出
     dup(0);     // 标准错误输出
 

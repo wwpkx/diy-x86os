@@ -22,11 +22,11 @@ typedef struct _fs_op_t {
 	int (*mount) (struct _fs_t * fs, int dev_id);
     void (*unmount) (struct _fs_t * fs);
     int (*open) (struct _fs_t * fs, const char * path, file_t * file);
-    int (*read) (char * buf, int size, struct _file_t * file);
-    int (*write) (char * buf, int size, struct _file_t * file);
-    int (*close) (struct _file_t * file);
+    int (*read) (char * buf, int size, file_t * file);
+    int (*write) (char * buf, int size, file_t * file);
+    void (*close) (file_t * file);
     int (*seek) (file_t * file, uint32_t offset, int dir);
-    int (*stat)(struct _fs_t * fs, const char *file, struct stat *st);
+    int (*stat)(file_t * file, struct stat *st);
 }fs_op_t;
 
 #define FS_MOUNTP_SIZE      512
@@ -54,6 +54,7 @@ void fs_inc_ref (file_t * file);
 int path_is_valid (const char * path);
 int path_is_relative (const char * path);
 int path_to_num (const char * path, int * num);
+const char * path_next_child (const char * path);
 
 int sys_open(const char *name, int flags, ...);
 int sys_read(int file, char *ptr, int len);
