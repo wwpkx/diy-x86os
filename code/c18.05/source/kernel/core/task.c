@@ -869,6 +869,7 @@ void sys_exit(int status) {
     }
 
     // 如果有父任务在wait，则唤醒父任务进行回收
+    // 如果父进程没有等待，则一直处理僵死状态？
     if (parent->state == TASK_WAITING) {
         task_set_ready(curr_task->parent);
     }

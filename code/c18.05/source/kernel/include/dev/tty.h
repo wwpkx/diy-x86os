@@ -41,7 +41,6 @@ typedef struct _tty_t {
 	sem_t isem;
 
 	int iflags;						// 输入标志
-	char ch_eof;					// EOF的值
     int oflags;						// 输出标志
 	int console_idx;				// 控制台索引号
 }tty_t;

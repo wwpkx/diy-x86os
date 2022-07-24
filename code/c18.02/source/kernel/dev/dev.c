@@ -42,6 +42,7 @@ int dev_open (int major, int minor, void * data) {
             free_dev = dev;
         } else if ((dev->desc->major == major) && (dev->minor == minor)) {
             // 找到了已经打开的？直接返回就好
+            dev->open_count++;
             irq_leave_protection(state);
             return i;
         }
@@ -124,8 +125,8 @@ void dev_close (int dev_id) {
 
     irq_state_t state = irq_enter_protection();
     if (--dev->open_count == 0) {
-        kernel_memset(dev, 0, sizeof(device_t));
         dev->desc->close(dev);
+        kernel_memset(dev, 0, sizeof(device_t));
     }
     irq_leave_protection(state);
 }

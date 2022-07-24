@@ -11,7 +11,6 @@
 #include <sys/stat.h>
 
 void fs_init (void);
-void fs_inc_ref (file_t * file);
 
 int sys_open(const char *name, int flags, ...);
 int sys_read(int file, char *ptr, int len);

@@ -54,7 +54,10 @@ int first_task_main (void) {
     }
 
     while (1) {
-        msleep(10000);
+        // 不断收集孤儿进程
+        int status;
+        wait(&status);
+        //msleep(10000);
     }
 
     return 0;

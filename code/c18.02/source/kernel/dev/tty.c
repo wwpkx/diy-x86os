@@ -102,6 +102,48 @@ int tty_open (device_t * dev)  {
 	return 0;
 }
 
+
+/**
+ * @brief 向tty写入数据
+ */
+int tty_write (device_t * dev, int addr, char * buf, int size) {
+	if (size < 0) {
+		return -1;
+	}
+
+	tty_t * tty = get_tty(dev);
+	int len = 0;
+
+	// 先将所有数据写入缓存中
+	while (size) {
+		char c = *buf++;
+
+		// 如果遇到\n，根据配置决定是否转换成\r\n
+		if (c == '\n' && (tty->oflags & TTY_OCRLF)) {
+			sem_wait(&tty->osem);
+			int err = tty_fifo_put(&tty->ofifo, '\r');
+			if (err < 0) {
+				break;
+			}
+		}
+
+		// 写入当前字符
+		sem_wait(&tty->osem);
+		int err = tty_fifo_put(&tty->ofifo, c);
+		if (err < 0) {
+			break;
+		}
+
+		len++;
+		size--;
+
+		// 启动输出, 这里是直接由console直接输出，无需中断
+		console_write(tty);
+	}
+
+	return len;
+}
+
 /**
  * @brief 从tty读取数据
  */
@@ -144,63 +186,14 @@ int tty_read (device_t * dev, int addr, char * buf, int size) {
 				break;
 		}
 
-		// 先处理回显处理的问题
 		if (tty->iflags & TTY_IECHO) {
-			if ((ch == '\n') && (tty->oflags & TTY_OCRLF)) {
-				// 碰到\n，转换成\r\n
-				tty_fifo_put(&tty->ofifo, '\r');
-				tty_fifo_put(&tty->ofifo, '\n');
-			} else {
-				tty_fifo_put(&tty->ofifo, ch);
-			}
-			console_write(tty);
+		    tty_write(dev, 0, &ch, 1);
 		}
 
 		// 遇到一行结束，也直接跳出
 		if ((ch == '\r') || (ch == '\n')) {
 			break;
 		}
-	}
-
-	return len;
-}
-
-/**
- * @brief 向tty写入数据
- */
-int tty_write (device_t * dev, int addr, char * buf, int size) {
-	if (size < 0) {
-		return -1;
-	}
-
-	tty_t * tty = get_tty(dev);
-	int len = 0;
-
-	// 先将所有数据写入缓存中
-	while (size) {
-		char c = *buf++;
-
-		// 如果遇到\n，根据配置决定是否转换成\r\n
-		if (c == '\n' && (tty->oflags & TTY_OCRLF)) {
-			sem_wait(&tty->osem);
-			int err = tty_fifo_put(&tty->ofifo, '\r');
-			if (err < 0) {
-				break;
-			}
-		}
-
-		// 写入当前字符
-		sem_wait(&tty->osem);
-		int err = tty_fifo_put(&tty->ofifo, c);
-		if (err < 0) {
-			break;
-		}
-
-		len++;
-		size--;
-
-		// 启动输出, 这里是直接由console直接输出，无需中断
-		console_write(tty);
 	}
 
 	return len;

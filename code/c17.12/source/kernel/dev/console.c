@@ -269,7 +269,8 @@ static void write_normal (console_t * console, char c) {
         case '\r':
             move_to_col0(console);
             break;
-        case '\n':
+        case '\n':  // 暂时这样处理
+            //move_to_col0(console);
             move_next_line(console);
             break;
             // 普通字符显示

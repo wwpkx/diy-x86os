@@ -102,68 +102,6 @@ int tty_open (device_t * dev)  {
 	return 0;
 }
 
-/**
- * @brief 从tty读取数据
- */
-int tty_read (device_t * dev, int addr, char * buf, int size) {
-	if (size < 0) {
-		return -1;
-	}
-
-	tty_t * tty = get_tty(dev);
-	char * pbuf = buf;
-	int len = 0;
-
-	// 不断读取，直到遇到文件结束符或者行结束符
-	while (len < size) {
-		// 等待可用的数据
-		sem_wait(&tty->isem);
-
-		// 取出数据
-		char ch;
-		tty_fifo_get(&tty->ififo, &ch);
-		switch (ch) {
-			case ASCII_DEL:
-				if (len == 0) {
-					continue;
-				}
-				len--;
-				pbuf--;
-				break;
-			case '\n':
-				if ((tty->iflags & TTY_INLCR) && (len < size - 1)) {	// \n变成\r\n
-					*pbuf++ = '\r';
-					len++;
-				}
-				*pbuf++ = '\n';
-				len++;
-				break;
-			default:
-				*pbuf++ = ch;
-				len++;
-				break;
-		}
-
-		// 先处理回显处理的问题
-		if (tty->iflags & TTY_IECHO) {
-			if ((ch == '\n') && (tty->oflags & TTY_OCRLF)) {
-				// 碰到\n，转换成\r\n
-				tty_fifo_put(&tty->ofifo, '\r');
-				tty_fifo_put(&tty->ofifo, '\n');
-			} else {
-				tty_fifo_put(&tty->ofifo, ch);
-			}
-			console_write(tty);
-		}
-
-		// 遇到一行结束，也直接跳出
-		if ((ch == '\r') || (ch == '\n')) {
-			break;
-		}
-	}
-
-	return len;
-}
 
 /**
  * @brief 向tty写入数据
@@ -207,6 +145,61 @@ int tty_write (device_t * dev, int addr, char * buf, int size) {
 }
 
 /**
+ * @brief 从tty读取数据
+ */
+int tty_read (device_t * dev, int addr, char * buf, int size) {
+	if (size < 0) {
+		return -1;
+	}
+
+	tty_t * tty = get_tty(dev);
+	char * pbuf = buf;
+	int len = 0;
+
+	// 不断读取，直到遇到文件结束符或者行结束符
+	while (len < size) {
+		// 等待可用的数据
+		sem_wait(&tty->isem);
+
+		// 取出数据
+		char ch;
+		tty_fifo_get(&tty->ififo, &ch);
+		switch (ch) {
+			case ASCII_DEL:
+				if (len == 0) {
+					continue;
+				}
+				len--;
+				pbuf--;
+				break;
+			case '\n':
+				if ((tty->iflags & TTY_INLCR) && (len < size - 1)) {	// \n变成\r\n
+					*pbuf++ = '\r';
+					len++;
+				}
+				*pbuf++ = '\n';
+				len++;
+				break;
+			default:
+				*pbuf++ = ch;
+				len++;
+				break;
+		}
+
+		if (tty->iflags & TTY_IECHO) {
+		    tty_write(dev, 0, &ch, 1);
+		}
+
+		// 遇到一行结束，也直接跳出
+		if ((ch == '\r') || (ch == '\n')) {
+			break;
+		}
+	}
+
+	return len;
+}
+
+/**
  * @brief 向tty设备发送命令
  */
 int tty_control (device_t * dev, int cmd, int arg0, int arg1) {
@@ -225,7 +218,7 @@ void tty_close (device_t * dev) {
  */
 void tty_in (char ch) {
 	tty_t * tty = tty_devs + curr_tty;
-	
+
 	// 辅助队列要有空闲空间可代写入
 	if (sem_count(&tty->isem) >= TTY_IBUF_SIZE) {
 		return;

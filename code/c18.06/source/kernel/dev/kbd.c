@@ -174,12 +174,12 @@ static void do_normal_key (uint8_t raw_code) {
     case KEY_F2:
     case KEY_F3:
     case KEY_F4:
-        do_fx_key(key);
-        break;
     case KEY_F5:
     case KEY_F6:
     case KEY_F7:
     case KEY_F8:
+         do_fx_key(key);
+        break;
     case KEY_F9:
     case KEY_F10:
     case KEY_F11:

@@ -14,7 +14,7 @@
 #include "dev/tty.h"
 #include "ipc/mutex.h"
 
-#define CONSOLE_NR          4           // 控制台的数量
+#define CONSOLE_NR          8           // 控制台的数量
 
 // https://wiki.osdev.org/Printing_To_Screen
 #define CONSOLE_VIDEO_BASE			0xb8000		// 控制台显存起始地址,共32KB

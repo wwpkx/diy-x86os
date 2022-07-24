@@ -10,7 +10,7 @@
 #include "tools/klib.h"
 #include "comm/cpu_instr.h"
 
-#define CONSOLE_NR          1           // 控制台的数量
+#define CONSOLE_NR          8           // 控制台的数量
 
 static console_t console_buf[CONSOLE_NR];
 
@@ -245,7 +245,7 @@ static void write_normal (console_t * console, char c) {
             move_to_col0(console);
             break;
         case '\n':  // 暂时这样处理
-            move_to_col0(console);
+            //move_to_col0(console);
             move_next_line(console);
             break;
             // 普通字符显示
