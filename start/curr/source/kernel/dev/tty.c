@@ -3,8 +3,10 @@
 #include "tools/log.h"
 #include "dev/kbd.h"
 #include "dev/console.h"
+#include "cpu/irq.h"
 
-static tty_t    tty_devs[TTY_NR];
+static tty_t tty_devs[TTY_NR];
+static int curr_tty = 0;
 
 static tty_t * get_tty (device_t * dev) {
     int tty = dev->minor;
@@ -24,7 +26,9 @@ void tty_fifo_init (tty_fifo_t * fifo, char * buf, int size) {
 }
 
 int tty_fifo_put (tty_fifo_t * fifo, char c) {
+    irq_state_t state = irq_enter_protection();
     if (fifo->count >= fifo->size) {
+        irq_leave_protection(state);
         return -1;
     }
 
@@ -33,11 +37,14 @@ int tty_fifo_put (tty_fifo_t * fifo, char c) {
         fifo->write = 0;
     }
     fifo->count++;
+    irq_leave_protection(state);
     return 0;
 }
 
 int tty_fifo_get (tty_fifo_t * fifo, char *c) {
+    irq_state_t state = irq_enter_protection();
     if (fifo->count <= 0) {
+        irq_leave_protection(state);
         return -1;
     }
 
@@ -46,6 +53,7 @@ int tty_fifo_get (tty_fifo_t * fifo, char *c) {
         fifo->read = 0;
     }
     fifo->count--;
+    irq_leave_protection(state);
     return 0;
 }
 
@@ -111,7 +119,7 @@ int tty_write (device_t * dev, int addr, char * buf, int size) {
         console_write(tty);
     }
 
-    return size;
+    return len;
 }
 
 int tty_read (device_t * dev, int addr, char * buf, int size) {
@@ -128,6 +136,14 @@ int tty_read (device_t * dev, int addr, char * buf, int size) {
         char ch;
         tty_fifo_get(&tty->ififo, &ch);
         switch (ch) {
+        case 0x7F:
+            if (len == 0) {
+                continue;
+            }
+
+            len--;
+            pbuf--;
+            break;
         case '\n':
             if ((tty->iflags & TTY_INCLR) && (len < size - 1)) {
                 *pbuf++ = '\r';
@@ -161,8 +177,8 @@ void tty_close (device_t * dev) {
 
 }
 
-void tty_in(int idx, char ch) {
-    tty_t * tty = tty_devs + idx;
+void tty_in(char ch) {
+    tty_t * tty = tty_devs + curr_tty;
 
     if (sem_count(&tty->isem) >= TTY_IBUF_SIZE) {
         return;
@@ -170,6 +186,13 @@ void tty_in(int idx, char ch) {
 
     tty_fifo_put(&tty->ififo, ch);
     sem_notify(&tty->isem);
+}
+
+void tty_select (int tty) {
+    if (tty != curr_tty) {
+        console_select(tty);
+        curr_tty = tty;
+    }
 }
 
 

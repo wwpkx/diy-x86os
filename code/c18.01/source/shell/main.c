@@ -57,8 +57,7 @@ int main (int argc, char **argv) {
    	cli_init(promot, cmd_list, sizeof(cmd_list) / sizeof(cli_cmd_t));
     for (;;) {
         show_promot();
-        puts(argv[0]);
-        msleep(1000);
+        gets(cli.curr_input);
     }
 
     return 0;
