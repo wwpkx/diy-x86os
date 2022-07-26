@@ -12,6 +12,8 @@
 #include "dev/tty.h"
 #include "cpu/irq.h"
 
+#define CONSOLE_NR          8           // 控制台的数量
+
 static console_t console_buf[CONSOLE_NR];
 
 /**
@@ -229,8 +231,6 @@ int console_init (int idx) {
 
     console->old_cursor_row = console->cursor_row;
     console->old_cursor_col = console->cursor_col;
-
-    mutex_init(&console->mutex);
 	return 0;
 }
 
@@ -442,9 +442,6 @@ static void write_esc_square (console_t * console, char c) {
 int console_write (tty_t * tty) {
 	console_t * console = console_buf + tty->console_idx;
 
-    // 下面的写序列涉及到状态机，还有多进程同时写，因此加上锁
-    mutex_lock(&console->mutex);
-
     int len = 0;
     do {
         char c;
@@ -471,8 +468,6 @@ int console_write (tty_t * tty) {
         }
         len++;
     }while (1);
-
-    mutex_unlock(&console->mutex);
 
     update_cursor_pos(console);
     return len;

@@ -12,6 +12,8 @@
 #include "dev/tty.h"
 #include "cpu/irq.h"
 
+#define CONSOLE_NR          8           // 控制台的数量
+
 static console_t console_buf[CONSOLE_NR];
 
 /**

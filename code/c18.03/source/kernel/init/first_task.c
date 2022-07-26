@@ -6,7 +6,7 @@
  * 联系邮箱: 527676163@qq.com
  */
 #include "applib/lib_syscall.h"
-#include "dev/console.h"
+#include "dev/tty.h"
 
 int first_task_main (void) {
 #if 0
@@ -30,12 +30,12 @@ int first_task_main (void) {
 
     pid = getpid();
     for (;;) {
-        //print_msg("task id = %d", pid);
+        print_msg("task id = %d", pid);
         msleep(1000);
     }
 #endif
 
-    for (int i = 0; i < CONSOLE_NR; i++) {
+    for (int i = 0; i < TTY_NR; i++) {
         int pid = fork();
         if (pid < 0) {
             print_msg("create shell proc failed", 0);
