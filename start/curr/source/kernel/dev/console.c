@@ -2,28 +2,36 @@
 #include "tools/klib.h"
 #include "comm/cpu_instr.h"
 #include "dev/tty.h"
+#include "cpu/irq.h"
 
 #define CONSOLE_NR      8
 
 static console_t console_buf[CONSOLE_NR];
+static int curr_console_idx = 0;
 
 static int read_cursor_pos (void) {
     int pos;
 
+    irq_state_t state = irq_enter_protection();
     outb(0x3D4, 0xF);
     pos = inb(0x3d5);
     outb(0x3D4, 0xE);
     pos |= inb(0x3d5) << 8;
+    irq_leave_protection(state);
     return pos;
 }
 
 static int update_cursor_pos (console_t * conole) {
-    uint16_t pos = conole->cursor_row * conole->display_cols + conole->cursor_col;
+    uint16_t pos = (conole - console_buf) * conole->display_rows * conole->display_cols;
+
+    pos += conole->cursor_row * conole->display_cols + conole->cursor_col;
     
+    irq_state_t state = irq_enter_protection();
     outb(0x3D4, 0xF);
     outb(0x3d5, (uint8_t)(pos & 0xFF));
     outb(0x3D4, 0xE);
     outb(0x3d5, (uint8_t)((pos >> 8) & 0xFF));
+    irq_leave_protection(state);
     return pos;
 }
 
@@ -137,7 +145,7 @@ int console_init (int idx) {
         console->cursor_row = 0;
         console->cursor_col = 0;
         clear_display(console);
-        update_cursor_pos(console);
+        //update_cursor_pos(console);
     }
     console->old_cursor_col = console->cursor_col;
     console->old_cursor_row = console->cursor_col;
@@ -332,10 +340,28 @@ int console_write (tty_t * tty) {
         len++;
      }while (1);
 
-    update_cursor_pos(c);
+    if (tty->console_idx == curr_console_idx) {
+        update_cursor_pos(c);
+    } 
     return len;
 }
 
 void console_close (int console) {
 
+}
+
+void console_select (int idx) {
+    console_t * console = console_buf + idx;
+    if (console->disp_base == 0) {
+        console_init(idx);
+    }
+
+    uint16_t pos = idx * console->display_rows * console->display_cols;
+    outb(0x3D4, 0xC);
+    outb(0x3D5, (uint8_t)((pos >> 8) & 0xFF));
+    outb(0x3D4, 0xD);
+    outb(0x3D5, (uint8_t)(pos & 0xFF));
+
+    curr_console_idx = idx;
+    update_cursor_pos(console);
 }

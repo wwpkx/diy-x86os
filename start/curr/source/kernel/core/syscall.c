@@ -26,6 +26,7 @@ static const syscall_hanler_t sys_table[] = {
     [SYS_isatty] = (syscall_hanler_t)sys_isatty,
     [SYS_sbrk] = (syscall_hanler_t)sys_sbrk,
     [SYS_fstat] = (syscall_hanler_t)sys_fstat,
+    [SYS_dup] = (syscall_hanler_t)sys_dup,
 };
 
 void do_handler_syscall (syscall_frame_t * frame) {

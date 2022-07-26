@@ -27,7 +27,7 @@ int main (int argc, char **argv) {
     printf("\033[31m");  // ESC [pn m, Hello,world红色，其余绿色
     printf("\033[10;10H test!\n");  // 定位到10, 10，test!
     printf("\033[20;20H test!\n");  // 定位到20, 20，test!
-    printf("\033[32;25;39m123\n");  // ESC [pn m, Hello,world红色，其余绿色  
+    printf("\033[32;25;39m123\n");  // ESC [pn m, Hello,world红色，其余绿色
 
     printf("\033[2J\n");   // clear screen
 #endif

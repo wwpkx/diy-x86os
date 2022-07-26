@@ -35,6 +35,7 @@ typedef struct _tty_t {
 int tty_fifo_put (tty_fifo_t * fifo, char c);
 int tty_fifo_get (tty_fifo_t * fifo, char *c);
 
-void tty_in(int idx, char ch);
+void tty_select (int tty);
+void tty_in(char ch);
 
 #endif
