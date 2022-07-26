@@ -114,7 +114,7 @@ int main (int argc, char **argv) {
         memset(argv, 0, sizeof(argv));
 
         // 提取出命令，找命令表
-        const char * space = " \t";  // 字符分割器
+        const char * space = " ";  // 字符分割器
         char *token = strtok(cli.curr_input, space);
         while (token) {
             // 记录参数
