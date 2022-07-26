@@ -16,10 +16,8 @@ endif ()
 # set(TOOL_PREFIX  "i686-elf-")
 
 # C编译器与参数配置
-set(CMAKE_OSX_SYSROOT "aa")
-set(CMAKE_OSX_ARCHITECTURES "xx")
 set(CMAKE_C_COMPILER "${TOOL_PREFIX}gcc") 
-set(CMAKE_C_FLAGS "-g -c -O0 -m32 -fno-pie a-fno-stack-protector -fno-asynchronous-unwind-tables")
+set(CMAKE_C_FLAGS "-g -c -O0 -m32 -fno-pie -fno-stack-protector -fno-asynchronous-unwind-tables")
 
 # 汇编器与参数配置
 set(CMAKE_ASM_COMPILER "${TOOL_PREFIX}gcc")

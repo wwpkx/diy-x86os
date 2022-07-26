@@ -152,6 +152,7 @@ int console_init (int idx) {
     console->write_state = CONSOLE_WRITE_NORMAL;
         // clear_display(console);
 
+    mutex_init(&console->mutex);
     return 0;
 }
 
@@ -316,6 +317,7 @@ int console_write (tty_t * tty) {
     console_t * c = console_buf + tty->console_idx;
     int len = 0;
 
+    mutex_lock(&c->mutex);
     do {
         char ch;
         int err = tty_fifo_get(&tty->ofifo, &ch);
@@ -340,6 +342,8 @@ int console_write (tty_t * tty) {
         len++;
      }while (1);
 
+    mutex_unlock(&c->mutex);
+    
     if (tty->console_idx == curr_console_idx) {
         update_cursor_pos(c);
     } 

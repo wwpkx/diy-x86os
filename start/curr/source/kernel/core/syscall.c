@@ -16,6 +16,8 @@ static const syscall_hanler_t sys_table[] = {
     [SYS_printmsg] = (syscall_hanler_t)sys_print_msg,
     [SYS_execve] = (syscall_hanler_t)sys_execve,
     [SYS_yield] = (syscall_hanler_t)sys_yield,
+    [SYS_exit] = (syscall_hanler_t)sys_exit,
+    [SYS_wait] = (syscall_hanler_t)sys_wait,
 
     [SYS_open] = (syscall_hanler_t)sys_open,
     [SYS_read] = (syscall_hanler_t)sys_read,
