@@ -141,7 +141,6 @@ static int do_less (int argc, char ** argv) {
     if (file == NULL) {
         fprintf(stderr, "open file failed. %s", argv[optind]);
         optind = 1;        // getopt需要多次调用，需要重置
-        return -1;
     }
 
     char * buf = (char *)malloc(255);
