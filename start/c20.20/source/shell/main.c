@@ -110,6 +110,48 @@ static int do_exit (int argc, char ** argv) {
 }
 
 /**
+ * @brief 列出文本文件内容
+ */
+static int do_less (int argc, char ** argv) {	
+    if (argc < 2) {
+        fprintf(stderr, "no file");
+        return -1;
+    }
+
+    FILE * file = fopen(argv[1], "r");
+    if (file == NULL) {
+        fprintf(stderr, "open file failed. %s", argv[1]);
+        return -1;
+    }
+
+    char * buf = (char *)malloc(255);
+
+    // 不使用缓存，这样能直接立即读取到输入而不用等回车
+    setvbuf(stdin, NULL, _IONBF, 0);        
+    ioctl(0, TTY_CMD_ECHO, 0, 0);
+    while (1) {
+        char * b = fgets(buf, 255, file);
+        if (b != NULL ) {
+            fputs(buf, stdout);
+        }
+        
+        int ch;
+        while ((ch = fgetc(stdin)) != 'n') {
+            if (ch == 'q') {
+                goto less_quit;
+            }   
+        }
+    }
+ less_quit:
+   // 恢复为行缓存
+    setvbuf(stdin, NULL,_IOLBF, BUFSIZ);
+    ioctl(0, TTY_CMD_ECHO, 1, 0);
+    free(buf);
+    fclose(file);
+    return 0;
+}
+
+/**
  * @brief 列出目录内容
  */
 static int do_ls (int argc, char ** argv) {	
@@ -155,6 +197,11 @@ static const cli_cmd_t cmd_list[] = {
         .name = "ls",
         .useage = "ls [dir] -- list director",
         .do_func = do_ls,
+    },
+    {
+        .name = "less",
+        .useage = "list text file content",
+        .do_func = do_less,
     },
     {
         .name = "quit",

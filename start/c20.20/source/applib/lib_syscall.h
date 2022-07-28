@@ -9,6 +9,7 @@
 #define LIB_SYSCALL_H
 
 #include "core/syscall.h"
+#include "dev/tty.h"
 #include "os_cfg.h"
 #include "fs/file.h"
 
@@ -39,6 +40,7 @@ int isatty(int file);
 int fstat(int file, struct stat *st);
 void * sbrk(ptrdiff_t incr);
 int dup (int file);
+int ioctl(int fd, int cmd, int arg0, int arg1);
 
 struct dirent {
    int index;         // 在目录中的偏移

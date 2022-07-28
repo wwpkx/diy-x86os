@@ -235,7 +235,7 @@ const char * path_next_child (const char * path) {
  */
 int sys_open(const char *name, int flags, ...) {
 	// 临时使用，保留shell加载的功能
-	if (kernel_strncmp(name, "/dev", 4) != 0) {
+	if (kernel_strncmp(name, "/shell.elf", 4) == 0) {
         // 暂时直接从扇区1000上读取, 读取大概40KB，足够了
         read_disk(5000, 80, (uint8_t *)TEMP_ADDR);
         temp_pos = (uint8_t *)TEMP_ADDR;
@@ -281,7 +281,7 @@ int sys_open(const char *name, int flags, ...) {
 		return -1;
 	}
 
-	return 0;
+	return fd;
 
 sys_open_failed:
 	file_free(file);
@@ -315,6 +315,23 @@ int sys_dup (int file) {
 
 	log_printf("No task file avaliable");
     return -1;
+}
+
+/**
+ * @brief IO设备控制
+ */
+int sys_ioctl(int fd, int cmd, int arg0, int arg1) {
+	if (is_fd_bad(fd)) {
+		return 0;
+	}
+
+	file_t * pfile = task_file(fd);
+	if (pfile == (file_t *)0) {
+		return 0;
+	}
+
+	fs_t * fs = pfile->fs;
+	return fs->op->ioctl(pfile, cmd, arg0, arg1);
 }
 
 /**

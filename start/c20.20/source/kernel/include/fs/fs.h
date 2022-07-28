@@ -28,11 +28,13 @@ typedef struct _fs_op_t {
     void (*close) (file_t * file);
     int (*seek) (file_t * file, uint32_t offset, int dir);
     int (*stat)(file_t * file, struct stat *st);
+    int (*ioctl) (file_t * file, int cmd, int arg0, int arg1);
+
 
     int (*opendir)(struct _fs_t * fs,const char * name, DIR * dir);
     int (*readdir)(struct _fs_t * fs, DIR* dir, struct dirent * dirent);
     int (*closedir)(struct _fs_t * fs,DIR *dir);
-    int (*unlink) (const char * path);
+    int (*unlink) (struct _fs_t * fs, const char * path);
 }fs_op_t;
 
 #define FS_MOUNTP_SIZE      512
@@ -77,6 +79,7 @@ int sys_isatty(int file);
 int sys_fstat(int file, struct stat *st);
 
 int sys_dup (int file);
+int sys_ioctl(int fd, int cmd, int arg0, int arg1);
 
 int sys_opendir(const char * name, DIR * dir);
 int sys_readdir(DIR* dir, struct dirent * dirent);

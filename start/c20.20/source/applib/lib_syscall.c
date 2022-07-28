@@ -9,6 +9,7 @@
 #include "os_cfg.h"
 #include "lib_syscall.h"
 #include "malloc.h"
+#include <string.h>
 
 /**
  * 执行系统调用
@@ -146,6 +147,8 @@ int fstat(int file, struct stat *st) {
     args.id = SYS_fstat;
     args.arg0 = (int)file;
     args.arg1 = (int)st;
+
+    memset(st, 0, sizeof(struct stat));
     return sys_call(&args);
 }
 
@@ -170,6 +173,16 @@ int dup (int file) {
     syscall_args_t args;
     args.id = SYS_dup;
     args.arg0 = file;
+    return sys_call(&args);
+}
+
+int ioctl(int fd, int cmd, int arg0, int arg1) {
+    syscall_args_t args;
+    args.id = SYS_ioctl;
+    args.arg0 = fd;
+    args.arg1 = cmd;
+    args.arg2 = arg0;
+    args.arg3 = arg1;
     return sys_call(&args);
 }
 
