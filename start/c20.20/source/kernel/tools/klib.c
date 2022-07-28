@@ -95,9 +95,10 @@ int kernel_strncmp (const char * s1, const char * s2, int size) {
         return -1;
     }
 
-    while (*s1 && *s2 && (*s1 == *s2) && size--) {
+    while (*s1 && *s2 && (*s1 == *s2) && size) {
     	s1++;
     	s2++;
+        size--;
     }
 
     int equal = (*s1 == '\0' && *s2 == '\0') || (size == 0);

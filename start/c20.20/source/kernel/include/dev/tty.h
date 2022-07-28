@@ -13,6 +13,7 @@
 #define TTY_NR						8		// 最大支持的tty设备数量
 #define TTY_IBUF_SIZE				512		// tty输入缓存大小
 #define TTY_OBUF_SIZE				512		// tty输出缓存大小
+#define TTY_CMD_ECHO				0x1		// 开回显
 
 typedef struct _tty_fifo_t {
 	char * buf;
