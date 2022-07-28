@@ -69,8 +69,6 @@ typedef struct _diritem_t {
     uint32_t DIR_FileSize;                 // 文件字节大小
 } diritem_t;
 
-#pragma pack()
-
 /**
  * @brief 基于簇的位置信息
  */
@@ -127,6 +125,7 @@ typedef struct _fat_t {
     uint32_t tbl_start;                     // FAT表起始扇区号
     uint32_t tbl_cnt;                       // FAT表数量
     uint32_t tbl_sectors;                   // 每个FAT表的扇区数
+    uint32_t bytes_per_sec;                 // 每扇区大小
     uint32_t sec_per_cluster;               // 每簇的扇区数
     uint32_t root_ent_cnt;                  // 根目录的项数
     uint32_t root_start;                    // 根目录起始扇区号
@@ -136,11 +135,11 @@ typedef struct _fat_t {
 
     // 与文件系统读写相关信息
     uint8_t * fat_buffer;             		// FAT表项缓冲
+    int curr_sector;                        // 当前缓存的扇区数
     uint32_t cfree_next;                    // 下一空闲的簇
     uint32_t cfree_total;                   // 总空闲的簇
 
     struct _fs_t * fs;                      // 所在的文件系统
-    struct _disk_t * disk;                  // 所在的磁盘
 } fat_t;
 
 struct stat;

@@ -170,7 +170,7 @@ void fs_init (void) {
 	disk_init();
 
 	// 挂载根文件系统
-	root_fs = mount(FS_FAT16, "/", ROOT_DEV);
+	root_fs = mount(FS_FAT16, "/home", ROOT_DEV);
 	ASSERT(root_fs != (fs_t *)0);
 
 	// 挂载设备文件系统，待后续完成。挂载点名称可随意
@@ -207,19 +207,16 @@ int path_to_num (const char * path, int * num) {
 
 /**
  * @brief 判断路径是否以xx开头
+ * 例如: /dev/tty, 以/dev开头
  */
 int path_begin_with (const char * path, const char * str) {
 	const char * s1 = path, * s2 = str;
 	while (*s1 && *s2 && (*s1 == *s2)) {
-		if (*s1 != *s2) {
-			return 0;
-		}
-
 		s1++;
 		s2++;
 	}
 
-	return 1;
+	return *s2 == '\0';
 }
 
 /**
@@ -276,11 +273,14 @@ int sys_open(const char *name, int flags, ...) {
 	}
 	
 	file->mode = flags;
+	file->fs = fs;
+	kernel_strncpy(file->file_name, name, FILE_NAME_SIZE);
 	int err = fs->op->open(fs, name, file);
 	if (err < 0) {
 		log_printf("open %s failed.", name);
 		return -1;
 	}
+
 	return 0;
 
 sys_open_failed:
@@ -459,4 +459,20 @@ int sys_fstat(int file, struct stat *st) {
 
 	fs_t * fs = p_file->fs;
 	return fs->op->stat(p_file, st);
+}
+
+int sys_opendir(const char * name, DIR * dir) {
+	return root_fs->op->opendir(root_fs, name, dir);
+}
+
+int sys_readdir(DIR* dir, struct dirent * dirent) {
+	return root_fs->op->readdir(root_fs, dir, dirent);
+}
+
+int sys_closedir(DIR *dir) {
+	return root_fs->op->closedir(root_fs, dir);
+}
+
+int sys_unlink (const char * path) {
+	return root_fs->op->unlink(root_fs, path);
 }

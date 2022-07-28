@@ -23,6 +23,7 @@
         "stat.h": "c",
         "main.h": "c",
         "disk.h": "c",
-        "devfs.h": "c"
+        "devfs.h": "c",
+        "file.h": "c"
     },
 }

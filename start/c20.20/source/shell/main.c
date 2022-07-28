@@ -112,26 +112,22 @@ static int do_exit (int argc, char ** argv) {
 /**
  * @brief 列出目录内容
  */
-static int do_ls (int argc, char ** argv) {
-    const char * path;
-    if (argc <= 1) {
-        path = ".";
-    } else {
-        path = argv[1];
-    }
-	
+static int do_ls (int argc, char ** argv) {	
     // 打开目录
-	DIR * p_dir = opendir(path);
+	DIR * p_dir = opendir("temp");
 	if (p_dir == NULL) {
-		printf("open dir failed: %s\n", path);
+		printf("open dir failed\n");
 		return -1;
 	}
 
     // 然后进行遍历
 	struct dirent * entry;
 	while((entry = readdir(p_dir)) != NULL) {
-        // 可以做更多的信息打印, 例如使用stat获取更多的文件信息
-		printf("%s", entry->d_name);
+        strlwr(entry->name);
+		printf("%c %s %d\n", 
+                entry->type == FILE_DIR ? 'd' : 'f',
+                entry->name, 
+                entry->size);
 	}
 	closedir(p_dir);
 

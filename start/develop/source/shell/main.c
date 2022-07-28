@@ -7,7 +7,7 @@
  */
 #include <stdio.h>
 #include "lib_syscall.h"
-#include "threadlib/thread_test.h"
+#include "thread/thread_test.h"
 
 int main (int argc, char **argv) {
     //thread_test1();

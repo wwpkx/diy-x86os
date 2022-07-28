@@ -212,22 +212,6 @@
 //     item->DIR_FstClusL0 = (uint16_t )(cluster & 0xFFFF);
 // }
 
-// /**
-//  * @brief 获取文件类型
-//  */
-// file_type_t diritem_get_type (diritem_t *diritem) {
-//     file_type_t type;
-
-//     if (diritem->DIR_Attr & DIRITEM_ATTR_VOLUME_ID) {
-//         type = FILE_UNKNOWN;
-//     } else if (diritem->DIR_Attr & DIRITEM_ATTR_DIRECTORY) {
-//         type = FILE_DIR;
-//     } else {
-//         type = FILE_NORMAL;
-//     }
-
-//     return type;
-// }
 
 // /**
 //  * @brief 加载fat16文件系统类型
@@ -499,6 +483,7 @@ int fatfs_mount (struct _fs_t * fs, int dev_major, int dev_minor) {
     // 解析DBR参数，解析出有用的参数
     fat_t * fat = &fs->fat_data;
     fat->fat_buffer = (uint8_t *)dbr;
+    fat->bytes_per_sec = dbr->BPB_BytsPerSec;
     fat->tbl_start = dbr->BPB_RsvdSecCnt;
     fat->tbl_sectors = dbr->BPB_FATSz16;
     fat->tbl_cnt = dbr->BPB_NumFATs;
@@ -508,6 +493,8 @@ int fatfs_mount (struct _fs_t * fs, int dev_major, int dev_minor) {
     fat->cluster_byte_size = fat->sec_per_cluster * dbr->BPB_BytsPerSec;
 	fat->root_start = fat->tbl_start + fat->tbl_sectors * fat->tbl_cnt;
     fat->data_start = fat->root_start + fat->root_ent_cnt * sizeof(diritem_t) / SECTOR_SIZE;
+    fat->curr_sector = 0;
+    fat->fs = fs;
 
 	// 简单检查是否是fat16文件系统, 可以在下边做进一步的更多检查。此处只检查做一点点检查
 	if (fat->tbl_cnt != 2) {
@@ -522,6 +509,8 @@ int fatfs_mount (struct _fs_t * fs, int dev_major, int dev_minor) {
 
     // 记录相关的打开信息
     fs->type = FS_FAT16;
+    fs->data = &fs->fat_data;
+    fs->dev_id = dev_id;
     return 0;
 
 mount_failed:
@@ -536,7 +525,10 @@ mount_failed:
  * @brief 卸载fatfs文件系统
  */
 void fatfs_unmount (struct _fs_t * fs) {
+    fat_t * fat = (fat_t *)fs->data;
 
+    dev_close(fs->dev_id);
+    memory_free_page((uint32_t)fat->fat_buffer);
 }
 
 /**
@@ -566,6 +558,154 @@ int fatfs_stat (file_t * file, struct stat *st) {
 
 }
 
+/**
+ * @brief 打开目录。只是简单地读取位置重设为0
+ */
+int fatfs_opendir (struct _fs_t * fs,const char * name, DIR * dir) {
+    dir->index = 0;
+    return 0;
+}
+
+/**
+ * @brief 获取文件类型
+ */
+file_type_t diritem_get_type (diritem_t * item) {
+    file_type_t type = FILE_UNKNOWN;
+
+    // 长文件名和volum id
+    if (item->DIR_Attr & (DIRITEM_ATTR_VOLUME_ID | DIRITEM_ATTR_HIDDEN | DIRITEM_ATTR_SYSTEM)) {
+        return FILE_UNKNOWN;
+    }
+
+    return item->DIR_Attr & DIRITEM_ATTR_DIRECTORY ? FILE_DIR : FILE_NORMAL;
+}
+
+/**
+ * @brief 获取diritem中的名称，转换成合适
+ */
+void diritem_get_name (diritem_t * item, char * dest) {
+    char * c = dest;
+    char * ext = (char *)0;
+
+    kernel_memset(dest, 0, 11);     // 最多11个字符
+    for (int i = 0; i < 11; i++) {
+        if (item->DIR_Name[i] != ' ') {
+            *c++ = item->DIR_Name[i];
+        }
+
+        if (i == 7) {
+            ext = c;
+            *c++ = '.';
+        }
+    }
+
+    // 没有扩展名的情况
+    if (ext[1] == '\0') {
+        ext[0] = '\0';
+    }
+}
+
+/**
+ * @brief 缓存读取磁盘数据，用于目录的遍历等
+ */
+static int bread_sector (fat_t * fat, int sector) {
+    if (sector == fat->curr_sector) {
+        return 0;
+    }
+
+    int cnt = dev_read(fat->fs->dev_id, sector, fat->fat_buffer, 1);
+    return (cnt == 1) ? 0 : -1;
+}
+
+/**
+ * @brief 在root目录中读取diritem
+ */
+static diritem_t * read_dir_entry (fat_t * fat, int index) {
+    if ((index < 0) || (index >= fat->root_ent_cnt)) {
+        return (diritem_t *)0;
+    }
+
+    int offset = index * sizeof(diritem_t);
+    int err = bread_sector(fat, fat->root_start + offset / fat->bytes_per_sec);
+    if (err < 0) {
+        return (diritem_t *)0;
+    }
+    return (diritem_t *)(fat->fat_buffer + offset % fat->bytes_per_sec);
+
+}
+
+/**
+ * @brief 读取一个目录项
+ */
+int fatfs_readdir (struct _fs_t * fs,DIR* dir, struct dirent * dirent) {
+    fat_t * fat = (fat_t *)fs->data;
+
+    // 做一些简单的判断，检查
+    while (dir->index < fat->root_ent_cnt) {
+        diritem_t * item = read_dir_entry(fat, dir->index);
+
+        // 结束项，不需要再扫描了，同时index也不能往前走
+        if (item->DIR_Name[0] == DIRITEM_NAME_END) {
+            break;
+        }
+
+        // 只显示普通文件和目录，其它的不显示
+        if (item->DIR_Name[0] != DIRITEM_NAME_FREE) {
+            file_type_t type = diritem_get_type(item);
+            if ((type == FILE_NORMAL) || (type == FILE_DIR)) {
+                dirent->index = dir->index++;
+                dirent->type = diritem_get_type(item);
+                dirent->size = item->DIR_FileSize;
+                diritem_get_name(item, dirent->name); 
+                return 0;           
+            }
+        }
+
+        dir->index++;
+    }
+    
+    return -1;
+}
+
+/**
+ * @brief 关闭文件扫描读取
+ */
+int fatfs_closedir (struct _fs_t * fs,DIR *dir) {
+    return 0;
+}
+
+/**
+ * @brief 删除文件
+ */
+int fatfs_unlink (const char * path) {
+    fat_t * fat = (fat_t *)fs->data;
+
+    // 做一些简单的判断，检查
+    for (int i = 0; i < fat->root_ent_cnt; i++) {
+        diritem_t * item = read_dir_entry(fat, i);
+
+        // 结束项，不需要再扫描了，同时index也不能往前走
+        switch (item->DIR_Name[0]) {
+            case DIRITEM_NAME_END:
+                break;
+            case DIRITEM_NAME_FREE:
+                continue;
+            default: {
+                if (diritem_get_type(item) != FILE_NORMAL) {
+                    continue;
+                }
+
+                if (kernel_strncmp()) {
+                       
+                }     
+            }
+            break;
+        }
+    }
+    
+    return -1;
+}
+
 fs_op_t fatfs_op = {
     .mount = fatfs_mount,
     .unmount = fatfs_unmount,
@@ -575,4 +715,9 @@ fs_op_t fatfs_op = {
     .seek = fatfs_seek,
     .stat = fatfs_stat,
     .close = fatfs_close,
+
+    .opendir = fatfs_opendir,
+    .readdir = fatfs_readdir,
+    .closedir = fatfs_closedir,
+    .unlink = unlink,
 };

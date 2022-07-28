@@ -10,7 +10,6 @@
 
 #include "core/syscall.h"
 #include "os_cfg.h"
-#include "fs/file.h"
 
 #include <sys/stat.h>
 typedef struct _syscall_args_t {
@@ -40,22 +39,20 @@ int fstat(int file, struct stat *st);
 void * sbrk(ptrdiff_t incr);
 int dup (int file);
 
-struct dirent {
-   int index;         // 在目录中的偏移
-   int type;            // 文件或目录的类型
-   char name [255];       // 目录或目录的名称
-   int size;            // 文件大小
-};
-
 typedef struct _DIR {
-    int index;               // 当前遍历的索引
-    struct dirent dirent;
+    int file;               // 目录所在的文件描述符
 }DIR;
 
+struct dirent {
+   long d_ino;          // 索引结点号
+   off_t d_off;         // 在目录中的偏移
+   unsigned short d_reclen;  // 文件或目录名称的长度
+   unsigned char d_type;    // 文件或目录的类型
+   char d_name [255];       // 目录或目录的名称
+};
 
 DIR * opendir(const char * name);
 struct dirent* readdir(DIR* dir);
 int closedir(DIR *dir);
-int unlink(const char *pathname);
 
 #endif //LIB_SYSCALL_H

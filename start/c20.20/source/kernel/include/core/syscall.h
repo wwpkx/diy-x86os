@@ -31,6 +31,7 @@
 #define SYS_opendir				59
 #define SYS_readdir				60
 #define SYS_closedir			61
+#define SYS_unlink				62
 
 
 #define SYS_printmsg            100

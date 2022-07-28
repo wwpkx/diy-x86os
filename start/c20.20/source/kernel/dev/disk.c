@@ -17,8 +17,8 @@
 #include "core/task.h"
 
 static disk_t disk_buf[DISK_CNT];  // 通道结构
-static mutex_t channel_mutex[DISK_CHANNEL_CNT];     // 通道信号量
-static sem_t channel_op_sem[DISK_CHANNEL_CNT];      // 通道操作的信号量
+static mutex_t mutex;     // 通道信号量
+static sem_t op_sem;      // 通道操作的信号量
 
 /**
  * 发送ata命令，支持多达16位的扇区，对我们目前的程序来书够用了。
@@ -77,7 +77,6 @@ static inline int ata_wait_data (disk_t * disk) {
  */
 static void print_disk_info (disk_t * disk) {
     log_printf("%s:", disk->name);
-    log_printf("  channel:%s", disk->channel == ATA_CHANNEL_PRIMARY? "Primary" : "Secondary");
     log_printf("  drive: %s", disk->drive == ATA_DISK_MASTER ? "Master" : "Slave");
     log_printf("  port_base: %x", disk->port_base);
     log_printf("  total_size: %d m", disk->partinfo[0].total_sector * disk->sector_size / 1024 /1024);
@@ -200,12 +199,6 @@ static int identify_disk (disk_t * disk) {
  * 以下只是将相关磁盘相关的信息给读取到内存中
  */
 void disk_init (void) {
-    // 通道端口地址
-    static uint16_t port_base[] = {
-        [ATA_CHANNEL_PRIMARY] = 0x1F0,
-        [ATA_CHANNEL_SECONDARY] = 0x170,
-    };    
-    
     uint8_t disk_cnt = *((uint8_t*)(0x475));	// 从BIOS数据区，读取硬盘的数量
     ASSERT(disk_cnt > 0);
 
@@ -216,34 +209,27 @@ void disk_init (void) {
     // 清空所有disk，以免数据错乱。不过引导程序应该有清0的，这里为安全再清一遍
     kernel_memset(disk_buf, 0, sizeof(disk_buf));
 
-    // 初始化通道结构
-    for (int i = ATA_CHANNEL_PRIMARY; i < ATA_CHANNEL_END; i++) {
-        // 信号量和锁
-        mutex_t * mutex = channel_mutex + i;
-        sem_t * sem = channel_op_sem + i;
-        mutex_init(mutex);
-        sem_init(sem, 0);       // 没有操作完成
+    // 信号量和锁
+    mutex_init(&mutex);
+    sem_init(&op_sem, 0);       // 没有操作完成
 
-        // 检测各个硬盘, 读取硬件是否存在，有其相关信息
-        int channel_disk_cnt = 0;
-        for (int j = 0; j < DISK_CNT_PER_CHANNEL; j++) {
-            int idx = i * DISK_CNT_PER_CHANNEL + j;
-            disk_t * disk = disk_buf + idx;
+    // 检测各个硬盘, 读取硬件是否存在，有其相关信息
+    int channel_disk_cnt = 0;
+    for (int j = 0; j < DISK_CNT_PER_CHANNEL; j++) {
+        disk_t * disk = disk_buf + j;
 
-            // 先初始化各字段
-            kernel_sprintf(disk->name, "sd%c", idx + 'a');
-            disk->channel = i;
-            disk->drive = (j == 0) ? ATA_DISK_MASTER : ATA_DISK_SLAVE;
-            disk->port_base = port_base[disk->channel];
-            disk->irq_num = (j == 0) ? IRQ14_HARDDISK_PRIMARY : IRQ15_HARDDISK_SECOND;
-            disk->mutex = mutex;
-            disk->op_sem = sem;
+        // 先初始化各字段
+        kernel_sprintf(disk->name, "sd%c", j + 'a');
+        disk->drive = (j == 0) ? ATA_DISK_MASTER : ATA_DISK_SLAVE;
+        disk->port_base = IOBASE_PRIMARY;
+        disk->irq_num = IRQ14_HARDDISK_PRIMARY;
+        disk->mutex = &mutex;
+        disk->op_sem = &op_sem;
 
-            // 识别磁盘，有错不处理，直接跳过
-            int err = identify_disk(disk);
-            if (err == 0) {
-                print_disk_info(disk);
-            }
+        // 识别磁盘，有错不处理，直接跳过
+        int err = identify_disk(disk);
+        if (err == 0) {
+            print_disk_info(disk);
         }
     }
 }
@@ -255,6 +241,11 @@ int disk_open (device_t * dev) {
     int disk_idx = (dev->minor >> 4) - 0xa;
     int part_idx = dev->minor & 0xF;
 
+    if ((disk_idx >= DISK_CNT) || (part_idx >= DISK_PRIMARY_PART_CNT)) {
+        log_printf("device minor error: %d", dev->minor);
+        return -1;
+    }
+    
     disk_t * disk = disk_buf + disk_idx;
     if (disk->sector_size == 0) {
         log_printf("disk not exist. device:sd%x", dev->minor);
@@ -269,14 +260,8 @@ int disk_open (device_t * dev) {
 
     // 磁盘存在，建立关联
     dev->data = part_info;
-    if (disk->channel == ATA_CHANNEL_PRIMARY) {
-        irq_install(IRQ14_HARDDISK_PRIMARY, exception_handler_ide_primary);
-        irq_enable(IRQ14_HARDDISK_PRIMARY);
-    } else {
-        irq_install(IRQ15_HARDDISK_SECOND, exception_handler_ide_secondary);
-        irq_enable(IRQ15_HARDDISK_SECOND);
-    }
-
+    irq_install(IRQ14_HARDDISK_PRIMARY, exception_handler_ide_primary);
+    irq_enable(IRQ14_HARDDISK_PRIMARY);
     return 0;
 }
 
@@ -302,7 +287,7 @@ int disk_read (device_t * dev, int start_sector, char * buf, int count) {
         // 关中断，避免中断发送信号量通知
         irq_disable(disk->irq_num);
 
-        ata_send_cmd(disk, start_sector, count, ATA_CMD_READ);
+        ata_send_cmd(disk, part_info->start_sector + start_sector, count, ATA_CMD_READ);
         for (cnt = 0; cnt < count; cnt++, buf += disk->sector_size) {
             // 等待数据就绪
             int err = ata_wait_data(disk);
@@ -320,7 +305,7 @@ int disk_read (device_t * dev, int start_sector, char * buf, int count) {
         mutex_lock(disk->mutex);
 
         disk->task_on_op = 1;
-        ata_send_cmd(disk, start_sector, count, ATA_CMD_READ);
+        ata_send_cmd(disk, part_info->start_sector + start_sector, count, ATA_CMD_READ);
         for (cnt = 0; cnt < count; cnt++, buf += disk->sector_size) {
             // 利用信号量等待中断通知，然后再读取数据
             sem_wait(disk->op_sem);
@@ -362,7 +347,7 @@ int disk_write (device_t * dev, int start_sector, char * buf, int count) {
     if (task_current() == (task_t *)0) {
         irq_disable(disk->irq_num);
 
-        ata_send_cmd(disk, start_sector, count, ATA_CMD_WRITE);
+        ata_send_cmd(disk, part_info->start_sector, count, ATA_CMD_WRITE);
         for (cnt = 0; cnt < count; cnt++, buf += disk->sector_size) {
             // 先写数据
             ata_write_data(disk, buf, disk->sector_size);
@@ -380,7 +365,7 @@ int disk_write (device_t * dev, int start_sector, char * buf, int count) {
         mutex_lock(disk->mutex);
 
         disk->task_on_op = 1;
-        ata_send_cmd(disk, start_sector, count, ATA_CMD_WRITE);
+        ata_send_cmd(disk, part_info->start_sector, count, ATA_CMD_WRITE);
         for (cnt = 0; cnt < count; cnt++, buf += disk->sector_size) {
             // 先写数据
             ata_write_data(disk, buf, disk->sector_size);
@@ -424,19 +409,7 @@ void do_handler_ide_primary (exception_frame_t *frame)  {
 
     // 通知主通道的信号量
     if (disk_buf[0].task_on_op || disk_buf[1].task_on_op) {
-        sem_notify(channel_op_sem + 0);
-    }
-}
-
-/**
- * @brief 磁盘第二通道中断处理
- */
-void do_handler_ide_secondary (exception_frame_t *frame) {
-    pic_send_eoi(IRQ15_HARDDISK_SECOND);
-
-    // 通知从通道的信号量
-    if (disk_buf[2].task_on_op || disk_buf[3].task_on_op) {
-        sem_notify(channel_op_sem + 1);
+        sem_notify(&op_sem);
     }
 }
 

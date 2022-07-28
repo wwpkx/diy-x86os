@@ -18,6 +18,7 @@
         "os_cfg.h": "c",
         "stdint.h": "c",
         "thread.h": "c",
-        "semaphore.h": "c"
+        "semaphore.h": "c",
+        "signal.h": "c"
     },
 }

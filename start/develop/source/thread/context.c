@@ -20,8 +20,8 @@ context_t * context_create (int stack_size) {
             return (context_t *)0;
         }
 
-        context->stack_start = (stack_t *)stack_start;
-        context->stack_top = (stack_t *)(stack_start + THREAD_STACK_DEF_SIZE - sizeof(thread_state_t));
+        context->stack_start = (thread_stack_t *)stack_start;
+        context->stack_top = (thread_stack_t *)(stack_start + THREAD_STACK_DEF_SIZE - sizeof(thread_state_t));
         
         // 配置运行状态
         thread_state_t * stack_state = (thread_state_t *)context->stack_top;
@@ -29,10 +29,10 @@ context_t * context_create (int stack_size) {
         stack_state->esi = 0x2;
         stack_state->ebx = 0x3;
         stack_state->ebp = 0x4;
-        stack_state->entry = (stack_t)thread_entry; 
+        stack_state->entry = (thread_stack_t)thread_entry; 
     } else {
-        context->stack_start = (stack_t *)0;
-        context->stack_top = (stack_t *)0;
+        context->stack_start = (thread_stack_t *)0;
+        context->stack_top = (thread_stack_t *)0;
         context->stack_size = 0;
     }
  

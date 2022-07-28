@@ -12,6 +12,7 @@
 #include "dev/dev.h"
 #include "file.h"
 #include "tools/list.h"
+#include "applib/lib_syscall.h"
 
 struct _fs_t;
 
@@ -27,6 +28,11 @@ typedef struct _fs_op_t {
     void (*close) (file_t * file);
     int (*seek) (file_t * file, uint32_t offset, int dir);
     int (*stat)(file_t * file, struct stat *st);
+
+    int (*opendir)(struct _fs_t * fs,const char * name, DIR * dir);
+    int (*readdir)(struct _fs_t * fs, DIR* dir, struct dirent * dirent);
+    int (*closedir)(struct _fs_t * fs,DIR *dir);
+    int (*unlink) (const char * path);
 }fs_op_t;
 
 #define FS_MOUNTP_SIZE      512
@@ -71,6 +77,11 @@ int sys_isatty(int file);
 int sys_fstat(int file, struct stat *st);
 
 int sys_dup (int file);
+
+int sys_opendir(const char * name, DIR * dir);
+int sys_readdir(DIR* dir, struct dirent * dirent);
+int sys_closedir(DIR *dir);
+int sys_unlink (const char * path);
 
 #endif // FILE_H
 

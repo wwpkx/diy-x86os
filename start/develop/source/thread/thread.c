@@ -9,8 +9,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <signal.h>
+#include<sys/time.h>
 #include "thread.h"
-#include "applib/lib_syscall.h"
 
 static scheduler_t scheduler;
 
@@ -117,6 +118,18 @@ static void thread_idle_entry (void * arg) {
     }
 }
 
+void sig_alarm_handler (int signum) {
+#ifdef DEBUG
+    printf("signal alarm");
+#endif
+
+    thread_t * current = thread_self();
+    if (--current->ticks == 0) {
+        thread_scheduler();
+        current->ticks = current->priority;
+    }
+}
+
 /**
  * @brief 初始化线程库
  */
@@ -144,6 +157,17 @@ void thread_init (void) {
     );
     //assert(scheduler.idle_thread != (thread_t *)0);
     thread_start(scheduler.idle_thread);
+
+    struct itimerval timer; 
+    timer.it_interval.tv_sec = 0;
+    timer.it_interval.tv_usec = 10;
+    timer.it_value.tv_sec = 0;
+    timer.it_value.tv_usec = 10;
+    if (setitimer(ITIMER_PROF, &timer, NULL) < 0) {
+        fprintf(stderr, "set timer failed.");
+        return;
+    }
+    signal(SIGALRM, sig_alarm_handler);
 }
 
 /**

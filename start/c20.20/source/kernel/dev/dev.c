@@ -127,8 +127,8 @@ void dev_close (int dev_id) {
 
     irq_state_t state = irq_enter_protection();
     if (--dev->open_count == 0) {
-        kernel_memset(dev, 0, sizeof(device_t));
         dev->desc->close(dev);
+        kernel_memset(dev, 0, sizeof(device_t));
     }
     irq_leave_protection(state);
 }

@@ -8,6 +8,7 @@
 #include "core/syscall.h"
 #include "os_cfg.h"
 #include "lib_syscall.h"
+#include "malloc.h"
 
 /**
  * 执行系统调用
@@ -77,6 +78,21 @@ int yield (void) {
     syscall_args_t args;
     args.id = SYS_yield;
     return sys_call(&args);
+}
+
+int wait(int* status) {
+    syscall_args_t args;
+    args.id = SYS_wait;
+    args.arg0 = (int)status;
+    return sys_call(&args);
+}
+
+void _exit(int status) {
+    syscall_args_t args;
+    args.id = SYS_exit;
+    args.arg0 = (int)status;
+    sys_call(&args);
+    for (;;) {}
 }
 
 int open(const char *name, int flags, ...) {
@@ -150,6 +166,9 @@ void * sbrk(ptrdiff_t incr) {
     return (void *)sys_call(&args);
 }
 
-int kill(pid_t pid,int signo) {
-    return 0;
+int dup (int file) {
+    syscall_args_t args;
+    args.id = SYS_dup;
+    args.arg0 = file;
+    return sys_call(&args);
 }

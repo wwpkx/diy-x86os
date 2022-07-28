@@ -5,7 +5,7 @@
  * 作者：李述铜
  * 联系邮箱: 527676163@qq.com
  */
-#include "applib/lib_syscall.h"
+#include "lib_syscall.h"
 #include "dev/console.h"
 
 int first_task_main (void) {

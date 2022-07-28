@@ -20,6 +20,8 @@
 typedef enum _file_type_t {
     FILE_UNKNOWN = 0,
     FILE_TTY = 1,
+    FILE_NORMAL,
+    FILE_DIR,
 } file_type_t;
 
 struct _fs_t;

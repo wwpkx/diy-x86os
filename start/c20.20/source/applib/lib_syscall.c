@@ -175,6 +175,9 @@ int dup (int file) {
 
 DIR * opendir(const char * name) {
     DIR * dir = (DIR *)malloc(sizeof(DIR));
+    if (dir == (DIR *)0) {
+        return (DIR *)0;
+    }
 
     syscall_args_t args;
     args.id = SYS_opendir;
@@ -189,23 +192,31 @@ DIR * opendir(const char * name) {
 }
 
 struct dirent* readdir(DIR* dir) {
-    struct dirent * ent = (struct dirent *)malloc(sizeof(struct dirent));
 
     syscall_args_t args;
     args.id = SYS_readdir;
     args.arg0 = (int)dir;
-    args.arg1 = (int)ent;
+    args.arg1 = (int)&dir->dirent;
     int err = sys_call(&args);
     if (err < 0) {
-        free(ent);
         return (struct dirent *)0;
     }
-    return ent;
+    return &dir->dirent;
 }
 
 int closedir(DIR *dir) {
     syscall_args_t args;
     args.id = SYS_closedir;
     args.arg0 = (int)dir;
+    sys_call(&args);
+
+    free(dir);
+    return 0;
+}
+
+int unlink(const char *path) {
+    syscall_args_t args;
+    args.id = SYS_unlink;
+    args.arg0 = (int)path;
     return sys_call(&args);
 }
