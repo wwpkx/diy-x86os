@@ -12,6 +12,7 @@
 #include "file.h"
 #include "tools/list.h"
 #include "fatfs/fatfs.h"
+#include "ipc/mutex.h"
 
 struct _fs_t;
 
@@ -52,6 +53,7 @@ typedef struct _fs_t {
     union {
         fat_t fat_data;         // 文件系统相关数据
     };
+    mutex_t * mutex;              // 文件系统操作互斥信号量
 }fs_t;
 
 void fs_init (void);

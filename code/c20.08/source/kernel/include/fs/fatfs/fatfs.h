@@ -6,9 +6,9 @@
  * 联系邮箱: 527676163@qq.com
  */
 #ifndef FAT_H
-#define FAT_H		
+#define FAT_H
 
-#include "comm/types.h"
+#include "ipc/mutex.h"
 
 #pragma pack(1)    // 千万记得加这个
 
@@ -54,15 +54,13 @@ typedef struct _fat_t {
     uint32_t root_start;                    // 根目录起始扇区号
     uint32_t data_start;                    // 数据区起始扇区号
     uint32_t cluster_byte_size;             // 每簇字节数
-    uint32_t total_sectors;                 // 总扇区数
 
     // 与文件系统读写相关信息
     uint8_t * fat_buffer;             		// FAT表项缓冲
     int curr_sector;                        // 当前缓存的扇区数
-    uint32_t cfree_next;                    // 下一空闲的簇
-    uint32_t cfree_total;                   // 总空闲的簇
 
     struct _fs_t * fs;                      // 所在的文件系统
+    mutex_t mutex;                          // 互斥信号量
 } fat_t;
 
 #endif // FAT_H

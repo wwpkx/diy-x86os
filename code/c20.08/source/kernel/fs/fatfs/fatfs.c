@@ -45,12 +45,13 @@ int fatfs_mount (struct _fs_t * fs, int dev_major, int dev_minor) {
     fat->tbl_cnt = dbr->BPB_NumFATs;
     fat->root_ent_cnt = dbr->BPB_RootEntCnt;
     fat->sec_per_cluster = dbr->BPB_SecPerClus;
-    fat->total_sectors = dbr->BPB_TotSec16;
     fat->cluster_byte_size = fat->sec_per_cluster * dbr->BPB_BytsPerSec;
 	fat->root_start = fat->tbl_start + fat->tbl_sectors * fat->tbl_cnt;
     fat->data_start = fat->root_start + fat->root_ent_cnt * 32 / SECTOR_SIZE;
-    fat->curr_sector = 0;
+    fat->curr_sector = -1;
     fat->fs = fs;
+    mutex_init(&fat->mutex);
+    fs->mutex = &fat->mutex;
 
 	// 简单检查是否是fat16文件系统, 可以在下边做进一步的更多检查。此处只检查做一点点检查
 	if (fat->tbl_cnt != 2) {
@@ -112,6 +113,9 @@ void fatfs_close (file_t * file) {
 
 }
 
+/**
+ * @brief 文件读写位置的调整
+ */
 int fatfs_seek (file_t * file, uint32_t offset, int dir) {
     return -1;          // 不支持，只允许应用程序连续读取
 }

@@ -129,7 +129,7 @@ void disk_init (void) {
 
         // 先初始化各字段
         kernel_sprintf(disk->name, "sd%c", i + 'a');
-        disk->drive = (j == 0) ? ATA_DISK_MASTER : ATA_DISK_SLAVE;
+        disk->drive = (i == 0) ? ATA_DISK_MASTER : ATA_DISK_SLAVE;
         disk->port_base = IOBASE_PRIMARY;
 
         // 识别磁盘，有错不处理，直接跳过

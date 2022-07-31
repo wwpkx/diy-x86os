@@ -123,6 +123,7 @@ static int do_less (int argc, char ** argv) {
                 puts("show file content");
                 puts("less [-l] file");
                 puts("-l show file line by line.");
+                break;
             case 'l':
                 line_mode = 1;
                 break;
@@ -228,8 +229,8 @@ static int do_cp (int argc, char ** argv) {
 
     char * buf = (char *)malloc(255);
     int size = 0;
-    while ((size = fread(buf, 255, 1, from)) > 0) {
-        fwrite(buf, 255, 1, to);
+    while ((size = fread(buf, 1, 255, from)) > 0) {
+        fwrite(buf, 1, size, to);
     }
     free(buf);
 

@@ -123,6 +123,7 @@ static int do_less (int argc, char ** argv) {
                 puts("show file content");
                 puts("less [-l] file");
                 puts("-l show file line by line.");
+                break;
             case 'l':
                 line_mode = 1;
                 break;

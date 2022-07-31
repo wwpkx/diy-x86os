@@ -61,6 +61,17 @@ static void read_disk(int sector, int sector_count, uint8_t * buf) {
 }
 
 /**
+ * @brief 判断文件描述符是否正确
+ */
+static int is_fd_bad (int file) {
+	if ((file < 0) && (file >= TASK_OFILE_NR)) {
+		return 1;
+	}
+
+	return 0;
+}
+
+/**
  * @brief 获取指定文件系统的操作接口
  */
 static fs_op_t * get_fs_op (fs_type_t type, int major) {
@@ -110,6 +121,7 @@ static fs_t * mount (fs_type_t type, char * mount_point, int dev_major, int dev_
 	kernel_memset(fs, 0, sizeof(fs_t));
 	kernel_strncpy(fs->mount_point, mount_point, FS_MOUNTP_SIZE);
 	fs->op = op;
+	fs->mutex = (mutex_t *)0;
 
 	// 挂载文件系统
 	if (op->mount(fs, dev_major, dev_minor) < 0) {
@@ -150,7 +162,7 @@ void fs_init (void) {
 }
 
 /**
- * @brief 检查路径是否正常
+ * @brief 目录是否有效
  */
 int path_is_valid (const char * path) {
 	return (path != (const char *)0) && path[0];
@@ -182,15 +194,11 @@ int path_to_num (const char * path, int * num) {
 int path_begin_with (const char * path, const char * str) {
 	const char * s1 = path, * s2 = str;
 	while (*s1 && *s2 && (*s1 == *s2)) {
-		if (*s1 != *s2) {
-			return 0;
-		}
-
 		s1++;
 		s2++;
 	}
 
-	return 1;
+	return *s2 == '\0';
 }
 
 /**
@@ -202,6 +210,18 @@ const char * path_next_child (const char * path) {
     while (*c && (*c++ == '/')) {}
     while (*c && (*c++ != '/')) {}
     return *c ? c : (const char *)0;
+}
+
+static void fs_protect (fs_t * fs) {
+	if (fs->mutex) {
+		mutex_lock(fs->mutex);
+	}
+}
+
+static void fs_unprotect (fs_t * fs) {
+	if (fs->mutex) {
+		mutex_unlock(fs->mutex);
+	}
 }
 
 /**
@@ -247,12 +267,20 @@ int sys_open(const char *name, int flags, ...) {
 	}
 
 	file->mode = flags;
+	file->fs = fs;
+	kernel_strncpy(file->file_name, name, FILE_NAME_SIZE);
+
+	fs_protect(fs);
 	int err = fs->op->open(fs, name, file);
 	if (err < 0) {
+		fs_unprotect(fs);
+
 		log_printf("open %s failed.", name);
 		return -1;
 	}
-	return 0;
+	fs_unprotect(fs);
+
+	return fd;
 
 sys_open_failed:
 	file_free(file);
@@ -267,7 +295,7 @@ sys_open_failed:
  */
 int sys_dup (int file) {
 	// 超出进程所能打开的全部，退出
-	if ((file < 0) && (file >= TASK_OFILE_NR)) {
+	if (is_fd_bad(file)) {
         log_printf("file(%d) is not valid.", file);
 		return -1;
 	}
@@ -280,7 +308,7 @@ int sys_dup (int file) {
 
 	int fd = task_alloc_fd(p_file);	// 新fd指向同一描述符
 	if (fd >= 0) {
-		p_file->ref++;		// 增加引用
+		file_inc_ref(p_file);
 		return fd;
 	}
 

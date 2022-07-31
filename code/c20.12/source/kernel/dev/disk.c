@@ -324,7 +324,7 @@ int disk_write (device_t * dev, int start_sector, char * buf, int count) {
     task_on_op = 1;
 
     int cnt;
-    ata_send_cmd(disk, part_info->start_sector, count, ATA_CMD_WRITE);
+    ata_send_cmd(disk, part_info->start_sector + start_sector, count, ATA_CMD_WRITE);
     for (cnt = 0; cnt < count; cnt++, buf += disk->sector_size) {
         // 先写数据
         ata_write_data(disk, buf, disk->sector_size);

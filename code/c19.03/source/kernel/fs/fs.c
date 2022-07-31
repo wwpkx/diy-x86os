@@ -110,6 +110,7 @@ static fs_t * mount (fs_type_t type, char * mount_point, int dev_major, int dev_
 	kernel_memset(fs, 0, sizeof(fs_t));
 	kernel_strncpy(fs->mount_point, mount_point, FS_MOUNTP_SIZE);
 	fs->op = op;
+	fs->mutex = (mutex_t *)0;
 
 	// 挂载文件系统
 	if (op->mount(fs, dev_major, dev_minor) < 0) {
@@ -150,7 +151,7 @@ void fs_init (void) {
 }
 
 /**
- * @brief 检查路径是否正常
+ * @brief 目录是否有效
  */
 static int is_path_valid (const char * path) {
 	if ((path == (const char *)0) || (path[0] == '\0')) {

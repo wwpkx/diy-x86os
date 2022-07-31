@@ -20,7 +20,11 @@ static int bread_sector (fat_t * fat, int sector) {
     }
 
     int cnt = dev_read(fat->fs->dev_id, sector, fat->fat_buffer, 1);
-    return (cnt == 1) ? 0 : -1;
+    if (cnt == 1) {
+        fat->curr_sector = sector;
+        return 0;
+    }
+    return -1;
 }
 
 /**
@@ -30,7 +34,7 @@ void diritem_get_name (diritem_t * item, char * dest) {
     char * c = dest;
     char * ext = (char *)0;
 
-    kernel_memset(dest, 0, 11);     // 最多11个字符
+    kernel_memset(dest, 0, SFN_LEN + 1);     // 最多11个字符
     for (int i = 0; i < 11; i++) {
         if (item->DIR_Name[i] != ' ') {
             *c++ = item->DIR_Name[i];
@@ -112,12 +116,13 @@ int fatfs_mount (struct _fs_t * fs, int dev_major, int dev_minor) {
     fat->tbl_cnt = dbr->BPB_NumFATs;
     fat->root_ent_cnt = dbr->BPB_RootEntCnt;
     fat->sec_per_cluster = dbr->BPB_SecPerClus;
-    fat->total_sectors = dbr->BPB_TotSec16;
     fat->cluster_byte_size = fat->sec_per_cluster * dbr->BPB_BytsPerSec;
 	fat->root_start = fat->tbl_start + fat->tbl_sectors * fat->tbl_cnt;
     fat->data_start = fat->root_start + fat->root_ent_cnt * 32 / SECTOR_SIZE;
-    fat->curr_sector = 0;
+    fat->curr_sector = -1;
     fat->fs = fs;
+    mutex_init(&fat->mutex);
+    fs->mutex = &fat->mutex;
 
 	// 简单检查是否是fat16文件系统, 可以在下边做进一步的更多检查。此处只检查做一点点检查
 	if (fat->tbl_cnt != 2) {
@@ -179,6 +184,9 @@ void fatfs_close (file_t * file) {
 
 }
 
+/**
+ * @brief 文件读写位置的调整
+ */
 int fatfs_seek (file_t * file, uint32_t offset, int dir) {
     return -1;          // 不支持，只允许应用程序连续读取
 }
@@ -187,7 +195,6 @@ int fatfs_stat (file_t * file, struct stat *st) {
     return -1;
 }
 
-
 /**
  * @brief 打开目录。只是简单地读取位置重设为0
  */
@@ -195,7 +202,6 @@ int fatfs_opendir (struct _fs_t * fs,const char * name, DIR * dir) {
     dir->index = 0;
     return 0;
 }
-
 
 /**
  * @brief 读取一个目录项

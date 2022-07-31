@@ -361,7 +361,7 @@ static int move_file_pos(file_t* file, fat_t * fat, uint32_t move_bytes, int exp
         file->cblk = next;
 	}
 
- 	file->pos += move_bytes;
+	file->pos += move_bytes;
 	return 0;
 }
 

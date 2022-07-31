@@ -45,6 +45,9 @@ void fatfs_close (file_t * file) {
 
 }
 
+/**
+ * @brief 文件读写位置的调整
+ */
 int fatfs_seek (file_t * file, uint32_t offset, int dir) {
     return -1;          // 不支持，只允许应用程序连续读取
 }

@@ -16,14 +16,7 @@
         "log.h": "c",
         "fs.h": "c",
         "os_cfg.h": "c",
-        "setjmp.h": "c",
-        "dev.h": "c",
         "console.h": "c",
-        "tty.h": "c",
-        "stat.h": "c",
-        "main.h": "c",
-        "disk.h": "c",
-        "devfs.h": "c",
-        "file.h": "c"
+        "syscall.h": "c"
     },
 }

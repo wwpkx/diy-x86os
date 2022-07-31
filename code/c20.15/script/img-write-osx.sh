@@ -26,7 +26,7 @@ export DISK2_NAME=disk2.dmg
 export TARGET_PATH=mp
 rm $TARGET_PATH
 hdiutil attach $DISK2_NAME -mountpoint $TARGET_PATH
-#cp -v init.elf $TARGET_PATH
+#cp -v init.elf $TARGET_PATH/init
 cp -v shell.elf $TARGET_PATH
-#cp -v loop $TARGET_PATH
+#cp -v loop $TARGET_PATH/loop
 hdiutil unmount $TARGET_PATH -verbose

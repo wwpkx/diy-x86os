@@ -24,7 +24,7 @@ diskpart /s a.txt
 del a.txt
 
 @REM ����Ӧ�ó���
-@copy /Y init.elf %TARGET_PATH%:\init.elf
+@copy /Y init.elf %TARGET_PATH%:\init
 copy /Y shell.elf %TARGET_PATH%:\shell.elf
 @copy /Y loop %TARGET_PATH%:\loop
 

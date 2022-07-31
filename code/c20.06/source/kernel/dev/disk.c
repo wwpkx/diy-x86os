@@ -284,7 +284,9 @@ int disk_read (device_t * dev, int start_sector, char * buf, int count) {
     ata_send_cmd(disk, part_info->start_sector + start_sector, count, ATA_CMD_READ);
     for (cnt = 0; cnt < count; cnt++, buf += disk->sector_size) {
         // 利用信号量等待中断通知，然后再读取数据
-        sem_wait(disk->op_sem);
+        if (task_current()) {
+            sem_wait(disk->op_sem);
+        }
 
         // 这里虽然有调用等待，但是由于已经是操作完毕，所以并不会等
         int err = ata_wait_data(disk);
@@ -322,13 +324,15 @@ int disk_write (device_t * dev, int start_sector, char * buf, int count) {
     task_on_op = 1;
 
     int cnt;
-    ata_send_cmd(disk, part_info->start_sector, count, ATA_CMD_WRITE);
+    ata_send_cmd(disk, part_info->start_sector + start_sector, count, ATA_CMD_WRITE);
     for (cnt = 0; cnt < count; cnt++, buf += disk->sector_size) {
         // 先写数据
         ata_write_data(disk, buf, disk->sector_size);
 
         // 利用信号量等待中断通知，等待写完成
-        sem_wait(disk->op_sem);
+        if (task_current()) {
+            sem_wait(disk->op_sem);
+        }
 
         // 这里虽然有调用等待，但是由于已经是操作完毕，所以并不会等
         int err = ata_wait_data(disk);
@@ -362,7 +366,7 @@ void disk_close (device_t * dev) {
  */
 void do_handler_ide_primary (exception_frame_t *frame)  {
     pic_send_eoi(IRQ14_HARDDISK_PRIMARY);
-    if (task_on_op) {
+    if (task_on_op && task_current()) {
         sem_notify(&op_sem);
     }
 }

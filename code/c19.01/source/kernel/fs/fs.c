@@ -78,7 +78,7 @@ void fs_init (void) {
 }
 
 /**
- * @brief 检查路径是否正常
+ * @brief 目录是否有效
  */
 static int is_path_valid (const char * path) {
 	if ((path == (const char *)0) || (path[0] == '\0')) {

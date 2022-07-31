@@ -123,6 +123,7 @@ static fs_t * mount (fs_type_t type, char * mount_point, int dev_major, int dev_
 	kernel_memset(fs, 0, sizeof(fs_t));
 	kernel_strncpy(fs->mount_point, mount_point, FS_MOUNTP_SIZE);
 	fs->op = op;
+	fs->mutex = (mutex_t *)0;
 
 	// 挂载文件系统
 	if (op->mount(fs, dev_major, dev_minor) < 0) {
@@ -198,15 +199,11 @@ int path_to_num (const char * path, int * num) {
 int path_begin_with (const char * path, const char * str) {
 	const char * s1 = path, * s2 = str;
 	while (*s1 && *s2 && (*s1 == *s2)) {
-		if (*s1 != *s2) {
-			return 0;
-		}
-
 		s1++;
 		s2++;
 	}
 
-	return 1;
+	return *s2 == '\0';
 }
 
 /**
@@ -220,6 +217,18 @@ const char * path_next_child (const char * path) {
     return *c ? c : (const char *)0;
 }
 
+static void fs_protect (fs_t * fs) {
+	if (fs->mutex) {
+		mutex_lock(fs->mutex);
+	}
+}
+
+static void fs_unprotect (fs_t * fs) {
+	if (fs->mutex) {
+		mutex_unlock(fs->mutex);
+	}
+}
+
 /**
  * 打开文件
  */
@@ -227,8 +236,6 @@ int sys_open(const char *name, int flags, ...) {
 	// 临时使用，保留shell加载的功能
 	if (kernel_strncmp(name, "/shell.elf", 4) == 0) {
         // 暂时直接从扇区1000上读取, 读取大概40KB，足够了
-		int dev_id = dev_open(DEV_DISK, 0xa0, (void *)0);
-
         read_disk(5000, 80, (uint8_t *)TEMP_ADDR);
         temp_pos = (uint8_t *)TEMP_ADDR;
         return TEMP_FILE_ID;
@@ -265,12 +272,20 @@ int sys_open(const char *name, int flags, ...) {
 	}
 
 	file->mode = flags;
+	file->fs = fs;
+	kernel_strncpy(file->file_name, name, FILE_NAME_SIZE);
+
+	fs_protect(fs);
 	int err = fs->op->open(fs, name, file);
 	if (err < 0) {
+		fs_unprotect(fs);
+
 		log_printf("open %s failed.", name);
 		return -1;
 	}
-	return 0;
+	fs_unprotect(fs);
+
+	return fd;
 
 sys_open_failed:
 	file_free(file);
@@ -333,7 +348,10 @@ int sys_read(int file, char *ptr, int len) {
 
 	// 读取文件
 	fs_t * fs = p_file->fs;
-	return fs->op->read(ptr, len, p_file);
+	fs_protect(fs);
+	int err = fs->op->read(ptr, len, p_file);
+	fs_unprotect(fs);
+	return err;
 }
 
 /**
@@ -357,7 +375,10 @@ int sys_write(int file, char *ptr, int len) {
 
 	// 写入文件
 	fs_t * fs = p_file->fs;
-	return fs->op->write(ptr, len, p_file);
+	fs_protect(fs);
+	int err = fs->op->write(ptr, len, p_file);
+	fs_unprotect(fs);
+	return err;
 }
 
 /**
@@ -381,7 +402,11 @@ int sys_lseek(int file, int ptr, int dir) {
 
 	// 写入文件
 	fs_t * fs = p_file->fs;
-	return fs->op->seek(p_file, ptr, dir);
+
+	fs_protect(fs);
+	int err = fs->op->seek(p_file, ptr, dir);
+	fs_unprotect(fs);
+	return err;
 }
 
 /**
@@ -407,7 +432,10 @@ int sys_close(int file) {
 
 	if (p_file->ref == 1) {
 		fs_t * fs = p_file->fs;
+
+		fs_protect(fs);
 		fs->op->close(p_file);
+		fs_unprotect(fs);
 	}
 
 	file_free(p_file);
@@ -446,5 +474,9 @@ int sys_fstat(int file, struct stat *st) {
 	}
 
 	fs_t * fs = p_file->fs;
-	return fs->op->stat(p_file, st);
+
+	fs_protect(fs);
+	int err = fs->op->stat(p_file, st);
+	fs_unprotect(fs);
+	return err;
 }

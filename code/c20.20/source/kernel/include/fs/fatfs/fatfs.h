@@ -18,11 +18,6 @@
 #define DIRITEM_NAME_FREE               0xE5                // 目录项空闲名标记
 #define DIRITEM_NAME_END                0x00                // 目录项结束名标记
 
-#define DIRITEM_NTRES_BODY_LOWER        0x08                // 文件名小写
-#define DIRITEM_NTRES_EXT_LOWER         0x10                // 扩展名小写
-#define DIRITEM_NTRES_ALL_UPPER         0x00                // 文件名全部大写
-#define DIRITEM_NTRES_CASE_MASK         0x18                // 大小写掩码
-
 #define DIRITEM_ATTR_READ_ONLY          0x01                // 目录项属性：只读
 #define DIRITEM_ATTR_HIDDEN             0x02                // 目录项属性：隐藏
 #define DIRITEM_ATTR_SYSTEM             0x04                // 目录项属性：系统类型
