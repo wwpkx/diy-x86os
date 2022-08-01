@@ -19,6 +19,7 @@
             "miDebuggerServerAddress": "127.0.0.1:1234",
             "targetArchitecture": "x86",
             "stopAtConnect": true,
+            "serverLaunchTimeout": 30000,
             // 启动gdb之前，做些准备：写映像文件、启动qemu
             "windows": {
                 "preLaunchTask": "调试准备", // 仅在windows下可自动运行
@@ -40,11 +41,11 @@
                     "ignoreFailures": true
                 },
                 // 设置体系结构: i8086，方便以16位方式进行反汇编
-                {
-                    "description": "设置体系结构",
-                    "text": "-gdb-set arch i8086",
-                    "ignoreFailures": true
-                }
+                // {
+                //     "description": "设置体系结构",
+                //     "text": "-gdb-set arch i8086",
+                //     "ignoreFailures": true
+                // }
             ],
             // gdb连接后的设置
             "postRemoteConnectCommands": [
@@ -55,7 +56,7 @@
                 },       
                 // {
                 //     "description": "加载内核符号文件",
-                //      "text": "add-symbol-file ./build/source/kernel/kernel.elf 0x100000",
+                //      "text": "add-symbol-file ./build/source/kernel/kernel.elf 0x10000",
                 //     "ignoreFailures": false
                 // },
                 // {

@@ -4,7 +4,7 @@
     "version": "2.0.0", 
     "tasks": [
         {
-            "label": "写映像文件",
+            "label": "----------------- image write(不要点)",
             "type": "shell",
             "command": "bash ${workspaceRoot}/script/img-write-osx.sh",
             "windows": {
@@ -16,10 +16,10 @@
             },
             "options": {
                 "cwd": "${workspaceRoot}/../../image/"
-            }
+            },
         },
         {
-            "label": "启动qemu",
+            "label": "----------------- start qemu(不要点)",
             "type": "shell",
             "command": "bash ${workspaceRoot}/script/qemu-debug-osx.sh",
             "windows": {
@@ -31,14 +31,14 @@
             },
             "options": {
                 "cwd": "${workspaceRoot}/../../image/"
-            }
+            },
         },
         {
             "label": "调试准备",
             "dependsOrder": "sequence",
             "dependsOn": [
-                "写映像文件",
-                "启动qemu"
+                "----------------- image write(不要点)",
+                "----------------- start qemu(不要点)"
             ],
         }
     ]

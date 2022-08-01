@@ -24,7 +24,7 @@ dd if=loader.bin of=%DISK1_NAME% bs=512 conv=notrunc seek=1
 @REM del a.txt
 
 @REM 复制应用程序
-@REM copy /Y init.elf %TARGET_PATH%:\init.elf
+@REM copy /Y init.elf %TARGET_PATH%:\init
 @REM copy /Y shell.elf %TARGET_PATH%:\shell.elf
 @REM copy /Y loop %TARGET_PATH%:\loop
 

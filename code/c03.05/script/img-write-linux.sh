@@ -27,7 +27,7 @@ dd if=boot.bin of=$DISK1_NAME bs=512 conv=notrunc count=1
 # rm -rf $TARGET_PATH
 # mkdir $TARGET_PATH
 # sudo mount -o offset=$[128*512],rw $DISK2_NAME $TARGET_PATH
-# sudo cp -v init.elf $TARGET_PATH
+# sudo cp -v init.elf $TARGET_PATH/init
 # sudo cp -v shell.elf $TARGET_PATH
-# sudo cp -v loop $TARGET_PATH
+# sudo cp -v loop.elf $TARGET_PATH/loop
 # sudo umount $TARGET_PATH

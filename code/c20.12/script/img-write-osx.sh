@@ -26,7 +26,7 @@ dd if=shell.elf of=$DISK1_NAME bs=512 conv=notrunc seek=5000
 # export TARGET_PATH=mp
 # rm $TARGET_PATH
 # hdiutil attach $DISK2_NAME -mountpoint $TARGET_PATH
-# cp -v init.elf $TARGET_PATH
+# cp -v init.elf $TARGET_PATH/init
 # cp -v shell.elf $TARGET_PATH
-# cp -v loop $TARGET_PATH
+# cp -v loop.elf $TARGET_PATH/loop
 # hdiutil unmount $TARGET_PATH -verbose

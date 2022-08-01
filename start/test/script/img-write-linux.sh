@@ -2,9 +2,20 @@ if [ -f "disk1.vhd" ]; then
     mv disk1.vhd disk1.img
 fi
 
+if [ ! -f "disk1.img" ]; then
+    echo "找不到disk1.vhd，请从课程提供的百度网盘链接上下载放到image目录下"
+    exit
+fi
+
 if [ -f "disk2.vhd" ]; then
     mv disk2.vhd disk2.img
 fi
+
+if [ ! -f "disk2.img" ]; then
+    echo "找不到disk2.vhd，请从课程提供的百度网盘链接上下载放到image目录下"
+    exit
+fi
+
 
 export DISK1_NAME=disk1.img
 
