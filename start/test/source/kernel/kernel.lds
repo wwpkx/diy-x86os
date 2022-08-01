@@ -1,48 +1,39 @@
 /* 参考文档： https://ftp.gnu.org/old-gnu/Manuals/ld-2.9.1/html_chapter/ld_3.html */
-ENTRY(_start)
-OUTPUT_FORMAT("elf32-i386")  /* 输出格式 */
 SECTIONS
 {
-	PROVIDE(kernel_base_addr = 0x0);
+	PROVIDE(kernel_base = 0x0);
 
-	/* 起始位置64KB，这样不会覆盖loader */
 	. = 0x00010000;
 
-	/* 代码区 */
-	PROVIDE(text_start = .);
+	PROVIDE(s_text = .);
 	.text : {
-		*(EXCLUDE_FILE(*first_task*) .text)
-	} 
-
-	.rodata : {
-		*(EXCLUDE_FILE(*first_task*) .rodata)
+		*(EXCLUDE_FILE(*first_task* *lib_syscall*) .text)
 	}
-	PROVIDE(text_end = .);	
+	.rodata : {
+		*(EXCLUDE_FILE(*first_task* *lib_syscall*) .rodata)
+	}
+	PROVIDE(e_text = .);
 
-	/* 数据区 */
 	. = ALIGN(4096);
-	PROVIDE(data_start = .);
+	PROVIDE(s_data = .);
 	.data : {
-		*(EXCLUDE_FILE(*first_task*) .data)
+		*(EXCLUDE_FILE(*first_task* *lib_syscall*) .data)
 	}
 	.bss : {
-		*(EXCLUDE_FILE(*first_task*) .bss)
+		*(EXCLUDE_FILE(*first_task* *lib_syscall*) .bss)
 	}
-	PROVIDE(data_end = .);
+	e_data = .;
 
-	/* 第一个任务，与内核一起编译链接，但是会被复制到用户空间中运行 */
-	PROVIDE(first_task_start = .);
-	PROVIDE(first_task_end = . + SIZEOF(.first_task));
-	.first_task 0x80000000: AT(first_task_start) {
-		*first_task_entry*(.text)  /* 放在前头，以便正确运行 */ 
-		*first_task*(.text)
+	/* 初始进程的配置：接紧着在低端1MB内存开始存储，但是运行时搬运到0x80000000处 */
+	. = 0x80000000;
+
+	PROVIDE(s_first_task = LOADADDR(.first_task));
+	.first_task : AT(e_data) {
+		*first_task_entry*(.text .data. rodata .data)
+		*first_task*(.text .data. rodata .data)
+	    *lib_syscall*(.text .data .bss)
 	}
+	PROVIDE(e_first_task = LOADADDR(.first_task) + SIZEOF(.first_task));
 
-	.first_task.data : {
-		*first_task*(.data .bss)
-	}
-
-	/* 空闲区 */
-	. = ALIGN(4096);
-	PROVIDE(mem_free_start = . - 0x80000000);
+	PROVIDE(mem_free_start = e_first_task);
 }

@@ -6,16 +6,15 @@
  * 联系邮箱: 527676163@qq.com
  */
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
-#include <getopt.h>
-#include <unistd.h>
-#include <sys/stat.h>
+#include "lib_syscall.h"
 #include "main.h"
-#include "applib/lib_syscall.h"
+#include <getopt.h>
+#include <stdlib.h>
+#include <sys/file.h>
+#include "fs/file.h"
 
 static cli_t cli;
-static const char * bin_path = "/bin";       // 可执行文件搜索路径
 static const char * promot = "sh >>";       // 命令行提示符
 
 /**
@@ -31,10 +30,10 @@ static void show_promot(void) {
  */
 static int do_help(int argc, char **argv) {
     const cli_cmd_t * start = cli.cmd_start;
-    
+
     // 循环打印名称及用法
     while (start < cli.cmd_end) {
-        printf("%s\t\t%s\n",  start->name, start->useage);
+        printf("%s %s\n",  start->name, start->useage);
         start++;
     }
     return 0;
@@ -56,13 +55,13 @@ static int do_echo (int argc, char ** argv) {
     // 只有一个参数，需要先手动输入，再输出
     if (argc == 1) {
         char msg_buf[128];
-        
+
         fgets(msg_buf, sizeof(msg_buf), stdin);
         msg_buf[sizeof(msg_buf) - 1] = '\0';
         puts(msg_buf);
         return 0;
     }
-    
+
     // https://www.cnblogs.com/yinghao-liu/p/7123622.html
     // optind是下一个要处理的元素在argv中的索引
     // 当没有选项时，变为argv第一个不是选项元素的索引。
@@ -86,14 +85,14 @@ static int do_echo (int argc, char ** argv) {
                 return -1;
         }
     }
-    
+
     // 索引已经超过了最后一个参数的位置，意味着没有传入要发送的信息
     if (optind > argc - 1) {
         fprintf(stderr, "Message is empty \n");
         optind = 1;        // getopt需要多次调用，需要重置
         return -1;
     }
-    
+
     // 循环打印消息
     char * msg = argv[optind];
     for (int i = 0; i < count; i++) {
@@ -108,6 +107,158 @@ static int do_echo (int argc, char ** argv) {
  */
 static int do_exit (int argc, char ** argv) {
     exit(0);
+    return 0;
+}
+
+/**
+ * @brief 列出文本文件内容
+ */
+static int do_less (int argc, char ** argv) {
+    int line_mode = 0;
+
+    int ch;
+    while ((ch = getopt(argc, argv, "lh")) != -1) {
+        switch (ch) {
+            case 'h':
+                puts("show file content");
+                puts("less [-l] file");
+                puts("-l show file line by line.");
+                break;
+            case 'l':
+                line_mode = 1;
+                break;
+            case '?':
+                if (optarg) {
+                    fprintf(stderr, "Unknown option: -%s\n", optarg);
+                }
+                optind = 1;        // getopt需要多次调用，需要重置
+                return -1;
+        }
+    }
+
+    // 索引已经超过了最后一个参数的位置，意味着没有传入要发送的信息
+    if (optind > argc - 1) {
+        fprintf(stderr, "no file\n");
+        optind = 1;        // getopt需要多次调用，需要重置
+        return -1;
+    }
+
+    FILE * file = fopen(argv[optind], "r");
+    if (file == NULL) {
+        fprintf(stderr, "open file failed. %s", argv[optind]);
+        optind = 1;        // getopt需要多次调用，需要重置
+        return -1;
+    }
+
+    char * buf = (char *)malloc(255);
+
+    if (line_mode == 0) {
+        while (fgets(buf, 255, file) != NULL)  {
+            fputs(buf, stdout);
+        }
+    } else {
+        // 不使用缓存，这样能直接立即读取到输入而不用等回车
+        setvbuf(stdin, NULL, _IONBF, 0);
+        ioctl(0, TTY_CMD_ECHO, 0, 0);
+        while (1) {
+            char * b = fgets(buf, 255, file);
+            if (b == NULL ) {
+                break;
+            }
+            fputs(buf, stdout);
+
+            int ch;
+            while ((ch = fgetc(stdin)) != 'n') {
+                if (ch == 'q') {
+                    goto less_quit;
+                }
+            }
+        }
+    less_quit:
+    // 恢复为行缓存
+        setvbuf(stdin, NULL,_IOLBF, BUFSIZ);
+        ioctl(0, TTY_CMD_ECHO, 1, 0);
+    }
+    free(buf);
+    fclose(file);
+    optind = 1;        // getopt需要多次调用，需要重置
+    return 0;
+}
+
+/**
+ * @brief 列出目录内容
+ */
+static int do_ls (int argc, char ** argv) {
+    // 打开目录
+	DIR * p_dir = opendir("temp");
+	if (p_dir == NULL) {
+		printf("open dir failed\n");
+		return -1;
+	}
+
+    // 然后进行遍历
+	struct dirent * entry;
+	while((entry = readdir(p_dir)) != NULL) {
+        strlwr(entry->name);
+		printf("%c %s %d\n",
+                entry->type == FILE_DIR ? 'd' : 'f',
+                entry->name,
+                entry->size);
+	}
+	closedir(p_dir);
+
+    return 0;
+}
+
+/**
+ * @brief 复制文件命令
+ */
+static int do_cp (int argc, char ** argv) {
+    if (argc < 3) {
+        puts("no [from] or no [to]");
+        return -1;
+    }
+
+    FILE * from, * to;
+    from = fopen(argv[1], "rb");
+    to = fopen(argv[2], "wb");
+    if (!from || !to) {
+        puts("open file failed.");
+        goto ls_failed;
+    }
+
+    char * buf = (char *)malloc(255);
+    int size = 0;
+    while ((size = fread(buf, 1, 255, from)) > 0) {
+        fwrite(buf, 1, size, to);
+    }
+    free(buf);
+
+ls_failed:
+    if (from) {
+        fclose(from);
+    }
+    if (to) {
+        fclose(to);
+    }
+    return 0;
+}
+
+/**
+ * @brief 删除文件命令
+ */
+static int do_remove (int argc, char ** argv) {
+    if (argc < 2) {
+        fprintf(stderr, "no file");
+        return -1;
+    }
+
+    int err = unlink(argv[1]);
+    if (err < 0) {
+        fprintf(stderr, "rm file failed: %s", argv[1]);
+        return err;
+    }
+
     return 0;
 }
 
@@ -128,6 +279,26 @@ static const cli_cmd_t cmd_list[] = {
 		.useage = "echo [-n count] msg  -- echo something",
 		.do_func = do_echo,
 	},
+    {
+        .name = "ls",
+        .useage = "ls [dir] -- list director",
+        .do_func = do_ls,
+    },
+    {
+        .name = "less",
+        .useage = "list text file content",
+        .do_func = do_less,
+    },
+    {
+        .name = "cp",
+        .useage = "cp from to -- copy file",
+        .do_func = do_cp,
+    },
+    {
+       .name = "rm",
+        .useage = "rm file -- remove file",
+        .do_func = do_remove,
+    },
     {
         .name = "quit",
         .useage = "quit from shell",
@@ -155,10 +326,10 @@ static const cli_cmd_t * find_builtin (const char * name) {
         if (strcmp(cmd->name, name) != 0) {
             continue;
         }
-        
+
         return cmd;
     }
-    
+
     return (const cli_cmd_t *)0;
 }
 
@@ -176,36 +347,13 @@ static void run_builtin (const cli_cmd_t * cmd, int argc, char ** argv) {
  * 遍历搜索目录，看看文件是否存在，存在返回文件所在路径
  */
 static const char * find_exec_path (const char * file_name) {
-    static char path_buf[1024];      // 应该够大, 哈哈！
-    static char bin_buf[1024];
-    
-    strncpy(bin_buf, bin_path, sizeof(bin_buf));
-    
-    // 先在当前目录下找找，看看有没有该文件
-    struct stat file_stat;
-    int err = stat(file_name, &file_stat);
-    if (err == 0) {
-        return file_name;
-    }
-    
-    // 遍历bin_path中的各项目录，看看是否相应的文件是否存在
-    char * sep = ";";
-    char *token = strtok(bin_buf, sep);
-    while (token) {
-        // 合并生成路径
-        snprintf(path_buf, sizeof(path_buf), "%s/%s", token, file_name);
-
-        struct stat file_stat;
-        int err = stat(path_buf, &file_stat);
-        if (err == 0) {
-            return path_buf;
-        }
-
-        // 先获取下一位置
-        token = strtok(NULL, sep);
+    int fd = open(file_name, 0);
+    if (fd < 0) {
+        return (const char * )0;
     }
 
-    return (const char * )0;
+    close(fd);
+    return file_name;
 }
 
 /**
@@ -231,13 +379,9 @@ static void run_exec_file (const char * path, int argc, char ** argv) {
 }
 
 int main (int argc, char **argv) {
-#if 0
- 	// 打开标准输入输出设备，临时用,后续删除
-	open("tty0", 0);
+	open(argv[0], O_RDWR);
     dup(0);     // 标准输出
     dup(0);     // 标准错误输出
-    ///////////////////////////////////
-#endif
 
    	cli_init(promot, cmd_list, sizeof(cmd_list) / sizeof(cli_cmd_t));
 	for (;;) {
@@ -251,9 +395,13 @@ int main (int argc, char **argv) {
             // 读不到错误，或f发生错误，则退出
             break;
         }
-        
+
         // 读取的字符串中结尾可能有换行符，去掉之
         char * cr = strchr(cli.curr_input, '\n');
+        if (cr) {
+            *cr = '\0';
+        }
+        cr = strchr(cli.curr_input, '\r');
         if (cr) {
             *cr = '\0';
         }
@@ -261,40 +409,40 @@ int main (int argc, char **argv) {
         int argc = 0;
         char * argv[CLI_MAX_ARG_COUNT];
         memset(argv, 0, sizeof(argv));
-        
+
         // 提取出命令，找命令表
-        const char * space = " \t";  // 字符分割器
+        const char * space = " ";  // 字符分割器
         char *token = strtok(cli.curr_input, space);
         while (token) {
             // 记录参数
             argv[argc++] = token;
-            
+
             // 先获取下一位置
             token = strtok(NULL, space);
         }
-        
+
         // 没有任何输入，则x继续循环
         if (argc == 0) {
             continue;
         }
-        
+
         // 试图作为内部命令加载执行
         const cli_cmd_t * cmd = find_builtin(argv[0]);
         if (cmd) {
             run_builtin(cmd, argc, argv);
             continue;
         }
-        
+
         // 试图作为外部命令执行。只检查文件是否存在，不考虑是否可执行
         const char * path = find_exec_path(argv[0]);
         if (path) {
             run_exec_file(path, argc, argv);
             continue;
         }
-        
+
         // 找不到命令，提示错误
         fprintf(stderr, ESC_COLOR_ERROR"Unknown command: %s\n"ESC_COLOR_DEFAULT, cli.curr_input);
     }
-    
+
     return 0;
 }

@@ -8,20 +8,20 @@
 #ifndef DISK_H
 #define DISK_H
 
+#include "comm/types.h"
 #include "ipc/mutex.h"
 #include "ipc/sem.h"
 
 #define PART_NAME_SIZE              32      // 分区名称
 #define DISK_NAME_SIZE              32      // 磁盘名称大小
-#define DISK_CNT                    4       // 磁盘的数量
-#define DISK_CNT_PER_CHANNEL        2       // 通道的数量
-#define DISK_CHANNEL_CNT            2       // 通道数量
+#define DISK_CNT                    2       // 磁盘的数量
 #define DISK_PRIMARY_PART_CNT       4       // 主分区数量最多才4个
+#define DISK_PER_CHANNEL        2       // 通道的数量
+#define DISK_CHANNEL_CNT            2       // 通道数量
 
 // https://wiki.osdev.org/ATA_PIO_Mode#IDENTIFY_command
 // 只考虑支持主总结primary bus
-// https://wiki.osdev.org/ATA_PIO_Mode#IDENTIFY_command
-// 只考虑支持主总结primary bus
+#define IOBASE_PRIMARY              0x1F0
 #define	ATA_DATA(disk)				(disk->port_base + 0)		// 数据寄存器
 #define	ATA_ERROR(disk)				(disk->port_base + 1)		// 错误寄存器
 #define	ATA_SECTOR_COUNT(disk)		(disk->port_base + 2)		// 扇区数量寄存器
@@ -92,7 +92,6 @@ typedef struct _partinfo_t {
         FS_FAT16_1 = 0x0E,
     }type;
 
-    int device;                 // 设备号
 	int start_sector;           // 起始扇区
 	int total_sector;           // 总扇区
 }partinfo_t;
@@ -104,36 +103,20 @@ typedef struct _disk_t {
     char name[DISK_NAME_SIZE];      // 磁盘名称
 
     enum {
-        ATA_CHANNEL_PRIMARY = 0,         // 主总线
-        ATA_CHANNEL_SECONDARY = 1,      // 第二总线
-        ATA_CHANNEL_END,
-    }channel;
-
-    enum {
         ATA_DISK_MASTER = (0 << 4),     // 主设备
         ATA_DISK_SLAVE = (1 << 4),      // 从设备
     }drive;
 
     uint16_t port_base;             // 端口起始地址
-    int irq_num;                    // 中断序号
-
-    uint32_t sector_cnt;            // 通道大小
     int sector_size;                // 块大小
-	partinfo_t partinfo[DISK_PRIMARY_PART_CNT];	// 分区表
-
+    int sector_count;               // 总扇区数量
+	partinfo_t partinfo[DISK_PRIMARY_PART_CNT];	// 分区表, 包含一个描述整个磁盘的假分区信息
     mutex_t * mutex;              // 访问该通知的互斥信号量
-
-    int task_on_op;                 // 是任务正在操纵磁盘
     sem_t * op_sem;               // 读写命令操作的同步信号量
 }disk_t;
 
 void disk_init (void);
-int disk_read_sector(int device, uint8_t *buffer, int start_sector, int count);
-int disk_write_sector(int device, uint8_t *buffer, int start_sector, int count);
-int part_to_device (disk_t * disk, int part_no);
-partinfo_t * device_to_part (int device);
 
-void handler_ide_primary (void);
-void handler_ide_secondary (void);
+void exception_handler_ide_primary (void);
 
 #endif // DISK_H

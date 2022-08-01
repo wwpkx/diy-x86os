@@ -8,41 +8,39 @@
 #include "comm/cpu_instr.h"
 #include "core/task.h"
 #include "tools/klib.h"
-#include "cpu/irq.h"
-#include "cpu/mmu.h"
+#include "tools/log.h"
 #include "os_cfg.h"
+#include "cpu/irq.h"
 #include "core/memory.h"
-#include "ipc/mutex.h"
+#include "cpu/cpu.h"
+#include "cpu/mmu.h"
 #include "core/syscall.h"
 #include "comm/elf.h"
 #include "fs/fs.h"
 
 static task_manager_t task_manager;     // 任务管理器
-static int task_incr_id;                // 任务自增id
+static uint32_t idle_task_stack[IDLE_STACK_SIZE];	// 空闲任务堆栈
 static task_t task_table[TASK_NR];      // 用户进程表
 static mutex_t task_table_mutex;        // 进程表互斥访问锁
 
-/**
- * @brief 初始化任务
- */
-int task_init (task_t *task, const char * name, int flag, uint32_t entry, uint32_t esp) {
+static int tss_init (task_t * task, int flag, uint32_t entry, uint32_t esp) {
     // 为TSS分配GDT
-    int tss_sel = gdt_alloc_segment((uint32_t)&task->tss,
-                                sizeof(tss_t), SEG_P_PRESENT | SEG_DPL0 | GDB_TSS_TYPE);
+    int tss_sel = gdt_alloc_desc();
     if (tss_sel < 0) {
+        log_printf("alloc tss failed.\n");
         return -1;
     }
+
+    segment_desc_set(tss_sel, (uint32_t)&task->tss, sizeof(tss_t),
+            SEG_P_PRESENT | SEG_DPL0 | SEG_TYPE_TSS);
 
     // tss段初始化
     kernel_memset(&task->tss, 0, sizeof(tss_t));
 
-    // 文件相关
-    kernel_memset(task->file_table, 0, sizeof(task->file_table));
-
-    // 分配内核栈
+    // 分配内核栈，得到的是物理地址
     uint32_t kernel_stack = memory_alloc_page();
     if (kernel_stack == 0) {
-        goto task_init_failed;
+        goto tss_init_failed;
     }
     
     // 根据不同的权限选择不同的访问选择子
@@ -52,8 +50,8 @@ int task_init (task_t *task, const char * name, int flag, uint32_t entry, uint32
         data_sel = KERNEL_SELECTOR_DS;
     } else {
         // 注意加了RP3,不然将产生段保护错误
-        code_sel = task_manager.app_code_sel | GDT_RPL3;
-        data_sel = task_manager.app_data_sel | GDT_RPL3;
+        code_sel = task_manager.app_code_sel | SEG_RPL3;
+        data_sel = task_manager.app_data_sel | SEG_RPL3;
     }
 
     task->tss.eip = entry;
@@ -61,21 +59,41 @@ int task_init (task_t *task, const char * name, int flag, uint32_t entry, uint32
     task->tss.esp0 = kernel_stack + MEM_PAGE_SIZE;
     task->tss.ss0 = KERNEL_SELECTOR_DS;
     task->tss.eip = entry;
-    task->tss.eflags = EFLAGS_DEFAULT | EFLAGS_IF;
+    task->tss.eflags = EFLAGS_DEFAULT| EFLAGS_IF;
     task->tss.es = task->tss.ss = task->tss.ds = task->tss.fs 
             = task->tss.gs = data_sel;   // 全部采用同一数据段
     task->tss.cs = code_sel; 
     task->tss.iomap = 0;
-    task->tss_sel = tss_sel;
-
-    task->heap_top = 0;
 
     // 页表初始化
     uint32_t page_dir = memory_create_uvm();
     if (page_dir == 0) {
-        goto task_init_failed;
+        goto tss_init_failed;
     }
     task->tss.cr3 = page_dir;
+
+    task->tss_sel = tss_sel;
+    return 0;
+tss_init_failed:
+    gdt_free_sel(tss_sel);
+
+    if (kernel_stack) {
+        memory_free_page(kernel_stack);
+    }
+    return -1;
+}
+
+/**
+ * @brief 初始化任务
+ */
+int task_init (task_t *task, const char * name, int flag, uint32_t entry, uint32_t esp) {
+    ASSERT(task != (task_t *)0);
+
+    int err = tss_init(task, flag, entry, esp);
+    if (err < 0) {
+        log_printf("init task failed.\n");
+        return err;
+    }
 
     // 任务字段初始化
     kernel_strncpy(task->name, name, TASK_NAME_SIZE);
@@ -84,20 +102,21 @@ int task_init (task_t *task, const char * name, int flag, uint32_t entry, uint32
     task->time_slice = TASK_TIME_SLICE_DEFAULT;
     task->slice_ticks = task->time_slice;
     task->parent = (task_t *)0;
-    task->pid = task_incr_id++;
-    task->status = 0;
+    task->heap_start = 0;
+    task->heap_end = 0;
     list_node_init(&task->all_node);
     list_node_init(&task->run_node);
     list_node_init(&task->wait_node);
+
+    // 文件相关
+    kernel_memset(task->file_table, 0, sizeof(task->file_table));
+
+    // 插入就绪队列中和所有的任务队列中
+    irq_state_t state = irq_enter_protection();
+    task->pid = (uint32_t)task;   // 使用地址，能唯一
+    list_insert_last(&task_manager.task_list, &task->all_node);
+    irq_leave_protection(state);
     return 0;
-
-task_init_failed:
-    gdt_free_sel(tss_sel);
-
-    if (kernel_stack) {
-        memory_free_page(kernel_stack);
-    }
-    return -1;
 }
 
 /**
@@ -128,20 +147,14 @@ void task_uninit (task_t * task) {
     kernel_memset(task, 0, sizeof(task_t));
 }
 
+void simple_switch (uint32_t ** from, uint32_t * to);
+
 /**
  * @brief 切换至指定任务
  */
-void task_switch_to (task_t * task) {
-    switch_to_tss(task->tss_sel);
-}
-
-/**
- * @brief 空闲任务
- */
-static void idle_task_entry (void) {
-    for (;;) {
-        hlt();
-    }
+void task_switch_from_to (task_t * from, task_t * to) {
+     switch_to_tss(to->tss_sel);
+    //simple_switch(&from->stack, to->stack);
 }
 
 /**
@@ -154,40 +167,53 @@ static void idle_task_entry (void) {
  * 综上，最好是分离。
  */
 void task_first_init (void) {
+    void first_task_entry (void);
+
     // 以下获得的是bin文件在内存中的物理地址
-    extern uint8_t first_task_start, first_task_end;
+    extern uint8_t s_first_task[], e_first_task[];
 
-    uint32_t init_size = (uint32_t)(&first_task_end - &first_task_start);
-    uint32_t total_size = 10 * MEM_PAGE_SIZE;        // 可以设置的大一些, 如40KB
-    ASSERT(init_size < total_size);
+    // 分配的空间比实际存储的空间要大一些，多余的用于放置栈
+    uint32_t copy_size = (uint32_t)(e_first_task - s_first_task);
+    uint32_t alloc_size = 10 * MEM_PAGE_SIZE;
+    ASSERT(copy_size < alloc_size);
 
-    // 初始进程也是要求传递参数的，只不过传递的参数为空，所以加上下面的设置
-    task_args_t * task_args = (task_args_t *)(MEMORY_TASK_BASE + total_size - sizeof(task_args_t));
-    task_init(&task_manager.first_task, "kernel task", 0,
-                MEMORY_TASK_BASE, // init进程从进程空间起点处运行
-                (uint32_t)task_args);     // 里面的值不必要写
+    uint32_t first_start = (uint32_t)first_task_entry;
 
-    // todo: 这里不正确，bin结尾是bss区。。。。???
-    task_manager.first_task.heap_top = (uint32_t)&first_task_end;  // 这里不对
+    // 第一个任务代码量小一些，好和栈放在1个页面呢
+    // 这样就不要立即考虑还要给栈分配空间的问题
+    task_init(&task_manager.first_task, "first task", 0, first_start, first_start + alloc_size);
+    task_manager.first_task.heap_start = (uint32_t)e_first_task;  // 这里不对
+    task_manager.first_task.heap_end = task_manager.first_task.heap_start;
     task_manager.curr_task = &task_manager.first_task;
 
     // 更新页表地址为自己的
     mmu_set_page_dir(task_manager.first_task.tss.cr3);
 
-    // 分配内存供代码存放使用，然后将代码复制过去
-    memory_alloc_page_for(MEMORY_TASK_BASE,  total_size, PTE_P | PTE_W | PTE_U);
-    kernel_memcpy((void *)MEMORY_TASK_BASE, (void *)&first_task_start, init_size);
-
-    // 设置参数，虽然初始进程不用
-    task_args->argc = 0;
-    task_args->argv = 0;
-    task_args->ret_addr = 0;
+    // 分配一页内存供代码存放使用，然后将代码复制过去
+    memory_alloc_page_for(first_start,  alloc_size, PTE_P | PTE_W | PTE_U);
+    kernel_memcpy((void *)first_start, (void *)&s_first_task, copy_size);
 
     // 启动进程
     task_start(&task_manager.first_task);
 
     // 写TR寄存器，指示当前运行的第一个任务
     write_tr(task_manager.first_task.tss_sel);
+}
+
+/**
+ * @brief 返回初始任务
+ */
+task_t * task_first_task (void) {
+    return &task_manager.first_task;
+}
+
+/**
+ * @brief 空闲任务
+ */
+static void idle_task_entry (void) {
+    for (;;) {
+        hlt();
+    }
 }
 
 /**
@@ -199,24 +225,26 @@ void task_manager_init (void) {
 
     //数据段和代码段，使用DPL3，所有应用共用同一个
     //为调试方便，暂时使用DPL0
-    task_manager.app_data_sel = gdt_alloc_segment(0x00000000, 0xFFFFFFFF,
+    int sel = gdt_alloc_desc();
+    segment_desc_set(sel, 0x00000000, 0xFFFFFFFF,
                      SEG_P_PRESENT | SEG_DPL3 | SEG_S_NORMAL |
                      SEG_TYPE_DATA | SEG_TYPE_RW | SEG_D);
+    task_manager.app_data_sel = sel;
 
-    task_manager.app_code_sel = gdt_alloc_segment(0x00000000, 0xFFFFFFFF,
+    sel = gdt_alloc_desc();
+    segment_desc_set(sel, 0x00000000, 0xFFFFFFFF,
                      SEG_P_PRESENT | SEG_DPL3 | SEG_S_NORMAL |
                      SEG_TYPE_CODE | SEG_TYPE_RW | SEG_D);
-
-    // <0和0的id有其它用途
-    task_incr_id = 1;
+    task_manager.app_code_sel = sel;
 
     // 各队列初始化
     list_init(&task_manager.ready_list);
     list_init(&task_manager.task_list);
     list_init(&task_manager.sleep_list);
 
+    // 空闲任务初始化
     task_init(&task_manager.idle_task,
-                "idle task", 
+                "idle task",
                 TASK_FLAG_SYSTEM,
                 (uint32_t)idle_task_entry,
                 0);     // 运行于内核模式，无需指定特权级3的栈
@@ -242,7 +270,6 @@ void task_set_block (task_t *task) {
         list_remove(&task_manager.ready_list, &task->run_node);
     }
 }
-
 /**
  * @brief 获取下一将要运行的任务
  */
@@ -328,19 +355,21 @@ void task_remove_fd (int fd) {
  * @brief 当前任务主动放弃CPU
  */
 int sys_yield (void) {
-    task_t * curr_task = task_current();
-
     irq_state_t state = irq_enter_protection();
 
-    // 如果队列中还有其它任务，则将当前任务移入到队列尾部
-    task_set_block(curr_task);
-    task_set_ready(curr_task);
+    if (list_count(&task_manager.ready_list) > 1) {
+        task_t * curr_task = task_current();
 
-    // 切换至下一个任务，在切换完成前要保护，不然可能下一任务
-    // 由于某些原因运行后阻塞或删除，再回到这里切换将发生问题
-    task_dispatch();
+        // 如果队列中还有其它任务，则将当前任务移入到队列尾部
+        task_set_block(curr_task);
+        task_set_ready(curr_task);
 
+        // 切换至下一个任务，在切换完成前要保护，不然可能下一任务
+        // 由于某些原因运行后阻塞或删除，再回到这里切换将发生问题
+        task_dispatch();
+    }
     irq_leave_protection(state);
+
     return 0;
 }
 
@@ -348,10 +377,12 @@ int sys_yield (void) {
  * @brief 进行一次任务调度
  */
 void task_dispatch (void) {
-    task_t * next_task = task_next_run();
-    if (next_task != task_manager.curr_task) {
-        task_manager.curr_task = next_task;
-        task_switch_to(task_manager.curr_task);
+    task_t * to = task_next_run();
+    if (to != task_manager.curr_task) {
+        task_t * from = task_manager.curr_task;
+
+        task_manager.curr_task = to;
+        task_switch_from_to(from, to);
     }
 }
 
@@ -420,7 +451,6 @@ static void free_task (task_t * task) {
     mutex_unlock(&task_table_mutex);
 }
 
-
 /**
  * @brief 任务进入睡眠状态
  * 
@@ -454,7 +484,7 @@ static void copy_opened_files(task_t * child_task) {
     for (int i = 0; i < TASK_OFILE_NR; i++) {
         file_t * file = parent->file_table[i];
         if (file) {
-            fs_add_ref(file);
+            file_inc_ref(file);
             child_task->file_table[i] = parent->file_table[i];
         }
     }
@@ -488,7 +518,7 @@ int sys_fork (void) {
     // 从父进程的栈中取部分状态，然后写入tss。
     // 注意检查esp, eip等是否在用户空间范围内，不然会造成page_fault
     tss_t * tss = &child_task->tss;
-    tss->eax = 0;                       // 子进程返回值pid = 自己的id
+    tss->eax = 0;                       // 子进程返回0
     tss->ebx = frame->ebx;
     tss->ecx = frame->ecx;
     tss->edx = frame->edx;
@@ -523,7 +553,6 @@ fork_failed:
 
 /**
  * @brief 加载一个程序表头的数据到内存中
- * 参考：https://wiki.osdev.org/ELF
  */
 static int load_phdr(int file, Elf32_Phdr * phdr, uint32_t page_dir) {
     // 生成的ELF文件要求是页边界对齐的
@@ -532,26 +561,29 @@ static int load_phdr(int file, Elf32_Phdr * phdr, uint32_t page_dir) {
     // 分配空间
     int err = memory_alloc_for_page_dir(page_dir, phdr->p_vaddr, phdr->p_memsz, PTE_P | PTE_U | PTE_W);
     if (err < 0) {
+        log_printf("no memory");
         return -1;
     }
 
     // 调整当前的读写位置
     if (sys_lseek(file, phdr->p_offset, 0) < 0) {
+        log_printf("read file failed");
         return -1;
     }
 
     // 为段分配所有的内存空间.后续操作如果失败，将在上层释放
     // 简单起见，设置成可写模式，也许可考虑根据phdr->flags设置成只读
     // 因为没有找到该值的详细定义，所以没有加上
-    uint32_t vaddr = phdr->p_vaddr; 
-    uint32_t size = phdr->p_filesz;  
+    uint32_t vaddr = phdr->p_vaddr;
+    uint32_t size = phdr->p_filesz;
     while (size > 0) {
         int curr_size = (size > MEM_PAGE_SIZE) ? MEM_PAGE_SIZE : size;
 
         uint32_t paddr = memory_get_paddr(page_dir, vaddr);
-        
+
         // 注意，这里用的页表仍然是当前的
         if (sys_read(file, (char *)paddr, curr_size) <  curr_size) {
+            log_printf("read file failed");
             return -1;
         }
 
@@ -576,28 +608,33 @@ static uint32_t load_elf_file (task_t * task, const char * name, uint32_t page_d
     // 以只读方式打开
     int file = sys_open(name, 0);   // todo: flags暂时用0替代
     if (file < 0) {
+        log_printf("open file failed.%s", name);
         goto load_failed;
     }
 
     // 先读取文件头
     int cnt = sys_read(file, (char *)&elf_hdr, sizeof(Elf32_Ehdr));
     if (cnt < sizeof(Elf32_Ehdr)) {
+        log_printf("elf hdr too small. size=%d", cnt);
         goto load_failed;
     }
 
     // 做点必要性的检查。当然可以再做其它检查
     if ((elf_hdr.e_ident[0] != ELF_MAGIC) || (elf_hdr.e_ident[1] != 'E')
         || (elf_hdr.e_ident[2] != 'L') || (elf_hdr.e_ident[3] != 'F')) {
+        log_printf("check elf indent failed.");
         goto load_failed;
     }
 
     // 必须是可执行文件和针对386处理器的类型，且有入口
     if ((elf_hdr.e_type != ET_EXEC) || (elf_hdr.e_machine != ET_386) || (elf_hdr.e_entry == 0)) {
+        log_printf("check elf type or entry failed.");
         goto load_failed;
     }
 
     // 必须有程序头部
     if ((elf_hdr.e_phentsize == 0) || (elf_hdr.e_phoff == 0)) {
+        log_printf("none programe header");
         goto load_failed;
     }
 
@@ -605,31 +642,34 @@ static uint32_t load_elf_file (task_t * task, const char * name, uint32_t page_d
     uint32_t e_phoff = elf_hdr.e_phoff;
     for (int i = 0; i < elf_hdr.e_phnum; i++, e_phoff += elf_hdr.e_phentsize) {
         if (sys_lseek(file, e_phoff, 0) < 0) {
+            log_printf("read file failed");
             goto load_failed;
         }
 
         // 读取程序头后解析，这里不用读取到新进程的页表中，因为只是临时使用下
         cnt = sys_read(file, (char *)&elf_phdr, sizeof(Elf32_Phdr));
         if (cnt < sizeof(Elf32_Phdr)) {
+            log_printf("read file failed");
             goto load_failed;
         }
 
         // 简单做一些检查，如有必要，可自行加更多
         // 主要判断是否是可加载的类型，并且要求加载的地址必须是用户空间
         if ((elf_phdr.p_type != PT_LOAD) || (elf_phdr.p_vaddr < MEMORY_TASK_BASE)) {
-            continue;
+           continue;
         }
 
         // 加载当前程序头
         int err = load_phdr(file, &elf_phdr, page_dir);
         if (err < 0) {
+            log_printf("load program hdr failed");
             goto load_failed;
         }
-        
-        // 简单起见，不检查了，以最后的地址为bss的地址
-        task->heap_top = elf_phdr.p_vaddr + elf_phdr.p_memsz;
-   }
 
+        // 简单起见，不检查了，以最后的地址为bss的地址
+        task->heap_start = elf_phdr.p_vaddr + elf_phdr.p_memsz;
+        task->heap_end = task->heap_start;
+   }
 
     sys_close(file);
     return elf_hdr.e_entry;
@@ -652,18 +692,22 @@ static int copy_args (char * to, uint32_t page_dir, int argc, char **argv) {
     task_args.argv = (char **)(to + sizeof(task_args_t));
 
     // 复制各项参数, 跳过task_args和参数表
+    // 各argv参数写入的内存空间
     char * dest_arg = to + sizeof(task_args_t) + sizeof(char *) * (argc + 1);   // 留出结束符
+    
+    // argv表
     char ** dest_argv_tb = (char **)memory_get_paddr(page_dir, (uint32_t)(to + sizeof(task_args_t)));
+    ASSERT(dest_argv_tb != 0);
 
     for (int i = 0; i < argc; i++) {
         char * from = argv[i];
 
         // 不能用kernel_strcpy，因为to和argv不在一个页表里
-        int len = kernel_strlen(from) + 1;
+        int len = kernel_strlen(from) + 1;   // 包含结束符
         int err = memory_copy_uvm_data((uint32_t)dest_arg, page_dir, (uint32_t)from, len);
-        if (err < 0) {
-            return -1;
-        }
+        ASSERT(err >= 0);
+
+        // 关联ar
         dest_argv_tb[i] = dest_arg;
 
         // 记录下位置后，复制的位置前移
@@ -706,14 +750,13 @@ int sys_execve(char *name, char **argv, char **env) {
     // 准备用户栈空间，预留环境环境及参数的空间
     uint32_t stack_top = MEM_TASK_STACK_TOP - MEM_TASK_ARG_SIZE;    // 预留一部分参数空间
     int err = memory_alloc_for_page_dir(new_page_dir,
-                            MEM_TASK_STACK_TOP - MEM_TASK_STACK_SIZE, 
+                            MEM_TASK_STACK_TOP - MEM_TASK_STACK_SIZE,
                             MEM_TASK_STACK_SIZE, PTE_P | PTE_U | PTE_W);
     if (err < 0) {
         goto exec_failed;
     }
 
-    // 复制参数。这里涉及到从一个进程空间拷数据到另一个进程空间
-    // 所以均需要转换成其物理地址，从而顺利进行拷贝？？？？
+    // 复制参数，写入到栈顶的后边
     int argc = strings_count(argv);
     err = copy_args((char *)stack_top, new_page_dir, argc, argv);
     if (err < 0) {
@@ -726,9 +769,12 @@ int sys_execve(char *name, char **argv, char **env) {
     // 运行地址要设备成整个程序的入口地址
     syscall_frame_t * frame = (syscall_frame_t *)(task->tss.esp0 - sizeof(syscall_frame_t));
     frame->eip = entry;
+    frame->eax = frame->ebx = frame->ecx = frame->edx = 0;
+    frame->esi = frame->edi = frame->ebp = 0;
+    frame->eflags = EFLAGS_DEFAULT| EFLAGS_IF;  // 段寄存器无需修改
 
-    // 内核栈不用设置，保持不变，但用户栈需要更改
-    // 同样要加上调用门的参数压栈空间
+    // 内核栈不用设置，保持不变，后面调用memory_destroy_uvm并不会销毁内核栈的映射。
+    // 但用户栈需要更改, 同样要加上调用门的参数压栈空间
     frame->esp = stack_top - sizeof(uint32_t)*SYSCALL_PARAM_COUNT;
 
     // 切换到新的页表
@@ -755,6 +801,15 @@ exec_failed:    // 必要的资源释放
 }
 
 /**
+ * 返回任务的pid
+ */
+int sys_getpid (void) {
+    task_t * curr_task = task_current();
+    return curr_task->pid;
+}
+
+
+/**
  * @brief 等待子进程退出
  */
 int sys_wait(int* status) {
@@ -768,25 +823,26 @@ int sys_wait(int* status) {
             if (task->parent != curr_task) {
                 continue;
             }
-            
+
             if (task->state == TASK_ZOMBIE) {
                 int pid = task->pid;
 
                 *status = task->status;
-                
+
                 memory_destroy_uvm(task->tss.cr3);
                 memory_free_page(task->tss.esp0 - MEM_PAGE_SIZE);
                 kernel_memset(task, 0, sizeof(task_t));
 
-                mutex_unlock(&task_table_mutex); 
+                mutex_unlock(&task_table_mutex);
                 return pid;
             }
         }
-        mutex_unlock(&task_table_mutex); 
+        mutex_unlock(&task_table_mutex);
 
+        // 找不到，则等待
         irq_state_t state = irq_enter_protection();
-        task_set_block(curr_task);   
-        curr_task->state = TASK_WAITING;     
+        task_set_block(curr_task);
+        curr_task->state = TASK_WAITING;
         task_dispatch();
         irq_leave_protection(state);
     }
@@ -818,12 +874,12 @@ void sys_exit(int status) {
             task->parent = &task_manager.first_task;
 
             // 如果子进程中有僵尸进程，唤醒回收资源
-            // 并不由自己回收，因为自己将要退出  
+            // 并不由自己回收，因为自己将要退出
             if (task->state == TASK_ZOMBIE) {
                 move_child = 1;
             }
         }
-    }    
+    }
     mutex_unlock(&task_table_mutex);
 
     irq_state_t state = irq_enter_protection();
@@ -837,9 +893,10 @@ void sys_exit(int status) {
     }
 
     // 如果有父任务在wait，则唤醒父任务进行回收
+    // 如果父进程没有等待，则一直处理僵死状态？
     if (parent->state == TASK_WAITING) {
         task_set_ready(curr_task->parent);
-    } 
+    }
 
     // 保存返回值，进入僵尸状态
     curr_task->status = status;
@@ -848,12 +905,4 @@ void sys_exit(int status) {
     task_dispatch();
 
     irq_leave_protection(state);
-}
-
-/**
- * 返回任务的pid
- */
-int sys_getpid (void) {
-    task_t * curr_task = task_current();
-    return curr_task->pid;
 }

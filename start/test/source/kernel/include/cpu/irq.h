@@ -31,45 +31,57 @@
 #define IRQ19_XM            19
 #define IRQ20_VE            20
 
-#define	IRQ0_TIMER			0x20				// 100Hz定时器中断
+#define IRQ0_TIMER          0x20
 #define IRQ1_KEYBOARD		0x21				// 按键中断
-#define IRQ12_MOUSE			0x2C				// PS/2鼠标中断
 #define IRQ14_HARDDISK_PRIMARY		0x2E		// 主总线上的ATA磁盘中断
-#define IRQ15_HARDDISK_SECOND		0x2F		// 主总线上的ATA磁盘中断
+
+#define ERR_PAGE_P          (1 << 0)
+#define ERR_PAGE_WR          (1 << 1)
+#define ERR_PAGE_US          (1 << 1)
+
+#define ERR_EXT             (1 << 0)
+#define ERR_IDT             (1 << 1)
 
 /**
- * 中断发生时相应的栈结构
+ * 中断发生时相应的栈结构，暂时为无特权级发生的情况
  */
 typedef struct _exception_frame_t {
-	int gs, fs, es, ds, edx, ecx, eax;
-	int num;
-	int error_code;
-	int eip, cs, eflags;
+    // 结合压栈的过程，以及pusha指令的实际压入过程
+    int gs, fs, es, ds;
+    int edi, esi, ebp, esp, ebx, edx, ecx, eax;
+    int num;
+    int error_code;
+    int eip, cs, eflags;
+    int esp3, ss3;
 }exception_frame_t;
 
 typedef void(*irq_handler_t)(void);
 
 void irq_init (void);
 int irq_install(int irq_num, irq_handler_t handler);
-void irq_enable(int irq_num);
-void irq_disable(int irq_num);
-void irq_disable_global(void);
-void irq_enable_global(void);
 
-typedef uint32_t irq_state_t;
-irq_state_t irq_enter_protection (void);
-void irq_leave_protection (irq_state_t state);
+void exception_handler_unknown (void);
+void exception_handler_divider (void);
+void exception_handler_Debug (void);
+void exception_handler_NMI (void);
+void exception_handler_breakpoint (void);
+void exception_handler_overflow (void);
+void exception_handler_bound_range (void);
+void exception_handler_invalid_opcode (void);
+void exception_handler_device_unavailable (void);
+void exception_handler_double_fault (void);
+void exception_handler_invalid_tss (void);
+void exception_handler_segment_not_present (void);
+void exception_handler_stack_segment_fault (void);
+void exception_handler_general_protection (void);
+void exception_handler_page_fault (void);
+void exception_handler_fpu_error (void);
+void exception_handler_alignment_check (void);
+void exception_handler_machine_check (void);
+void exception_handler_smd_exception (void);
+void exception_handler_virtual_exception (void);
 
-void irq_enter_handler (void);
-void irq_leave_handler (void);
-int irq_is_in (void);
-
-// PIC0��PIC1���ƼĴ���
-#define PIC0_COMMAND		0x20
-#define PIC0_DATA			0x21
-#define PIC1_COMMAND		0xA0
-#define PIC1_DATA			0xA1
-
+// PIC控制器相关的寄存器及位配置
 #define PIC0_ICW1			0x20
 #define PIC0_ICW2			0x21
 #define PIC0_ICW3			0x21
@@ -84,36 +96,23 @@ int irq_is_in (void);
 #define PIC1_OCW2			0xa0
 #define PIC1_IMR			0xa1
 
-#define PIC_ICW1_ICW4		(1 << 0)		// ��ʼ��ʱ��1- ��ҪICW4, 0-����Ҫ
-#define PIC_ICW1_SNGL		(1 << 1)		// 1- ��Ƭ8259, 0 - ��Ƭ����
-#define PIC_ICW1_LTIM		(1 << 3)		// 1- �ߵ�ƽ����, 0 - �����ش���
-#define PIC_ICW_ALWAYS_1	(1 << 4)		// ����Ϊ1
+#define PIC_ICW1_ICW4		(1 << 0)		// 1 - 需要初始化ICW4
+#define PIC_ICW1_ALWAYS_1	(1 << 4)		// 总为1的位
+#define PIC_ICW4_8086	    (1 << 0)        // 8086工作模式
 
-#define PIC_ICW4_ALWAYS_1	(1 << 0)		// ����Ϊ1
-#define PIC_OCW2_EOI		(1 << 5)		// 1 - ʹ��ǰISR�Ĵ�������Ӧλ��0
+#define PIC_OCW2_EOI		(1 << 5)		// 1 - 非特殊结束中断EOI命令
+
+#define IRQ_PIC_START		0x20			// PIC中断起始号
+
+void irq_enable(int irq_num);
+void irq_disable(int irq_num);
+void irq_disable_global(void);
+void irq_enable_global(void);
+typedef uint32_t irq_state_t;
+irq_state_t irq_enter_protection (void);
+void irq_leave_protection (irq_state_t state);
 
 void pic_send_eoi(int irq);
-void pic_clear_all(void);
 
-// 异常处理函数
-void handler_divider (void);
-void handler_Debug (void);
-void handler_NMI (void);
-void handler_breakpoint (void);
-void handler_overflow (void);
-void handler_bound_range (void);
-void handler_invalid_opcode (void);
-void handler_device_unavailable (void);
-void handler_double_fault (void);
-void handler_invalid_tss (void);
-void handler_segment_not_present (void);
-void handler_stack_segment_fault (void);
-void handler_general_protection (void);
-void handler_page_fault (void);
-void handler_fpu_error (void);
-void handler_alignment_check (void);
-void handler_machine_check (void);
-void handler_smd_exception (void);
-void handler_virtual_exception (void);
 
 #endif

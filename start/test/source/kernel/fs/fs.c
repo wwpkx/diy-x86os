@@ -9,228 +9,251 @@
 #include "comm/cpu_instr.h"
 #include "tools/klib.h"
 #include "fs/fs.h"
+#include "comm/boot_info.h"
+#include <sys/stat.h>
+#include "dev/console.h"
 #include "fs/file.h"
-#include "fs/fat/fat.h"
-#include "ipc/mutex.h"
-#include "tools/klib.h"
 #include "tools/log.h"
 #include "dev/dev.h"
-#include "dev/tty.h"
+#include <sys/file.h>
 #include "dev/disk.h"
 #include "os_cfg.h"
 
-static fs_t root_fs;		// 根文件系统
+#define FS_TABLE_SIZE		10		// 文件系统表数量
 
-// 文件系统操作接口
-static fs_op_t fs_ops[] = {
-	[FS_FAT16_0] = {
-		.mount = fat_mount,
-		.unmount = fat_unmount,
-		.open = fat_open,
-		.read = fat_read,
-		.write = fat_write,
-		.close = fat_close,
-		.seek = fat_seek,
-		.stat = fat_stat,
-	},
-	[FS_FAT16_1] = {
-		.mount = fat_mount,
-		.unmount = fat_unmount,
-		.open = fat_open,
-		.read = fat_read,
-		.write = fat_write,
-		.close = fat_close,
-		.seek = fat_seek,
-		.stat = fat_stat,
-	},
-};
+static list_t mounted_list;			// 已挂载的文件系统
+static list_t free_list;				// 空闲fs列表
+static fs_t fs_tbl[FS_TABLE_SIZE];		// 空闲文件系统列表大小
+static fs_t * root_fs;				// 根文件系统
 
-#define ADDR                    (8*1024*1024)      // 在0x800000处缓存原始
-#define SYS_DISK_SECTOR_SIZE    512
-
-static uint8_t * pos;       // 当前位置
-
-static void read_disk(int sector, int sector_count, uint8_t * buf) {
-	outb(0x1F1, (uint8_t) 0);
-	outb(0x1F1, (uint8_t) 0);
-	outb(0x1F2, (uint8_t) (sector_count >> 8));
-	outb(0x1F2, (uint8_t) (sector_count));
-	outb(0x1F3, (uint8_t) (sector >> 24));		// LBA参数的24~31位
-	outb(0x1F3, (uint8_t) (sector));			// LBA参数的0~7位
-	outb(0x1F4, (uint8_t) (0));					// LBA参数的32~39位
-	outb(0x1F4, (uint8_t) (sector >> 8));		// LBA参数的8~15位
-	outb(0x1F5, (uint8_t) (0));					// LBA参数的40~47位
-	outb(0x1F5, (uint8_t) (sector >> 16));		// LBA参数的16~23位
-	outb(0x1F6, (uint8_t) (0xE0));
-	outb(0x1F7, (uint8_t) 0x24);
-
-	// 读取数据
-	uint16_t *data_buf = (uint16_t*) buf;
-	while (sector_count-- > 0) {
-		// 每次扇区读之前都要检查，等待数据就绪
-		while ((inb(0x1F7) & 0x88) != 0x8) {}
-
-		// 读取并将数据写入到缓存中
-		for (int i = 0; i < SYS_DISK_SECTOR_SIZE / 2; i++) {
-			*data_buf++ = inw(0x1F0);
-		}
-	}
-}
-
-static file_t file_table[FILE_TABLE_SIZE];      // 系统中可打开的文件表
-static mutex_t fs_mutex;                // 访问file_table的互斥信号量
-
+extern fs_op_t devfs_op;
+extern fs_op_t fatfs_op;
 
 /**
- * @brief 检查路径是否正常
+ * @brief 判断文件描述符是否正确
  */
-int is_path_valid (const char * path) {
-	if ((path == (const char *)0) || (path[0] == '\0')) {
-		return 0;
-	}
-
-    return 1;
-}
-
-/**
- * @brief 分配一个文件描述符
- */
-static file_t * file_alloc (void) {
-    file_t * file = (file_t *)0;
-
-    mutex_lock(&fs_mutex);
-    for (int i = 0; i < FILE_TABLE_SIZE; i++) {
-        file_t * pfile = file_table + i;
-        if (pfile->ref == 0) {
-			kernel_memset(pfile, 0, sizeof(file_t));
-            pfile->ref = 1;
-			file = pfile;
-            break;
-        }
-    }
-    mutex_unlock(&fs_mutex);
-    return file;
-}
-
-/**
- * @brief 释放文件描述符
- */
-static void file_free (file_t * file) {
-    mutex_lock(&fs_mutex);
-    if (file->ref) {
-        file->ref--;
-    }
-    mutex_unlock(&fs_mutex);
-}
-
-/**
- * @brief 增加file的引用计数
- */
-void fs_add_ref (file_t * file) {
-    mutex_lock(&fs_mutex);
-	file->ref++;
-    mutex_unlock(&fs_mutex);
-}
-
-/**
- * @brief 加载根文件系统
- */
-int fs_load_root (int root_device) {
-	log_printf("loading root file system...");
-
-	// 根据文件系统类型模块进行特定的处理
-	partinfo_t * part_info = device_to_part(root_device);
-	if (!part_info) {
-		log_printf("Get part info failed. device= %d", root_device);
-		return -1;
-	}
-
-	// 检查分区的支持情况
-	if (part_info->type >= sizeof(fs_ops)) {
-		log_printf("Unsupport file system. deivce = %d, type = %d", root_device, part_info->type);
-		return -1;
-	}
-
-	root_fs.part_info = part_info;
-	root_fs.op = fs_ops + part_info->type;
-
-	// 调用实际的加载机制
-	if (!root_fs.op->mount) {
-		log_printf("Unsupport file system. deivce = %d, type = %d", root_device, part_info->type);
-		return -1;
-	}
-
-	int err = root_fs.op->mount(&root_fs, part_info);
-	if (err < 0) {
-		log_printf("mount fs %s failed", part_info->name);
-		return -1;
+static int is_fd_bad (int file) {
+	if ((file < 0) && (file >= TASK_OFILE_NR)) {
+		return 1;
 	}
 
 	return 0;
 }
 
 /**
+ * @brief 获取指定文件系统的操作接口
+ */
+static fs_op_t * get_fs_op (fs_type_t type, int major) {
+	switch (type) {
+	case FS_FAT16:
+		return &fatfs_op;
+	case FS_DEVFS:
+		return &devfs_op;
+	default:
+		return (fs_op_t *)0;
+	}
+}
+
+/**
+ * @brief 挂载文件系统
+ */
+static fs_t * mount (fs_type_t type, char * mount_point, int dev_major, int dev_minor) {
+	fs_t * fs = (fs_t *)0;
+
+	log_printf("mount file system, name: %s, dev: %x", mount_point, dev_major);
+
+	// 遍历，查找是否已经有挂载
+ 	list_node_t * curr = list_first(&mounted_list);
+	while (curr) {
+		fs_t * fs = list_node_parent(curr, fs_t, node);
+		if (kernel_strncmp(fs->mount_point, mount_point, FS_MOUNTP_SIZE) == 0) {
+			log_printf("fs alreay mounted.");
+			goto mount_failed;
+		}
+		curr = list_node_next(curr);
+	}
+
+	// 分配新的fs结构
+	list_node_t * free_node = list_remove_first(&free_list);
+	if (!free_node) {
+		log_printf("no free fs, mount failed.");
+		goto mount_failed;
+	}
+	fs = list_node_parent(free_node, fs_t, node);
+
+	// 检查挂载的文件系统类型：不检查实际
+	fs_op_t * op = get_fs_op(type, dev_major);
+	if (!op) {
+		log_printf("unsupported fs type: %d", type);
+		goto mount_failed;
+	}
+
+	// 给定数据一些缺省的值
+	kernel_memset(fs, 0, sizeof(fs_t));
+	kernel_strncpy(fs->mount_point, mount_point, FS_MOUNTP_SIZE);
+	fs->op = op;
+	fs->mutex = (mutex_t *)0;
+
+	// 挂载文件系统
+	if (op->mount(fs, dev_major, dev_minor) < 0) {
+		log_printf("mount fs %s failed", mount_point);
+		goto mount_failed;
+	}
+	list_insert_last(&mounted_list, &fs->node);
+	return fs;
+mount_failed:
+	if (fs) {
+		// 回收fs
+		list_insert_first(&free_list, &fs->node);
+	}
+	return (fs_t *)0;
+}
+
+/**
+ * @brief 初始化挂载列表
+ */
+static void mount_list_init (void) {
+	list_init(&free_list);
+	for (int i = 0; i < FS_TABLE_SIZE; i++) {
+		list_insert_first(&free_list, &fs_tbl[i].node);
+	}
+	list_init(&mounted_list);
+}
+
+/**
  * @brief 文件系统初始化
  */
 void fs_init (void) {
-	// 文件描述符表初始化
-	kernel_memset(&file_table, 0, sizeof(file_table));
-	mutex_init(&fs_mutex);
+	mount_list_init();
+    file_table_init();
 
-	// 磁盘初始化
+	// 磁盘检查
 	disk_init();
+
+	// 挂载设备文件系统，待后续完成。挂载点名称可随意
+	fs_t * fs = mount(FS_DEVFS, "/dev", 0, 0);
+	ASSERT(fs != (fs_t *)0);
+
+	// 挂载根文件系统
+	root_fs = mount(FS_FAT16, "/home", ROOT_DEV);
+	ASSERT(root_fs != (fs_t *)0);
+}
+
+/**
+ * @brief 目录是否有效
+ */
+int path_is_valid (const char * path) {
+	return (path != (const char *)0) && path[0];
+}
+
+// 当前进程所在的文件系统和路径
+int path_is_relative (const char * path) {
+	return path_is_valid(path) && (path[0] != '/');
+}
+
+/**
+ * @brief 转换目录为数字
+ */
+int path_to_num (const char * path, int * num) {
+	int n = 0;
+
+	const char * c = path;
+	while (*c && *c != '/') {
+		n = n * 10 + *c - '0';
+		c++;
+	}
+	*num = n;
+	return 0;
+}
+
+/**
+ * @brief 判断路径是否以xx开头
+ */
+int path_begin_with (const char * path, const char * str) {
+	const char * s1 = path, * s2 = str;
+	while (*s1 && *s2 && (*s1 == *s2)) {
+		s1++;
+		s2++;
+	}
+
+	return *s2 == '\0';
+}
+
+/**
+ * @brief 获取下一级子目录
+ */
+const char * path_next_child (const char * path) {
+   const char * c = path;
+
+    while (*c && (*c++ == '/')) {}
+    while (*c && (*c++ != '/')) {}
+    return *c ? c : (const char *)0;
+}
+
+static void fs_protect (fs_t * fs) {
+	if (fs->mutex) {
+		mutex_lock(fs->mutex);
+	}
+}
+
+static void fs_unprotect (fs_t * fs) {
+	if (fs->mutex) {
+		mutex_unlock(fs->mutex);
+	}
 }
 
 /**
  * 打开文件
  */
-int sys_open(const char *path, int flags, ...) {
-	int fd = -1;
-
-	// 必要的参数检查
-	if (!is_path_valid(path)) {
+int sys_open(const char *name, int flags, ...) {
+	// 分配文件描述符链接
+	file_t * file = file_alloc();
+	if (!file) {
 		return -1;
 	}
 
-	// 分配文件描述符链接。这个过程中可能会被释放
-	file_t * file = file_alloc();
-	if (file) {
-		fd = task_alloc_fd(file);
-		if (fd < 0) {
-			goto sys_open_failed;
-		}
+	int fd = task_alloc_fd(file);
+	if (fd < 0) {
+		goto sys_open_failed;
 	}
 
-	if (kernel_strncmp(path, "tty0", sizeof("tty0")) == 0) {
-		int dev = make_device_num(DEV_TTY, 0);	// 暂时只支持tty0
-
-		// 打开tty设备，检查是否重复打开？
-		int tty = tty_open(dev);
-		if (tty < 0) {
-			goto sys_open_failed;
+	// 检查名称是否以挂载点开头，如果没有，则认为name在根目录下
+	// 即只允许根目录下的遍历
+	fs_t * fs = (fs_t *)0;
+	list_node_t * node = list_first(&mounted_list);
+	while (node) {
+		fs_t * curr = list_node_parent(node, fs_t, node);
+		if (path_begin_with(name, curr->mount_point)) {
+			fs = curr;
+			break;
 		}
-		
-		file->dev = dev;
-		file->mode = O_RDWR;
-		file->pos = 0;
-		file->ref = 1;
-		file->type = FILE_TTY;
+		node = list_node_next(node);
+	}
+
+	if (fs) {
+		name = path_next_child(name);
 	} else {
-		int err = root_fs.op->open(&root_fs, path, file);
-		if (err < 0) {
-			goto sys_open_failed;
-		}
-
-		// 记下读写模式等, 暂时只支持打开已有的文件
-		file->mode = flags;
+		fs = root_fs;
 	}
+
+	file->mode = flags;
+	file->fs = fs;
+	kernel_strncpy(file->file_name, name, FILE_NAME_SIZE);
+
+	fs_protect(fs);
+	int err = fs->op->open(fs, name, file);
+	if (err < 0) {
+		fs_unprotect(fs);
+
+		log_printf("open %s failed.", name);
+		return -1;
+	}
+	fs_unprotect(fs);
 
 	return fd;
-sys_open_failed:
-	if (file) {
-		file_free(file);
-	}
 
+sys_open_failed:
+	file_free(file);
 	if (fd >= 0) {
 		task_remove_fd(fd);
 	}
@@ -242,228 +265,161 @@ sys_open_failed:
  */
 int sys_dup (int file) {
 	// 超出进程所能打开的全部，退出
-	if ((file < 0) && (file >= TASK_OFILE_NR)) {
+	if (is_fd_bad(file)) {
+        log_printf("file(%d) is not valid.", file);
 		return -1;
 	}
 
-	file_t * pfile = task_file(file);
-	if (pfile) {
-		int fd = task_alloc_fd(pfile);	// 新fd指向同一描述符
-		if (fd >= 0) {
-			pfile->ref++;		// 增加引用
-			return fd;
-		}
+	file_t * p_file = task_file(file);
+	if (!p_file) {
+		log_printf("file not opened");
+		return -1;
 	}
 
-	return -1;
+	int fd = task_alloc_fd(p_file);	// 新fd指向同一描述符
+	if (fd >= 0) {
+		file_inc_ref(p_file);
+		return fd;
+	}
+
+	log_printf("No task file avaliable");
+    return -1;
 }
 
 /**
- * @brief 获取文件状态
+ * @brief IO设备控制
  */
-int sys_fstat(int file, struct stat *st) {
-	// 超出进程所能打开的全部，退出
-	if ((file < 0) && (file >= TASK_OFILE_NR)) {
-		return -1;
+int sys_ioctl(int fd, int cmd, int arg0, int arg1) {
+	if (is_fd_bad(fd)) {
+		return 0;
 	}
 
-	if (st == (struct stat *)0) {
-		return -1;
-	}
-
-	// 获取文件描述符，可能为空，如file不合法等
-	file_t * pfile = task_file(file);
+	file_t * pfile = task_file(fd);
 	if (pfile == (file_t *)0) {
-		return -1;
+		return 0;
 	}
 
-	kernel_memset(st, 0, sizeof(struct stat));
-	st->st_size = pfile->size;
-	return 0;
-} 
+	fs_t * fs = pfile->fs;
 
-/**
- * @brief 获取文件的状态
- */
-int sys_stat(const char *file, struct stat *st) {
-	// 必要的参数检查
-	if (!is_path_valid(file)) {
-		return -1;
-	}
-
-	if (st == (struct stat *)0) {
-		return -1;
-	}
-
-	return root_fs.op->stat(&root_fs, file, st);
+	fs_protect(fs);
+	int err = fs->op->ioctl(pfile, cmd, arg0, arg1);
+	fs_unprotect(fs);
+	return err;
 }
 
 /**
  * 读取文件api
  */
-int sys_read(int file, char *ptr, int len) {	
-	// 必要的参数检查
-	if ((ptr == (char *)0) || (len < 0) || (file < 0) || (file >= TASK_OFILE_NR)) {
-		return -1;
-	}
-
-	// 无需读取数据
-	if (len == 0) {
+int sys_read(int file, char *ptr, int len) {
+    if (is_fd_bad(file) || !ptr || !len) {
 		return 0;
 	}
 
-	// 获取文件描述符，可能为空，如file不合法等
-	file_t * pfile = task_file(file);
-	if (pfile == (file_t *)0) {
+	file_t * p_file = task_file(file);
+	if (!p_file) {
+		log_printf("file not opened");
 		return -1;
 	}
 
-	// 不能写
-	if (pfile->mode == O_WRONLY) {
+	if (p_file->mode == O_WRONLY) {
+		log_printf("file is write only");
 		return -1;
 	}
 
-	// 根据文件类型做不同的处理
-	switch (pfile->type) {
-		case FILE_TTY: {
-			int tty = device_minor(pfile->dev);
-			return tty_read(tty, ptr, len);
-		}	
-		case FILE_NORMAL: {
-			if (pfile->pos >= pfile->size) {
-				return 0;
-			}
-
-			return root_fs.op->read(ptr, len, pfile);
-		}
-	}
+	// 读取文件
+	fs_t * fs = p_file->fs;
+	fs_protect(fs);
+	int err = fs->op->read(ptr, len, p_file);
+	fs_unprotect(fs);
+	return err;
 }
 
 /**
  * 写文件
  */
 int sys_write(int file, char *ptr, int len) {
-	// 必要的参数检查
-	if ((ptr == (char *)0) || (len < 0) || (file < 0) || (file >= TASK_OFILE_NR)) {
-		return -1;
-	}
-
-	// 无需读取数据
-	if (len == 0) {
+	if (is_fd_bad(file) || !ptr || !len) {
 		return 0;
 	}
 
-	// 获取文件描述符，可能为空，如file不合法等
-	file_t * pfile = task_file(file);
-	if (pfile == (file_t *)0) {
+	file_t * p_file = task_file(file);
+	if (!p_file) {
+		log_printf("file not opened");
 		return -1;
 	}
 
-	// 不能写
-	if (pfile->mode == O_RDONLY) {
+	if (p_file->mode == O_RDONLY) {
+		log_printf("file is write only");
 		return -1;
 	}
 
-	// 根据文件类型做不同的处理
-	switch (pfile->type) {
-	case FILE_TTY: {
-		int tty = device_minor(pfile->dev);
-		return tty_write(tty, ptr, len);
-	}
-	default:			// 普通文件
-		return root_fs.op->write(ptr, len, pfile);
-	}
+	// 写入文件
+	fs_t * fs = p_file->fs;
+	fs_protect(fs);
+	int err = fs->op->write(ptr, len, p_file);
+	fs_unprotect(fs);
+	return err;
 }
 
 /**
  * 文件访问位置定位
  */
 int sys_lseek(int file, int ptr, int dir) {
-	// 必要的参数检查
-	if ((file < 0) && (file >= TASK_OFILE_NR)) {
+	if (is_fd_bad(file)) {
 		return -1;
 	}
 
-	// 获取文件描述符，可能为空，如file不合法等
-	file_t * pfile = task_file(file);
-	if (pfile == (file_t *)0) {
+	file_t * p_file = task_file(file);
+	if (!p_file) {
+		log_printf("file not opened");
 		return -1;
 	}
 
-	// 根据文件类型做不同的处理
-	switch (pfile->type) {
-		case FILE_TTY:		// tty文件
-			return -1;		// 不支持
-		default: {
-			// 获取最终的定位位置
-			uint32_t final_pos;
-			switch (dir) {
-			case FILE_SEEK_SET:
-				final_pos = ptr;
-				break;
-			case FILE_SEEK_CUR:
-				final_pos = pfile->pos + ptr;
-				break;
-			case FILE_SEEK_END:
-				final_pos = pfile->size + ptr;
-				break;
-			default:
-				final_pos = -1;
-				break;
-			}
+	// 写入文件
+	fs_t * fs = p_file->fs;
 
-			if ((pos < 0) || (final_pos > pfile->size)) {
-				return -1;
-			}
-
-			return root_fs.op->seek(pfile, final_pos);
-		}
-	}
-
-    return -1;
+	fs_protect(fs);
+	int err = fs->op->seek(p_file, ptr, dir);
+	fs_unprotect(fs);
+	return err;
 }
 
 /**
  * 关闭文件
  */
 int sys_close(int file) {
-	if ((file < 0) && (file >= TASK_OFILE_NR)) {
+	if (is_fd_bad(file)) {
+		log_printf("file error");
 		return -1;
 	}
 
-	file_t * pfile = task_file(file);
-	if (pfile == (file_t *)0) {
+	file_t * p_file = task_file(file);
+	if (p_file == (file_t *)0) {
+		log_printf("file not opened. %d", file);
 		return -1;
 	}
 
-	ASSERT(pfile->ref > 0);
+	ASSERT(p_file->ref > 0);
 
-	mutex_lock(&fs_mutex);
-	if (--pfile->ref == 0) {
-		// 仅当引用计数到0时才释放
-		switch (pfile->type) {
-		case FILE_TTY: {
-			int tty = device_minor(pfile->dev);
-			tty_close(tty);
-			break;
-		}
-		default:
-			root_fs.op->close(pfile);
-			break;
-		}
-		file_free(pfile);
+	if (p_file->ref == 1) {
+		fs_t * fs = p_file->fs;
+
+		fs_protect(fs);
+		fs->op->close(p_file);
+		fs_unprotect(fs);
 	}
+
+	file_free(p_file);
 	task_remove_fd(file);
-	
-	mutex_unlock(&fs_mutex);
 	return 0;
 }
+
 
 /**
  * 判断文件描述符与tty关联
  */
 int sys_isatty(int file) {
-	if ((file < 0) && (file >= TASK_OFILE_NR)) {
+	if (is_fd_bad(file)) {
 		return 0;
 	}
 
@@ -473,4 +429,53 @@ int sys_isatty(int file) {
 	}
 
 	return pfile->type == FILE_TTY;
+}
+
+/**
+ * @brief 获取文件状态
+ */
+int sys_fstat(int file, struct stat *st) {
+	if (is_fd_bad(file)) {
+		return -1;
+	}
+
+	file_t * p_file = task_file(file);
+	if (p_file == (file_t *)0) {
+		return -1;
+	}
+
+	fs_t * fs = p_file->fs;
+
+	fs_protect(fs);
+	int err = fs->op->stat(p_file, st);
+	fs_unprotect(fs);
+	return err;
+}
+
+int sys_opendir(const char * name, DIR * dir) {
+	fs_protect(root_fs);
+	int err = root_fs->op->opendir(root_fs, name, dir);
+	fs_unprotect(root_fs);
+	return err;
+}
+
+int sys_readdir(DIR* dir, struct dirent * dirent) {
+	fs_protect(root_fs);
+	int err = root_fs->op->readdir(root_fs, dir, dirent);
+	fs_unprotect(root_fs);
+	return err;
+}
+
+int sys_closedir(DIR *dir) {
+	fs_protect(root_fs);
+	int err = root_fs->op->closedir(root_fs, dir);
+	fs_unprotect(root_fs);
+	return err;
+}
+
+int sys_unlink (const char * path) {
+	fs_protect(root_fs);
+	int err = root_fs->op->unlink(root_fs, path);
+	fs_unprotect(root_fs);
+	return err;
 }

@@ -2,11 +2,11 @@
 // https://wiki.osdev.org/Programmable_Interval_Timer
 //
 
-#include "dev/timer.h"
+#include "dev/time.h"
 #include "cpu/irq.h"
 #include "comm/cpu_instr.h"
-#include "core/task.h"
 #include "os_cfg.h"
+#include "core/task.h"
 
 static uint32_t sys_tick;						// 系统启动后的tick数量
 
@@ -20,7 +20,6 @@ void do_handler_timer (exception_frame_t *frame) {
     // 放最后将从任务中切换出去之后，除非任务再切换回来才能继续噢应
     pic_send_eoi(IRQ0_TIMER);
 
-
     task_time_tick();
 }
 
@@ -30,20 +29,21 @@ void do_handler_timer (exception_frame_t *frame) {
 static void init_pit (void) {
     uint32_t reload_count = PIT_OSC_FREQ / (1000.0 / OS_TICK_MS);
 
-    outb(PIT_COMMAND_MODE_PORT, PIT_CHANNLE0 | PIT_ACCESS_LOHIBYTE_ONLY | PIT_MODE3);
-    outb(PIT_CHANNLE0_DATA_PORT, reload_count & 0xFF);
-    outb(PIT_CHANNLE0_DATA_PORT, (reload_count >> 8) & 0xFF);
+    outb(PIT_COMMAND_MODE_PORT, PIT_CHANNLE0 | PIT_LOAD_LOHI | PIT_MODE0);
+    outb(PIT_CHANNEL0_DATA_PORT, reload_count & 0xFF);   // 加载低8位
+    outb(PIT_CHANNEL0_DATA_PORT, (reload_count >> 8) & 0xFF); // 再加载高8位
+
+    irq_install(IRQ0_TIMER, (irq_handler_t)exception_handler_timer);
+    irq_enable(IRQ0_TIMER);
 }
 
 /**
  * 定时器初始化
  */
-void timer_init (void) {
+void time_init (void) {
     sys_tick = 0;
 
     init_pit();
-    irq_install(IRQ0_TIMER, (irq_handler_t)handler_timer);
-    irq_enable(IRQ0_TIMER);
 }
 
 

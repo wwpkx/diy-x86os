@@ -1,20 +1,19 @@
 set DISK1_NAME=disk1.vhd
 
-@REM Ð´bootÇø£¬¶¨Î»µ½´ÅÅÌ¿ªÍ·£¬Ð´1¸ö¿é£º512×Ö½Ú
+@REM Ð´bootï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½ï¿½ï¿½ï¿½Ì¿ï¿½Í·ï¿½ï¿½Ð´1ï¿½ï¿½ï¿½é£º512ï¿½Ö½ï¿½
 dd if=boot.bin of=%DISK1_NAME% bs=512 conv=notrunc count=1
 
-@REM Ð´loaderÇø£¬¶¨Î»µ½´ÅÅÌµÚ2¸ö¿é£¬Ð´1¸ö¿é£º512×Ö½Ú
+@REM Ð´loaderï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½ï¿½ï¿½ï¿½Ìµï¿½2ï¿½ï¿½ï¿½é£¬Ð´1ï¿½ï¿½ï¿½é£º512ï¿½Ö½ï¿½
 dd if=loader.bin of=%DISK1_NAME% bs=512 conv=notrunc seek=1
 
-@REM Ð´kernelÇø£¬¶¨Î»µ½´ÅÅÌµÚ100¸ö¿é
+@REM Ð´kernelï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½ï¿½ï¿½ï¿½Ìµï¿½100ï¿½ï¿½ï¿½ï¿½
 dd if=kernel.elf of=%DISK1_NAME% bs=512 conv=notrunc seek=100
 
-@REM Ð´Ó¦ÓÃ³ÌÐòinit£¬ÁÙÊ±Ê¹ÓÃ
+@REM  Ð´Ó¦ï¿½Ã³ï¿½ï¿½ï¿½initï¿½ï¿½ï¿½ï¿½Ê±Ê¹ï¿½ï¿½
 @REM dd if=init.elf of=%DISK1_NAME% bs=512 conv=notrunc seek=5000
-@REM dd if=shell.elf of=%DISK1_NAME% bs=512 conv=notrunc seek=5000
+@dd if=shell.elf of=%DISK1_NAME% bs=512 conv=notrunc seek=5000
 
-@REM Ð´Ó¦ÓÃ³ÌÐò£¬Ê¹ÓÃÏµÍ³µÄ¹ÒÔØÃüÁî
-@REM ¿ªÊ¼¸´ÖÆ
+@REM Ð´Ó¦ï¿½Ã³ï¿½ï¿½ï¿½Ê¹ï¿½ï¿½ÏµÍ³ï¿½Ä¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 set DISK2_NAME=disk2.vhd
 set TARGET_PATH=k
 echo select vdisk file="%cd%\%DISK2_NAME%" >a.txt
@@ -24,10 +23,10 @@ echo assign letter=%TARGET_PATH% >> a.txt
 diskpart /s a.txt
 del a.txt
 
-@REM ¸´ÖÆÓ¦ÓÃ³ÌÐò
-copy /Y init.elf %TARGET_PATH%:\init.elf
+@REM ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½Ã³ï¿½ï¿½ï¿½
+copy /Y init.elf %TARGET_PATH%:\init
 copy /Y shell.elf %TARGET_PATH%:\shell.elf
-copy /Y loop %TARGET_PATH%:\loop
+copy /Y loop.elf %TARGET_PATH%:\loop
 
 echo select vdisk file="%cd%\%DISK2_NAME%" >a.txt
 echo detach vdisk >>a.txt

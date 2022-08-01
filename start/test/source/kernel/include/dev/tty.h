@@ -8,46 +8,45 @@
 #ifndef TTY_H
 #define TTY_H
 
-#include "ipc/bfifo.h"
+#include "ipc/sem.h"
 
-#define TTY_MAX_COUNT				10		// 最大支持的tty设备数量
-#define TTY_IN_SIZE					512		// tty输入缓存大小
-#define TTY_OUT_SIZE				512		// tty输出缓存大小
+#define TTY_NR						8		// 最大支持的tty设备数量
+#define TTY_IBUF_SIZE				512		// tty输入缓存大小
+#define TTY_OBUF_SIZE				512		// tty输出缓存大小
+#define TTY_CMD_ECHO				0x1		// 开回显
 
-struct _tty_t;
-typedef struct _tty_dev_t {
-	int (*init) (struct _tty_t * tty);
-	int (*write) (struct _tty_t * tty);	// 写函数
-	void (*close) (struct _tty_t * tty);	// 关闭函数
-}tty_dev_t;
+typedef struct _tty_fifo_t {
+	char * buf;
+	int size;				// 最大字节数
+	int read, write;		// 当前读写位置
+	int count;				// 当前已有的数据量
+}tty_fifo_t;
+
+int tty_fifo_get (tty_fifo_t * fifo, char * c);
+int tty_fifo_put (tty_fifo_t * fifo, char c);
+
+#define TTY_INLCR			(1 << 0)		// 将\n转成\r\n
+#define TTY_IECHO			(1 << 2)		// 是否回显
+
+#define TTY_OCRLF			(1 << 0)		// 输出是否将\n转换成\r\n
 
 /**
  * tty设备
  */
 typedef struct _tty_t {
-	int device_num;					// 所在的设备号
-	tty_dev_t * dev;				// 实际设备
-	void * dev_data;				// 设备参数
+	char obuf[TTY_OBUF_SIZE];
+	tty_fifo_t ofifo;				// 输出队列
+	sem_t osem;
+	char ibuf[TTY_IBUF_SIZE];
+	tty_fifo_t ififo;				// 输入处理后的队列
+	sem_t isem;
 
-	int pre_in_size;				// 已有的数据量
-	char pre_in_buf[TTY_IN_SIZE];	// 预输入队列
-	mutex_t mutex;					// 进程访问的互斥锁
-	char in_buf[TTY_IN_SIZE];
-	bfifo_t in_fifo;				// 输入队列
-	char out_buf[TTY_OUT_SIZE];
-	bfifo_t out_fifo;				// 输出队列
-
-	struct {
-		int echo : 1;				// 是否回显
-	};
+	int iflags;						// 输入标志
+    int oflags;						// 输出标志
+	int console_idx;				// 控制台索引号
 }tty_t;
 
-void tty_init (void);
-int tty_open (int device);
-int tty_read (int tty, char * buffer, int size);
-int tty_write (int tty, char * buffer, int size);
-void tty_close (int tty);
-int tty_current(void);
-void tty_in_data(int tty, char * data, int size);
+void tty_select (int tty);
+void tty_in (char ch);
 
 #endif /* TTY_H */

@@ -1,244 +1,263 @@
 /**
  * 终端tty
+ * 目前只考虑处理cooked模式的处理
  *
  * 创建时间：2021年8月5日
  * 作者：李述铜
  * 联系邮箱: 527676163@qq.com
  */
 #include "dev/tty.h"
-#include "dev/kbd.h"
 #include "dev/console.h"
+#include "dev/kbd.h"
 #include "dev/dev.h"
-#include "tools/list.h"
-#include "tools/klib.h"
-#include "ipc/mutex.h"
-#include <stdarg.h>
+#include "tools/log.h"
+#include "cpu/irq.h"
 
-static tty_t tty_list[TTY_MAX_COUNT];
-static mutex_t tty_list_mutex;
-static int curr_tty;					// 当前的tty设备
+static tty_t tty_devs[TTY_NR];
+static int curr_tty = 0;
 
 /**
- * @brief 当前的tty控制
- * @return int 
+ * @brief FIFO初始化
  */
-int tty_current(void) {
-	return curr_tty;
-}
-
-// tty设备列表
-static tty_dev_t tty_dev_list[] = {
-	{
-		.init = console_init,
-		.write = console_write,
-	}
-};
-
-/**
- * 将tty索引转换为指针
- */
-static tty_t * to_tty(int tty) {
-	if ((tty >= 0) && (tty < TTY_MAX_COUNT)) {
-		return tty_list + tty;
-	}
-
-	return (tty_t *)0;
+void tty_fifo_init (tty_fifo_t * fifo, char * buf, int size) {
+	fifo->buf = buf;
+	fifo->count = 0;
+	fifo->size = size;
+	fifo->read = fifo->write = 0;
 }
 
 /**
- * 转换指针为索引
+ * @brief 取一字节数据
  */
-static int to_index (tty_t * tty) {
-	return (tty - tty_list);
-}
-
-/**
- * @brief 分配一个tty设备
- */
-static tty_t * alloc_tty (int dev) {
-	tty_t * tty = (tty_t *)0;
-
-	// 找一个空间的tty结构
-	mutex_lock(&tty_list_mutex);
-	for (int i = 0; i < sizeof(tty_list) / sizeof(tty_t); i++) {
-		tty_t * curr = tty_list + i;
-		if (curr->dev == (tty_dev_t *)0) {
-			tty = curr;
-			break;
-		}
-	}
-	mutex_unlock(&tty_list_mutex);
-
-	if (tty) {
-		// 根据设备号找到对应的设备属性
-		int minor_dev = device_minor(dev);
-		if (minor_dev >= sizeof(tty_dev_list) / sizeof(tty_dev_t)) {
-			return (tty_t *)0;
-		}
-		
-		tty->dev = tty_dev_list + minor_dev;
-		mutex_init(&tty->mutex);
-		tty->pre_in_size = 0;		// 预先没有数据量
-		bfifo_init(&tty->in_fifo, tty->in_buf, TTY_IN_SIZE);
-		bfifo_init(&tty->out_fifo, tty->out_buf, TTY_OUT_SIZE);
-	}
-
-	return tty;
-}
-
-/**
- * @brief 释放一个tty设备
- */
-static void free_tty (tty_t * tty) {
-	mutex_lock(&tty_list_mutex);
-	tty->dev = (tty_dev_t *)0;
-	mutex_unlock(&tty_list_mutex);
-}
-
-/**
- * 初始化tty列表
- */
-void tty_init (void) {
-	kernel_memset(tty_list, 0, sizeof(tty_list));
-	mutex_init(&tty_list_mutex);
-	curr_tty = -1;
-}
-
-/**
- * 打开一个tty设备
- */
-int tty_open (int dev) {
-	// 分配tty结构
-	tty_t * tty = alloc_tty(dev);
-	if (!tty) {
+int tty_fifo_get (tty_fifo_t * fifo, char * c) {
+	if (fifo->count <= 0) {
 		return -1;
 	}
 
-	tty_dev_t * tty_deivce = tty->dev;
-	tty->device_num = dev;
-	tty->echo = 1;			// 默认开启回显
-
-	// 初始化设备
-	if (tty_deivce->init) {
-		int err = tty_deivce->init(tty);
-		if (err < 0) {
-			return -1;
-		}
+	irq_state_t state = irq_enter_protection();
+	*c = fifo->buf[fifo->read++];
+	if (fifo->read >= fifo->size) {
+		fifo->read = 0;
 	}
-
-	int idx = to_index(tty);
-	if (curr_tty < 0) {
-		curr_tty = idx;
-	}
-	return idx;
+	fifo->count--;
+	irq_leave_protection(state);
+	return 0;
 }
 
 /**
- * 从tty中读取数据
- * 主要是从缓存中读取数据, 缓存中有多少数据就读多少数据，如果没有数据则等待
+ * @brief 写一字节数据
  */
-int tty_read (int tty, char * buffer, int size) {
-	tty_t * p_tty = to_tty(tty);
-
-	// 试着读一下，能读多少就读多少。如果没有，则等待
-	int read_size = bfifo_get(&p_tty->in_fifo, buffer, size);
-	if (read_size == 0) {
-		// 即使是等待，也不要等全部，也是有多少先读多少.
-		// 先等1个字节，然后下次循环时再重复读取
-		read_size = bfifo_read(&p_tty->in_fifo, buffer, 1);
+int tty_fifo_put (tty_fifo_t * fifo, char c) {
+	if (fifo->count >= fifo->size) {
+		return -1;
 	}
 
-	return read_size;
+	irq_state_t state = irq_enter_protection();
+	fifo->buf[fifo->write++] = c;
+	if (fifo->write >= fifo->size) {
+		fifo->write = 0;
+	}
+	fifo->count++;
+	irq_leave_protection(state);
+
+	return 0;
 }
 
 /**
- * 向tty中写入数据
+ * @brief 判断tty是否有效
  */
-int tty_write (int tty, char * buffer, int size) {
-	tty_t * p_tty = to_tty(tty);
-	int total_size = size;
-	char * curr = buffer;
-
-	// size可能比out_fifo的容量大，所以直接用size去写
-	// 所以下面每次尽可能多写，能写多少是多少。写不了说明缓存满，等一下
-	while (size > 0) {
-		// 先尝试写入，看看实际能写多少。不能用write,如果size比fifo大，会卡死
-		int write_size = bfifo_put(&p_tty->out_fifo, curr, size);
-		if (write_size <= 0) {
-			// 写入不了，可能是缓冲区满，此时应当等有任意可用的空间
-			write_size = bfifo_write(&p_tty->out_fifo, curr, 1);
-		}
-
-		// 至这里，无论前面是否等了，缓存里面都是有数据的，在这里启动发送
-		size -= write_size;
-		curr += write_size;
-
-		// 写入缓存中后，再由底层设备从设备中取出数据，完成数据的最终写入
-		mutex_lock(&p_tty->mutex);
-		p_tty->dev->write(p_tty);
-		mutex_unlock(&p_tty->mutex);
+static inline tty_t * get_tty (device_t * dev) {
+	int tty = dev->minor;
+	if ((tty < 0) || (tty >= TTY_NR) || (!dev->open_count)) {
+		log_printf("tty is not opened. tty = %d", tty);
+		return (tty_t *)0;
 	}
-	return total_size;
+
+	return tty_devs + tty;
 }
 
 /**
- * 关闭tty设备
+ * @brief 打开tty设备
  */
-void tty_close (int tty) {
-	tty_t * p_tty = to_tty(tty);
-	if (p_tty && p_tty->dev->close) {
-		mutex_lock(&p_tty->mutex);
-		p_tty->dev->close(p_tty);
-		mutex_unlock(&p_tty->mutex);
+int tty_open (device_t * dev)  {
+	int idx = dev->minor;
+	if ((idx < 0) || (idx >= TTY_NR)) {
+		log_printf("open tty failed. incorrect tty num = %d", idx);
+		return -1;
 	}
 
-	if (tty == curr_tty) {
-		curr_tty = -1;
-	}
+	tty_t * tty = tty_devs + idx;
+	tty_fifo_init(&tty->ofifo, tty->obuf, TTY_OBUF_SIZE);
+	sem_init(&tty->osem, TTY_OBUF_SIZE);
+	tty_fifo_init(&tty->ififo, tty->ibuf, TTY_IBUF_SIZE);
+	sem_init(&tty->isem, 0);
+
+	tty->iflags = TTY_INLCR | TTY_IECHO;
+	tty->oflags = TTY_OCRLF;
+
+	tty->console_idx = idx;
+
+	kbd_init();
+	console_init(idx);
+	return 0;
 }
 
+
 /**
- * @brief tty设备接收到数据时的处理
- * 将从底层硬件接受到的数据写入tty的输入队列
+ * @brief 向tty写入数据
  */
-void tty_in_data(int tty, char * data, int size) {
-	// 没有tty，数据丢掉
-	if ((tty > 0) && (tty >= TTY_MAX_COUNT)) {
-		return;
+int tty_write (device_t * dev, int addr, char * buf, int size) {
+	if (size < 0) {
+		return -1;
 	}
 
-	tty_t * p_tty = to_tty(tty);
+	tty_t * tty = get_tty(dev);
+	int len = 0;
 
-	// 在这里要处理一些控制字符的问题
-	int commit = 0;
-	for (int i = 0; i < size; i++) {
-		switch (data[i]) {
-			case '\b':
-				if (data[i] == '\b') {
-					if (p_tty->pre_in_size) {
-						p_tty->pre_in_size--;
-					}
-				}			
-				break;
-			default: {
-				p_tty->pre_in_buf[p_tty->pre_in_size++] = data[i];
-				if ((data[i] == '\n') || p_tty->pre_in_size >= TTY_IN_SIZE) {\
-					commit = 1;
-				}
+	// 先将所有数据写入缓存中
+	while (size) {
+		char c = *buf++;
+
+		// 如果遇到\n，根据配置决定是否转换成\r\n
+		if (c == '\n' && (tty->oflags & TTY_OCRLF)) {
+			sem_wait(&tty->osem);
+			int err = tty_fifo_put(&tty->ofifo, '\r');
+			if (err < 0) {
 				break;
 			}
 		}
+
+		// 写入当前字符
+		sem_wait(&tty->osem);
+		int err = tty_fifo_put(&tty->ofifo, c);
+		if (err < 0) {
+			break;
+		}
+
+		len++;
+		size--;
+
+		// 启动输出, 这里是直接由console直接输出，无需中断
+		console_write(tty);
 	}
 
-	if (p_tty->echo) {
-		tty_write(tty, data, size);
-	}	
+	return len;
+}
 
-	// 先处理完所有数据，再提交给读进程
-	if (commit) {
-		bfifo_put(&p_tty->in_fifo, p_tty->pre_in_buf, p_tty->pre_in_size);
-		p_tty->pre_in_size = 0;
+/**
+ * @brief 从tty读取数据
+ */
+int tty_read (device_t * dev, int addr, char * buf, int size) {
+	if (size < 0) {
+		return -1;
+	}
+
+	tty_t * tty = get_tty(dev);
+	char * pbuf = buf;
+	int len = 0;
+
+	// 不断读取，直到遇到文件结束符或者行结束符
+	while (len < size) {
+		// 等待可用的数据
+		sem_wait(&tty->isem);
+
+		// 取出数据
+		char ch;
+		tty_fifo_get(&tty->ififo, &ch);
+		switch (ch) {
+			case ASCII_DEL:
+				if (len == 0) {
+					continue;
+				}
+				len--;
+				pbuf--;
+				break;
+			case '\n':
+				if ((tty->iflags & TTY_INLCR) && (len < size - 1)) {	// \n变成\r\n
+					*pbuf++ = '\r';
+					len++;
+				}
+				*pbuf++ = '\n';
+				len++;
+				break;
+			default:
+				*pbuf++ = ch;
+				len++;
+				break;
+		}
+
+		if (tty->iflags & TTY_IECHO) {
+		    tty_write(dev, 0, &ch, 1);
+		}
+
+		// 遇到一行结束，也直接跳出
+		if ((ch == '\r') || (ch == '\n')) {
+			break;
+		}
+	}
+
+	return len;
+}
+
+/**
+ * @brief 向tty设备发送命令
+ */
+int tty_control (device_t * dev, int cmd, int arg0, int arg1) {
+	tty_t * tty = get_tty(dev);
+
+	switch (cmd) {
+	case TTY_CMD_ECHO:
+		if (arg0) {
+			tty->iflags |= TTY_IECHO;
+		} else {
+			tty->iflags &= ~TTY_IECHO;
+		}
+		break;
+	default:
+		break;
 	}
 }
 
+/**
+ * @brief 关闭tty设备
+ */
+void tty_close (device_t * dev) {
 
+}
+
+/**
+ * @brief 输入tty字符
+ */
+void tty_in (char ch) {
+	tty_t * tty = tty_devs + curr_tty;
+
+	// 辅助队列要有空闲空间可代写入
+	if (sem_count(&tty->isem) >= TTY_IBUF_SIZE) {
+		return;
+	}
+
+	// 写入辅助队列，通知数据到达
+	tty_fifo_put(&tty->ififo, ch);
+	sem_notify(&tty->isem);
+}
+
+/**
+ * @brief 选择tty
+ */
+void tty_select (int tty) {
+	if (tty != curr_tty) {
+		console_select(tty);
+		curr_tty = tty;
+	}
+}
+
+// 设备描述表: 描述一个设备所具备的特性
+dev_desc_t dev_tty_desc = {
+	.name = "tty",
+	.major = DEV_TTY,
+	.open = tty_open,
+	.read = tty_read,
+	.write = tty_write,
+	.control = tty_control,
+	.close = tty_close,
+};
