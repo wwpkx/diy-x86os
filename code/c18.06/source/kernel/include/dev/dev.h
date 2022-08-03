@@ -23,7 +23,6 @@ struct _dev_desc_t;
 /**
  * @brief 设备驱动接口
  */
-struct _dev_desc_t;
 typedef struct _device_t {
     struct _dev_desc_t * desc;      // 设备特性描述符
     int mode;                       // 操作模式

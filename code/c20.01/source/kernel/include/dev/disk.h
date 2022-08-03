@@ -13,7 +13,7 @@
 #define PART_NAME_SIZE              32      // 分区名称
 #define DISK_NAME_SIZE              32      // 磁盘名称大小
 #define DISK_CNT                    2       // 磁盘的数量
-#define DISK_PRIMARY_PART_CNT       4       // 主分区数量最多才4个
+#define DISK_PRIMARY_PART_CNT       (4+1)       // 主分区数量最多才4个
 
 struct _disk_t;
 

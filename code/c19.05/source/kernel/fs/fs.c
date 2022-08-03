@@ -471,6 +471,8 @@ int sys_fstat(int file, struct stat *st) {
 
 	fs_t * fs = p_file->fs;
 
+    kernel_memset(st, 0, sizeof(struct stat));
+
 	fs_protect(fs);
 	int err = fs->op->stat(p_file, st);
 	fs_unprotect(fs);

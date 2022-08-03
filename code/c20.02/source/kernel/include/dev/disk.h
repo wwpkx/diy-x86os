@@ -13,8 +13,7 @@
 #define PART_NAME_SIZE              32      // 分区名称
 #define DISK_NAME_SIZE              32      // 磁盘名称大小
 #define DISK_CNT                    2       // 磁盘的数量
-#define DISK_PRIMARY_PART_CNT       4       // 主分区数量最多才4个
-#define DISK_PER_CHANNEL        2       // 通道的数量
+#define DISK_PRIMARY_PART_CNT       (4+1)       // 主分区数量最多才4个
 #define DISK_CHANNEL_CNT            2       // 通道数量
 
 // https://wiki.osdev.org/ATA_PIO_Mode#IDENTIFY_command

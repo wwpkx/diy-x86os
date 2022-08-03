@@ -16,12 +16,6 @@
 #include "tools/log.h"
 #include "dev/dev.h"
 
-#define FS_TABLE_SIZE		10		// 文件系统表数量
-
-static list_t mounted_list;			// 已挂载的文件系统
-static list_t free_list;				// 空闲fs列表
-static fs_t fs_tbl[FS_TABLE_SIZE];		// 空闲文件系统列表大小
-
 #define TEMP_FILE_ID		100
 #define TEMP_ADDR        	(8*1024*1024)      // 在0x800000处缓存原始
 
@@ -59,26 +53,14 @@ static void read_disk(int sector, int sector_count, uint8_t * buf) {
 }
 
 /**
- * @brief 初始化挂载列表
- */
-static void mount_list_init (void) {
-	list_init(&free_list);
-	for (int i = 0; i < FS_TABLE_SIZE; i++) {
-		list_insert_first(&free_list, &fs_tbl[i].node);
-	}
-	list_init(&mounted_list);
-}
-
-/**
  * @brief 文件系统初始化
  */
 void fs_init (void) {
-	mount_list_init();
     file_table_init();
 }
 
 /**
- * @brief 目录是否有效
+ * @brief 检查路径是否正常
  */
 static int is_path_valid (const char * path) {
 	if ((path == (const char *)0) || (path[0] == '\0')) {
