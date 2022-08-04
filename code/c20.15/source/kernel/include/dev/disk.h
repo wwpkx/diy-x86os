@@ -19,31 +19,31 @@
 #define DISK_PER_CHANNEL        2       // 通道的数量
 #define DISK_CHANNEL_CNT            2       // 通道数量
 
-// https://wiki.osdev.org/ATA_PIO_Mode#IDENTIFY_command
+// https://wiki.osdev.org/DISK_PIO_Mode#IDENTIFY_command
 // 只考虑支持主总结primary bus
 #define IOBASE_PRIMARY              0x1F0
-#define	ATA_DATA(disk)				(disk->port_base + 0)		// 数据寄存器
-#define	ATA_ERROR(disk)				(disk->port_base + 1)		// 错误寄存器
-#define	ATA_SECTOR_COUNT(disk)		(disk->port_base + 2)		// 扇区数量寄存器
-#define	ATA_LBA_LO(disk)			(disk->port_base + 3)		// LBA寄存器
-#define	ATA_LBA_MID(disk)			(disk->port_base + 4)		// LBA寄存器
-#define	ATA_LBA_HI(disk)			(disk->port_base + 5)		// LBA寄存器
-#define	ATA_DRIVE(disk)				(disk->port_base + 6)		// 磁盘或磁头？
-#define	ATA_STATUS(disk)			(disk->port_base + 7)		// 状态寄存器
-#define	ATA_CMD(disk)				(disk->port_base + 7)		// 命令寄存器
+#define	DISK_DATA(disk)				(disk->port_base + 0)		// 数据寄存器
+#define	DISK_ERROR(disk)				(disk->port_base + 1)		// 错误寄存器
+#define	DISK_SECTOR_COUNT(disk)		(disk->port_base + 2)		// 扇区数量寄存器
+#define	DISK_LBA_LO(disk)			(disk->port_base + 3)		// LBA寄存器
+#define	DISK_LBA_MID(disk)			(disk->port_base + 4)		// LBA寄存器
+#define	DISK_LBA_HI(disk)			(disk->port_base + 5)		// LBA寄存器
+#define	DISK_DRIVE(disk)				(disk->port_base + 6)		// 磁盘或磁头？
+#define	DISK_STATUS(disk)			(disk->port_base + 7)		// 状态寄存器
+#define	DISK_CMD(disk)				(disk->port_base + 7)		// 命令寄存器
 
 // ATA命令
-#define	ATA_CMD_IDENTIFY				0xEC	// IDENTIFY命令
-#define	ATA_CMD_READ					0x24	// 读命令
-#define	ATA_CMD_WRITE					0x34	// 写命令
+#define	DISK_CMD_IDENTIFY				0xEC	// IDENTIFY命令
+#define	DISK_CMD_READ					0x24	// 读命令
+#define	DISK_CMD_WRITE					0x34	// 写命令
 
 // 状态寄存器
-#define ATA_STATUS_ERR          (1 << 0)    // 发生了错误
-#define ATA_STATUS_DRQ          (1 << 3)    // 准备好接受数据或者输出数据
-#define ATA_STATUS_DF           (1 << 5)    // 驱动错误
-#define ATA_STATUS_BUSY         (1 << 7)    // 正忙           
+#define DISK_STATUS_ERR          (1 << 0)    // 发生了错误
+#define DISK_STATUS_DRQ          (1 << 3)    // 准备好接受数据或者输出数据
+#define DISK_STATUS_DF           (1 << 5)    // 驱动错误
+#define DISK_STATUS_BUSY         (1 << 7)    // 正忙
 
-#define	ATA_DRIVE_BASE		    0xE0		// 驱动器号基础值:0xA0 + LBA
+#define	DISK_DRIVE_BASE		    0xE0		// 驱动器号基础值:0xA0 + LBA
 
 #pragma pack(1)
 
@@ -103,8 +103,8 @@ typedef struct _disk_t {
     char name[DISK_NAME_SIZE];      // 磁盘名称
 
     enum {
-        ATA_DISK_MASTER = (0 << 4),     // 主设备
-        ATA_DISK_SLAVE = (1 << 4),      // 从设备
+        DISK_DISK_MASTER = (0 << 4),     // 主设备
+        DISK_DISK_SLAVE = (1 << 4),      // 从设备
     }drive;
 
     uint16_t port_base;             // 端口起始地址

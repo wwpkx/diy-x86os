@@ -25,34 +25,34 @@ static int task_on_op;
  * 发送ata命令，支持多达16位的扇区，对我们目前的程序来书够用了。
  */
 static void ata_send_cmd (disk_t * disk, uint32_t start_sector, uint32_t sector_count, int cmd) {
-    outb(ATA_DRIVE(disk), ATA_DRIVE_BASE | disk->drive);		// 使用LBA寻址，并设置驱动器
+    outb(DISK_DRIVE(disk), DISK_DRIVE_BASE | disk->drive);		// 使用LBA寻址，并设置驱动器
 
 	// 必须先写高字节
-	outb(ATA_SECTOR_COUNT(disk), (uint8_t) (sector_count >> 8));	// 扇区数高8位
-	outb(ATA_LBA_LO(disk), (uint8_t) (start_sector >> 24));		// LBA参数的24~31位
-	outb(ATA_LBA_MID(disk), 0);									// 高于32位不支持
-	outb(ATA_LBA_HI(disk), 0);										// 高于32位不支持
-	outb(ATA_SECTOR_COUNT(disk), (uint8_t) (sector_count));		// 扇区数量低8位
-	outb(ATA_LBA_LO(disk), (uint8_t) (start_sector >> 0));			// LBA参数的0-7
-	outb(ATA_LBA_MID(disk), (uint8_t) (start_sector >> 8));		// LBA参数的8-15位
-	outb(ATA_LBA_HI(disk), (uint8_t) (start_sector >> 16));		// LBA参数的16-23位
+	outb(DISK_SECTOR_COUNT(disk), (uint8_t) (sector_count >> 8));	// 扇区数高8位
+	outb(DISK_LBA_LO(disk), (uint8_t) (start_sector >> 24));		// LBA参数的24~31位
+	outb(DISK_LBA_MID(disk), 0);									// 高于32位不支持
+	outb(DISK_LBA_HI(disk), 0);										// 高于32位不支持
+	outb(DISK_SECTOR_COUNT(disk), (uint8_t) (sector_count));		// 扇区数量低8位
+	outb(DISK_LBA_LO(disk), (uint8_t) (start_sector >> 0));			// LBA参数的0-7
+	outb(DISK_LBA_MID(disk), (uint8_t) (start_sector >> 8));		// LBA参数的8-15位
+	outb(DISK_LBA_HI(disk), (uint8_t) (start_sector >> 16));		// LBA参数的16-23位
 
 	// 选择对应的主-从磁盘
-	outb(ATA_CMD(disk), (uint8_t)cmd);
+	outb(DISK_CMD(disk), (uint8_t)cmd);
 }
 
 /**
  * 读取ATA数据端口
  */
 static inline void ata_read_data (disk_t * disk, void * buf, int size) {
-	insw(ATA_DATA(disk), buf, size / 2);
+	insw(DISK_DATA(disk), buf, size / 2);
 }
 
 /**
  * 读取ATA数据端口
  */
 static inline void ata_write_data (disk_t * disk, void * buf, int size) {
-	outsw(ATA_DATA(disk), buf, size / 2);
+	outsw(DISK_DATA(disk), buf, size / 2);
 }
 
 /**
@@ -62,15 +62,15 @@ static inline int ata_wait_data (disk_t * disk) {
     uint8_t status;
 	do {
         // 等待数据或者有错误
-        status = inb(ATA_STATUS(disk));
-        if ((status & (ATA_STATUS_BUSY | ATA_STATUS_DRQ | ATA_STATUS_ERR))
-                        != ATA_STATUS_BUSY) {
+        status = inb(DISK_STATUS(disk));
+        if ((status & (DISK_STATUS_BUSY | DISK_STATUS_DRQ | DISK_STATUS_ERR))
+                        != DISK_STATUS_BUSY) {
             break;
         }
     }while (1);
 
     // 检查是否有错误
-    return (status & ATA_STATUS_ERR) ? -1 : 0;
+    return (status & DISK_STATUS_ERR) ? -1 : 0;
 }
 
 /**
@@ -80,7 +80,7 @@ static void print_disk_info (disk_t * disk) {
     log_printf("%s:", disk->name);
     log_printf("  port_base: %x", disk->port_base);
     log_printf("  total_size: %d m", disk->sector_count * disk->sector_size / 1024 /1024);
-    log_printf("  drive: %s", disk->drive == ATA_DISK_MASTER ? "Master" : "Slave");
+    log_printf("  drive: %s", disk->drive == DISK_DISK_MASTER ? "Master" : "Slave");
 
     // 显示分区信息
     log_printf("  Part info:");
@@ -121,7 +121,7 @@ static int detect_part_info(disk_t * disk) {
     mbr_t mbr;
 
     // 读取mbr区
-    ata_send_cmd(disk, 0, 1, ATA_CMD_READ);
+    ata_send_cmd(disk, 0, 1, DISK_CMD_READ);
     int err = ata_wait_data(disk);
     if (err < 0) {
         log_printf("read mbr failed");
@@ -154,10 +154,10 @@ static int detect_part_info(disk_t * disk) {
  * @brief 检测磁盘相关的信息
  */
 static int identify_disk (disk_t * disk) {
-    ata_send_cmd(disk, 0, 0, ATA_CMD_IDENTIFY);
+    ata_send_cmd(disk, 0, 0, DISK_CMD_IDENTIFY);
 
     // 检测状态，如果为0，则控制器不存在
-    int err = inb(ATA_STATUS(disk));
+    int err = inb(DISK_STATUS(disk));
     if (err == 0) {
         log_printf("%s doesn't exist\n", disk->name);
         return -1;
@@ -215,7 +215,7 @@ void disk_init (void) {
 
         // 先初始化各字段
         kernel_sprintf(disk->name, "sd%c", i + 'a');
-        disk->drive = (i == 0) ? ATA_DISK_MASTER : ATA_DISK_SLAVE;
+        disk->drive = (i == 0) ? DISK_DISK_MASTER : DISK_DISK_SLAVE;
         disk->port_base = IOBASE_PRIMARY;
         disk->mutex = &mutex;
         disk->op_sem = &op_sem;
@@ -281,7 +281,7 @@ int disk_read (device_t * dev, int start_sector, char * buf, int count) {
     task_on_op = 1;
 
     int cnt;
-    ata_send_cmd(disk, part_info->start_sector + start_sector, count, ATA_CMD_READ);
+    ata_send_cmd(disk, part_info->start_sector + start_sector, count, DISK_CMD_READ);
     for (cnt = 0; cnt < count; cnt++, buf += disk->sector_size) {
         // 利用信号量等待中断通知，然后再读取数据
         if (task_current()) {
@@ -324,7 +324,7 @@ int disk_write (device_t * dev, int start_sector, char * buf, int count) {
     task_on_op = 1;
 
     int cnt;
-    ata_send_cmd(disk, part_info->start_sector + start_sector, count, ATA_CMD_WRITE);
+    ata_send_cmd(disk, part_info->start_sector + start_sector, count, DISK_CMD_WRITE);
     for (cnt = 0; cnt < count; cnt++, buf += disk->sector_size) {
         // 先写数据
         ata_write_data(disk, buf, disk->sector_size);
