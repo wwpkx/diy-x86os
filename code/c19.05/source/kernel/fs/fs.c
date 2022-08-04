@@ -163,18 +163,6 @@ void fs_init (void) {
 }
 
 /**
- * @brief 目录是否有效
- */
-int path_is_valid (const char * path) {
-	return (path != (const char *)0) && path[0];
-}
-
-// 当前进程所在的文件系统和路径
-int path_is_relative (const char * path) {
-	return path_is_valid(path) && (path[0] != '/');
-}
-
-/**
  * @brief 转换目录为数字
  */
 int path_to_num (const char * path, int * num) {
@@ -426,15 +414,15 @@ int sys_close(int file) {
 
 	ASSERT(p_file->ref > 0);
 
-	if (p_file->ref == 1) {
+	if (p_file->ref-- == 1) {
 		fs_t * fs = p_file->fs;
 
 		fs_protect(fs);
 		fs->op->close(p_file);
 		fs_unprotect(fs);
+	    file_free(p_file);
 	}
 
-	file_free(p_file);
 	task_remove_fd(file);
 	return 0;
 }

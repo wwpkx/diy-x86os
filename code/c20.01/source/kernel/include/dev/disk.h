@@ -40,13 +40,6 @@ typedef struct _partinfo_t {
  */
 typedef struct _disk_t {
     char name[DISK_NAME_SIZE];      // 磁盘名称
-
-    enum {
-        ATA_DISK_MASTER = (0 << 4),     // 主设备
-        ATA_DISK_SLAVE = (1 << 4),      // 从设备
-    }drive;
-
-    uint16_t port_base;             // 端口起始地址
     int sector_size;                // 块大小
     int sector_count;               // 总扇区数量
 	partinfo_t partinfo[DISK_PRIMARY_PART_CNT];	// 分区表, 包含一个描述整个磁盘的假分区信息

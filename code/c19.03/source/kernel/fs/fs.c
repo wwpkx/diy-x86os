@@ -151,17 +151,6 @@ void fs_init (void) {
 }
 
 /**
- * @brief 检查路径是否正常
- */
-static int is_path_valid (const char * path) {
-	if ((path == (const char *)0) || (path[0] == '\0')) {
-		return 0;
-	}
-
-    return 1;
-}
-
-/**
  * @brief 转换目录为数字
  */
 int path_to_num (const char * path, int * num) {
@@ -212,7 +201,7 @@ int sys_open(const char *name, int flags, ...) {
 		file->mode = 0;
 		file->pos = 0;
 		file->ref = 1;
-		file->type = FILE_TTY;
+
 		kernel_strncpy(file->file_name, name, FILE_NAME_SIZE);
 		int err = devfs_op.open((fs_t *)0, name, file);
 		if (err < 0) {
