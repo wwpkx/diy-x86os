@@ -13,20 +13,19 @@
 #define PART_NAME_SIZE              32      // 分区名称
 #define DISK_NAME_SIZE              32      // 磁盘名称大小
 #define DISK_CNT                    2       // 磁盘的数量
-#define DISK_PRIMARY_PART_CNT       4       // 主分区数量最多才4个
-#define DISK_PER_CHANNEL        2       // 通道的数量
-#define DISK_CHANNEL_CNT            2       // 通道数量
+#define DISK_PRIMARY_PART_CNT       (4+1)       // 主分区数量最多才4个
+#define DISK_PER_CHANNEL            2       // 每通道磁盘数量
 
-// https://wiki.osdev.org/DISK_PIO_Mode#IDENTIFY_command
+// https://wiki.osdev.org/ATA_PIO_Mode#IDENTIFY_command
 // 只考虑支持主总结primary bus
 #define IOBASE_PRIMARY              0x1F0
 #define	DISK_DATA(disk)				(disk->port_base + 0)		// 数据寄存器
-#define	DISK_ERROR(disk)				(disk->port_base + 1)		// 错误寄存器
+#define	DISK_ERROR(disk)			(disk->port_base + 1)		// 错误寄存器
 #define	DISK_SECTOR_COUNT(disk)		(disk->port_base + 2)		// 扇区数量寄存器
 #define	DISK_LBA_LO(disk)			(disk->port_base + 3)		// LBA寄存器
 #define	DISK_LBA_MID(disk)			(disk->port_base + 4)		// LBA寄存器
 #define	DISK_LBA_HI(disk)			(disk->port_base + 5)		// LBA寄存器
-#define	DISK_DRIVE(disk)				(disk->port_base + 6)		// 磁盘或磁头？
+#define	DISK_DRIVE(disk)			(disk->port_base + 6)		// 磁盘或磁头？
 #define	DISK_STATUS(disk)			(disk->port_base + 7)		// 状态寄存器
 #define	DISK_CMD(disk)				(disk->port_base + 7)		// 命令寄存器
 

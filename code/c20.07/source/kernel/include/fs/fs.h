@@ -57,8 +57,6 @@ typedef struct _fs_t {
 }fs_t;
 
 void fs_init (void);
-int path_is_valid (const char * path);
-int path_is_relative (const char * path);
 int path_to_num (const char * path, int * num);
 const char * path_next_child (const char * path);
 

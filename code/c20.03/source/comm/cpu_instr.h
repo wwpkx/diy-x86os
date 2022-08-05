@@ -26,12 +26,8 @@ static inline void outb(uint16_t port, uint8_t data) {
 	__asm__ __volatile__("outb %[v], %[p]" : : [p]"d" (port), [v]"a" (data));
 }
 
-static inline void insw(uint16_t port, const uint16_t * data, uint32_t cnt) {
-   __asm__ __volatile__("cld; rep insw" : "+D" (data), "+c" (cnt) : "d" (port) : "memory");
-}
-
-static inline void outsw(uint16_t port, const uint16_t * data, uint32_t cnt) {
-   __asm__ __volatile__ ("cld; rep outsw" : "+S" (data), "+c" (cnt) : "d" (port));
+static inline void outw(uint16_t port, uint16_t data) {
+	__asm__ __volatile__("out %[v], %[p]" : : [p]"d" (port), [v]"a" (data));
 }
 
 static inline void cli() {
