@@ -57,10 +57,8 @@ typedef struct _fat_t {
 
     // 与文件系统读写相关信息
     uint8_t * fat_buffer;             		// FAT表项缓冲
-    int curr_sector;                        // 当前缓存的扇区数
 
     struct _fs_t * fs;                      // 所在的文件系统
-    mutex_t mutex;                          // 互斥信号量
 } fat_t;
 
 #endif // FAT_H

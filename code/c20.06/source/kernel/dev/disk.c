@@ -101,25 +101,6 @@ static void print_disk_info (disk_t * disk) {
 }
 
 /**
- * @brief 根据设备号，获取分区信息
- */
-partinfo_t * device_to_part (int minor) {
-    // 不能超过磁盘数量
-    int disk_idx = ((minor >> 4) & 0xF) - 0xa;       // 每块硬盘从'a'开始
-    if (disk_idx >= DISK_CNT) {
-        return (partinfo_t *)0;
-    }
-
-    // 不能超过分区数量
-    int part_no = minor & 0xF;
-    if (part_no >= DISK_PRIMARY_PART_CNT) {
-        return (partinfo_t *)0;
-    }
-
-    return disk_buf[disk_idx].partinfo + part_no - 1;       // 从1开始算起
-}
-
-/**
  * 获取指定序号的分区信息
  * 注意，该操作依赖物理分区分配，如果设备的分区结构有变化，则序号也会改变，得到的结果不同
  */
@@ -285,9 +266,7 @@ int disk_read (device_t * dev, int start_sector, char * buf, int count) {
     ata_send_cmd(disk, part_info->start_sector + start_sector, count, DISK_CMD_READ);
     for (cnt = 0; cnt < count; cnt++, buf += disk->sector_size) {
         // 利用信号量等待中断通知，然后再读取数据
-        if (task_current()) {
-            sem_wait(disk->op_sem);
-        }
+        sem_wait(disk->op_sem);
 
         // 这里虽然有调用等待，但是由于已经是操作完毕，所以并不会等
         int err = ata_wait_data(disk);
@@ -331,9 +310,7 @@ int disk_write (device_t * dev, int start_sector, char * buf, int count) {
         ata_write_data(disk, buf, disk->sector_size);
 
         // 利用信号量等待中断通知，等待写完成
-        if (task_current()) {
-            sem_wait(disk->op_sem);
-        }
+        sem_wait(disk->op_sem);
 
         // 这里虽然有调用等待，但是由于已经是操作完毕，所以并不会等
         int err = ata_wait_data(disk);
@@ -367,7 +344,7 @@ void disk_close (device_t * dev) {
  */
 void do_handler_ide_primary (exception_frame_t *frame)  {
     pic_send_eoi(IRQ14_HARDDISK_PRIMARY);
-    if (task_on_op && task_current()) {
+    if (task_on_op) {
         sem_notify(&op_sem);
     }
 }

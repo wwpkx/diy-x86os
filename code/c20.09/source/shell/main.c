@@ -125,7 +125,6 @@ static int do_ls (int argc, char ** argv) {
     // 然后进行遍历
 	struct dirent * entry;
 	while((entry = readdir(p_dir)) != NULL) {
-        strlwr(entry->name);
 		printf("%c %s %d\n",
                 entry->type == FILE_DIR ? 'd' : 'f',
                 entry->name,
@@ -155,7 +154,7 @@ static const cli_cmd_t cmd_list[] = {
 	},
     {
         .name = "ls",
-        .useage = "ls [dir] -- list director",
+        .useage = "ls -- list director",
         .do_func = do_ls,
     },
     {

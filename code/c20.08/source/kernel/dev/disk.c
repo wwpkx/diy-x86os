@@ -101,25 +101,6 @@ static void print_disk_info (disk_t * disk) {
 }
 
 /**
- * @brief 根据设备号，获取分区信息
- */
-partinfo_t * device_to_part (int minor) {
-    // 不能超过磁盘数量
-    int disk_idx = ((minor >> 4) & 0xF) - 0xa;       // 每块硬盘从'a'开始
-    if (disk_idx >= DISK_CNT) {
-        return (partinfo_t *)0;
-    }
-
-    // 不能超过分区数量
-    int part_no = minor & 0xF;
-    if (part_no >= DISK_PRIMARY_PART_CNT) {
-        return (partinfo_t *)0;
-    }
-
-    return disk_buf[disk_idx].partinfo + part_no - 1;       // 从1开始算起
-}
-
-/**
  * 获取指定序号的分区信息
  * 注意，该操作依赖物理分区分配，如果设备的分区结构有变化，则序号也会改变，得到的结果不同
  */
