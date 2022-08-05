@@ -2,12 +2,15 @@
 #define DISK_H
 
 #include "comm/types.h"
+#include "ipc/mutex.h"
+#include "ipc/sem.h"
 
 #define DISK_NAME_SIZE  32
 #define PART_NAME_SIZE  32
 #define DISK_PRIMARY_PART_CNT   (4+1)
 #define DISK_CNT        2
 #define DISK_PER_CHANNEL    2
+#define MBR_PRIMARY_PART_NR 4
 
 #define IOBASE_PRIMARY      0x1F0
 #define DISK_DATA(disk)     (disk->port_base + 0)
@@ -30,6 +33,28 @@
 #define DISK_STATUS_BUSY     (1 << 7)
 
 #define DISK_DRIVE_BASE     0xE0
+
+#pragma pack(1)
+typedef struct _part_item_t {
+    uint8_t boot_active;
+    uint8_t start_header;
+    uint16_t start_sector:6;
+    uint16_t start_cylinder:10;
+    uint8_t system_id;
+    uint8_t end_header;
+    uint16_t end_sector:6;
+    uint16_t end_cylinder : 10;
+    uint32_t relative_sectors;
+    uint32_t total_sectors;
+}part_item_t;
+
+typedef struct _mbr_t {
+    uint8_t code[446];
+    part_item_t part_item[MBR_PRIMARY_PART_NR];
+    uint8_t boot_sig[2];
+}mbr_t;
+#pragma pack()
+
 
 struct _disk_t;
 typedef struct _partinfo_t {
@@ -59,8 +84,12 @@ typedef struct _disk_t {
     int sector_size;
     int sector_count;
     partinfo_t partinfo[DISK_PRIMARY_PART_CNT];
+
+    mutex_t * mutex;
+    sem_t * op_sem;
 }disk_t;
 
 void disk_init (void);
 
+void exception_handler_ide_primary (void);
 #endif
