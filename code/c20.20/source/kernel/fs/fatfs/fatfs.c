@@ -170,7 +170,7 @@ static void to_sfn(char* dest, const char* src) {
     // 不断生成直到遇到分隔符和写完缓存
     char * curr = dest;
     char * end = dest + SFN_LEN;
-    while (path_is_valid(src) && (curr < end)) {
+    while (*src && (curr < end)) {
         char c = *src++;
 
         switch (c) {
@@ -209,13 +209,8 @@ int diritem_init(diritem_t * item, uint8_t attr,
     item->DIR_NTRes = 0;
 
     // 时间写固定值，简单方便
-    item->DIR_CrtTime.hour = 12;
-    item->DIR_CrtTime.minute = 0;
-    item->DIR_CrtTime.second_2 = 0;
-    item->DIR_CrtTimeTeenth = 0;
-    item->DIR_CrtDate.year_from_1980 = 2008 - 1980;
-    item->DIR_CrtDate.month = 12;
-    item->DIR_CrtDate.day = 1;
+    item->DIR_CrtTime = 0;
+    item->DIR_CrtDate = 0;
     item->DIR_WrtTime = item->DIR_CrtTime;
     item->DIR_WrtDate = item->DIR_CrtDate;
     item->DIR_LastAccDate = item->DIR_CrtDate;
@@ -242,7 +237,7 @@ void diritem_get_name (diritem_t * item, char * dest) {
     }
 
     // 没有扩展名的情况
-    if (ext[1] == '\0') {
+    if (ext && (ext[1] == '\0')) {
         ext[0] = '\0';
     }
 }
@@ -336,7 +331,6 @@ static int expand_file(file_t * file, int inc_bytes) {
         }
     }
 
-    file->size += inc_bytes;
     return 0;
 }
 
@@ -356,6 +350,8 @@ static int move_file_pos(file_t* file, fat_t * fat, uint32_t move_bytes, int exp
             }
 
             next = cluster_get_next(fat, file->cblk);
+            log_printf("expand %d, file size: %d", move_bytes, file->size);
+
         }
 
         file->cblk = next;
@@ -409,12 +405,12 @@ int fatfs_mount (struct _fs_t * fs, int dev_major, int dev_minor) {
 
 	// 简单检查是否是fat16文件系统, 可以在下边做进一步的更多检查。此处只检查做一点点检查
 	if (fat->tbl_cnt != 2) {
-        log_printf("%s: fat table num error, major: %x, minor: %x", dev_major, dev_minor);
+        log_printf("fat table num error, major: %x, minor: %x", dev_major, dev_minor);
 		goto mount_failed;
 	}
 
     if (kernel_memcmp(dbr->BS_FileSysType, "FAT16", 5) != 0) {
-        log_printf("%s: not a fat16 file system, major: %x, minor: %x", dev_major, dev_minor);
+        log_printf("not a fat16 file system, major: %x, minor: %x", dev_major, dev_minor);
         goto mount_failed;
     }
 
@@ -577,7 +573,8 @@ int fatfs_write (char * buf, int size, file_t * file) {
 
     // 如果文件大小不够，则先扩展文件大小
     if (file->pos + size > file->size) {
-        int err = expand_file(file, file->pos + size - file->size);
+        int inc_size = file->pos + size - file->size;
+        int err = expand_file(file, inc_size);
         if (err < 0) {
             return 0;
         }
@@ -622,6 +619,7 @@ int fatfs_write (char * buf, int size, file_t * file) {
         buf += curr_write;
         nbytes -= curr_write;
         total_write += curr_write;
+        file->size += curr_write;
 
         // 前移文件指针
 		int err = move_file_pos(file, fat, curr_write, 1);

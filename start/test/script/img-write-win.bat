@@ -26,7 +26,10 @@ echo attach vdisk >>a.txt
 echo select partition 1 >> a.txt
 echo assign letter=%TARGET_PATH% >> a.txt
 diskpart /s a.txt
-if %errorlevel% neq 0 exit -1
+if %errorlevel% neq 0 (
+    echo "attach disk2 failed"
+    exit -1
+)
 del a.txt
 
 copy /Y init.elf %TARGET_PATH%:\init
@@ -36,5 +39,8 @@ copy /Y loop.elf %TARGET_PATH%:\loop
 echo select vdisk file="%cd%\%DISK2_NAME%" >a.txt
 echo detach vdisk >>a.txt
 diskpart /s a.txt
-if %errorlevel% neq 0 exit -1
+if %errorlevel% neq 0 (
+    echo "deattach disk2 failed, remove it manual"
+    exit -1
+)
 del a.txt

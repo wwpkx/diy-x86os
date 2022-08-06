@@ -47,7 +47,7 @@ void diritem_get_name (diritem_t * item, char * dest) {
     }
 
     // 没有扩展名的情况
-    if (ext[1] == '\0') {
+    if (ext && (ext[1] == '\0')) {
         ext[0] = '\0';
     }
 }

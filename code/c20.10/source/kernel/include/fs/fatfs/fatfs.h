@@ -26,24 +26,6 @@
 #define SFN_LEN                    	 	11              // sfn文件名长
 
 /**
- * FAT目录项的日期类型
- */
-typedef struct _diritem_date_t {
-    uint16_t day : 5;                  // 日
-    uint16_t month : 4;                // 月
-    uint16_t year_from_1980 : 7;       // 年
-} diritem_date_t;
-
-/**
- * FAT目录项的时间类型
- */
-typedef struct _diritem_time_t {
-    uint16_t second_2 : 5;             // 2秒
-    uint16_t minute : 6;               // 分
-    uint16_t hour : 5;                 // 时
-} diritem_time_t;
-
-/**
  * FAT目录项
  */
 typedef struct _diritem_t {
@@ -51,12 +33,12 @@ typedef struct _diritem_t {
     uint8_t DIR_Attr;                      // 属性
     uint8_t DIR_NTRes;
     uint8_t DIR_CrtTimeTeenth;             // 创建时间的毫秒
-    diritem_time_t DIR_CrtTime;         // 创建时间
-    diritem_date_t DIR_CrtDate;         // 创建日期
-    diritem_date_t DIR_LastAccDate;     // 最后访问日期
+    uint16_t DIR_CrtTime;         // 创建时间
+    uint16_t DIR_CrtDate;         // 创建日期
+    uint16_t DIR_LastAccDate;     // 最后访问日期
     uint16_t DIR_FstClusHI;                // 簇号高16位
-    diritem_time_t DIR_WrtTime;         // 修改时间
-    diritem_date_t DIR_WrtDate;         // 修改时期
+    uint16_t DIR_WrtTime;         // 修改时间
+    uint16_t DIR_WrtDate;         // 修改时期
     uint16_t DIR_FstClusL0;                // 簇号低16位
     uint32_t DIR_FileSize;                 // 文件字节大小
 } diritem_t;

@@ -71,7 +71,7 @@ static void to_sfn(char* dest, const char* src) {
     // 不断生成直到遇到分隔符和写完缓存
     char * curr = dest;
     char * end = dest + SFN_LEN;
-    while (path_is_valid(src) && (curr < end)) {
+    while (*src && (curr < end)) {
         char c = *src++;
 
         switch (c) {
@@ -117,7 +117,7 @@ void diritem_get_name (diritem_t * item, char * dest) {
     }
 
     // 没有扩展名的情况
-    if (ext[1] == '\0') {
+    if (ext && (ext[1] == '\0')) {
         ext[0] = '\0';
     }
 }
@@ -165,9 +165,7 @@ static int move_file_pos(file_t* file, fat_t * fat, uint32_t move_bytes, int exp
 			return -1;
 		}
 
-		if (cluster_is_valid(next)) {
-			file->cblk = next;
-		}
+        file->cblk = next;
 	}
 
 	file->pos += move_bytes;
@@ -213,8 +211,6 @@ int fatfs_mount (struct _fs_t * fs, int dev_major, int dev_minor) {
     fat->data_start = fat->root_start + fat->root_ent_cnt * 32 / SECTOR_SIZE;
     fat->curr_sector = -1;
     fat->fs = fs;
-    mutex_init(&fat->mutex);
-    fs->mutex = &fat->mutex;
 
 	// 简单检查是否是fat16文件系统, 可以在下边做进一步的更多检查。此处只检查做一点点检查
 	if (fat->tbl_cnt != 2) {
@@ -280,13 +276,11 @@ int fatfs_open (struct _fs_t * fs, const char * path, file_t * file) {
 
          // 结束项，不需要再扫描了，同时index也不能往前走
         if (item->DIR_Name[0] == DIRITEM_NAME_END) {
-            p_index = i;
             break;
         }
 
         // 只显示普通文件和目录，其它的不显示
         if (item->DIR_Name[0] == DIRITEM_NAME_FREE) {
-            p_index = i;
             continue;
         }
 
@@ -300,13 +294,6 @@ int fatfs_open (struct _fs_t * fs, const char * path, file_t * file) {
 
     if (file_item) {
         read_from_diritem(fat, file, file_item, p_index);
-
-        // 如果要截断，则清空
-        if (file->mode & O_TRUNC) {
-            // cluster_free_chain(fat, file->sblk);
-            file->cblk = file->sblk = FAT_CLUSTER_INVALID;
-            file->size = 0;
-        }
         return 0;
     }
 

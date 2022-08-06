@@ -23,11 +23,8 @@ echo assign letter=%TARGET_PATH% >> a.txt
 diskpart /s a.txt
 del a.txt
 
-@REM ����Ӧ�ó���
-copy /Y init.elf %TARGET_PATH%:\init
-copy /Y shell.elf %TARGET_PATH%:\shell.elf
-copy /Y loop.elf %TARGET_PATH%:\loop
-copy /Y snake.elf %TARGET_PATH%:\snake
+
+copy /Y *.elf %TARGET_PATH%:\
 
 echo select vdisk file="%cd%\%DISK2_NAME%" >a.txt
 echo detach vdisk >>a.txt

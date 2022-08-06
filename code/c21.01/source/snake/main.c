@@ -196,14 +196,8 @@ static void move_forward (int dir) {
 		next_row = snake.head->row + 1;
 		next_col = snake.head->col;
 		break;
-	}
-
-	// 没有发生变化
-	body_part_t * next_part = snake.head->next;
-	if (next_part) {
-		if ((next_row == next_part->row) && (next_col == next_part->col)) {
-			return;
-		}
+	default:
+		return;
 	}
 
 	// 先不管有没有食物，都生成一个头部，然后前移
@@ -273,7 +267,8 @@ int main (int argc, char ** argv) {
 		// 检查是否有键盘输入
 		ioctl(0, TTY_CMD_IN_COUNT, (int)&count, 0);
 		if (count) {
-			move_forward(getchar());
+			int ch = getchar();
+			move_forward(ch);
 		} else if (++cnt % 50 == 0) {
 			// 每隔一段时间自动往前移
 			move_forward(snake.dir);

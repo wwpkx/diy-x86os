@@ -78,7 +78,7 @@ static void to_sfn(char* dest, const char* src) {
     // 不断生成直到遇到分隔符和写完缓存
     char * curr = dest;
     char * end = dest + SFN_LEN;
-    while (path_is_valid(src) && (curr < end)) {
+    while (*src && (curr < end)) {
         char c = *src++;
 
         switch (c) {
@@ -117,13 +117,8 @@ int diritem_init(diritem_t * item, uint8_t attr,
     item->DIR_NTRes = 0;
 
     // 时间写固定值，简单方便
-    item->DIR_CrtTime.hour = 12;
-    item->DIR_CrtTime.minute = 0;
-    item->DIR_CrtTime.second_2 = 0;
-    item->DIR_CrtTimeTeenth = 0;
-    item->DIR_CrtDate.year_from_1980 = 2008 - 1980;
-    item->DIR_CrtDate.month = 12;
-    item->DIR_CrtDate.day = 1;
+    item->DIR_CrtTime = 0;
+    item->DIR_CrtDate = 0;
     item->DIR_WrtTime = item->DIR_CrtTime;
     item->DIR_WrtDate = item->DIR_CrtDate;
     item->DIR_LastAccDate = item->DIR_CrtDate;
@@ -150,7 +145,7 @@ void diritem_get_name (diritem_t * item, char * dest) {
     }
 
     // 没有扩展名的情况
-    if (ext[1] == '\0') {
+    if (ext && (ext[1] == '\0')) {
         ext[0] = '\0';
     }
 }
@@ -216,9 +211,7 @@ static int move_file_pos(file_t* file, fat_t * fat, uint32_t move_bytes, int exp
 			return -1;
 		}
 
-		if (cluster_is_valid(next)) {
-			file->cblk = next;
-		}
+        file->cblk = next;
 	}
 
 	file->pos += move_bytes;
@@ -264,17 +257,15 @@ int fatfs_mount (struct _fs_t * fs, int dev_major, int dev_minor) {
     fat->data_start = fat->root_start + fat->root_ent_cnt * 32 / SECTOR_SIZE;
     fat->curr_sector = -1;
     fat->fs = fs;
-    mutex_init(&fat->mutex);
-    fs->mutex = &fat->mutex;
 
 	// 简单检查是否是fat16文件系统, 可以在下边做进一步的更多检查。此处只检查做一点点检查
 	if (fat->tbl_cnt != 2) {
-        log_printf("%s: fat table num error, major: %x, minor: %x", dev_major, dev_minor);
+        log_printf("fat table num error, major: %x, minor: %x", dev_major, dev_minor);
 		goto mount_failed;
 	}
 
     if (kernel_memcmp(dbr->BS_FileSysType, "FAT16", 5) != 0) {
-        log_printf("%s: not a fat16 file system, major: %x, minor: %x", dev_major, dev_minor);
+        log_printf("not a fat16 file system, major: %x, minor: %x", dev_major, dev_minor);
         goto mount_failed;
     }
 
@@ -351,13 +342,6 @@ int fatfs_open (struct _fs_t * fs, const char * path, file_t * file) {
 
     if (file_item) {
         read_from_diritem(fat, file, file_item, p_index);
-
-        // 如果要截断，则清空
-        if (file->mode & O_TRUNC) {
-            // cluster_free_chain(fat, file->sblk);
-            file->cblk = file->sblk = FAT_CLUSTER_INVALID;
-            file->size = 0;
-        }
     } else if ((file->mode & O_CREAT) && (p_index >= 0)) {
         // 创建一个空闲的diritem项
         diritem_t item;

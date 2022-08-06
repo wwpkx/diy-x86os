@@ -101,25 +101,6 @@ static void print_disk_info (disk_t * disk) {
 }
 
 /**
- * @brief 根据设备号，获取分区信息
- */
-partinfo_t * device_to_part (int minor) {
-    // 不能超过磁盘数量
-    int disk_idx = ((minor >> 4) & 0xF) - 0xa;       // 每块硬盘从'a'开始
-    if (disk_idx >= DISK_CNT) {
-        return (partinfo_t *)0;
-    }
-
-    // 不能超过分区数量
-    int part_no = minor & 0xF;
-    if (part_no >= DISK_PRIMARY_PART_CNT) {
-        return (partinfo_t *)0;
-    }
-
-    return disk_buf[disk_idx].partinfo + part_no - 1;       // 从1开始算起
-}
-
-/**
  * 获取指定序号的分区信息
  * 注意，该操作依赖物理分区分配，如果设备的分区结构有变化，则序号也会改变，得到的结果不同
  */
@@ -201,10 +182,6 @@ static int identify_disk (disk_t * disk) {
  * 以下只是将相关磁盘相关的信息给读取到内存中
  */
 void disk_init (void) {
-    uint8_t disk_cnt = *((uint8_t*)(0x475));	// 从BIOS数据区，读取硬盘的数量
-    ASSERT(disk_cnt > 0);
-
-    log_printf("disk init: %d disk found!", disk_cnt);
     log_printf("Checking disk...");
 
     // 清空所有disk，以免数据错乱。不过引导程序应该有清0的，这里为安全再清一遍
@@ -215,7 +192,6 @@ void disk_init (void) {
     sem_init(&op_sem, 0);       // 没有操作完成
 
     // 检测各个硬盘, 读取硬件是否存在，有其相关信息
-    int channel_disk_cnt = 0;
     for (int i = 0; i < DISK_PER_CHANNEL; i++) {
         disk_t * disk = disk_buf + i;
 

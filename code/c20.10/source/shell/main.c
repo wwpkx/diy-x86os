@@ -155,7 +155,7 @@ static const cli_cmd_t cmd_list[] = {
 	},
     {
         .name = "ls",
-        .useage = "ls [dir] -- list director",
+        .useage = "ls -- list director",
         .do_func = do_ls,
     },
     {

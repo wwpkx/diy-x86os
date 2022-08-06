@@ -140,13 +140,6 @@ void fs_init (void) {
 }
 
 /**
- * @brief 目录是否有效
- */
-int path_is_valid (const char * path) {
-	return (path != (const char *)0) && path[0];
-}
-
-/**
  * @brief 转换目录为数字
  */
 int path_to_num (const char * path, int * num) {
