@@ -154,6 +154,17 @@ int dup (int file) {
     return sys_call(&args);
 }
 
+int ioctl (int file, int cmd, int arg0, int arg1) {
+    syscall_args_t args;
+    args.id = SYS_ioctl;
+    args.arg0 = (int)file;
+    args.arg1 = (int)cmd;
+    args.arg2 = (int)arg0;
+    args.arg3 = (int)arg1;
+
+    return sys_call(&args);
+}
+
 void _exit (int status) {
     syscall_args_t args;
     args.id = SYS_exit;

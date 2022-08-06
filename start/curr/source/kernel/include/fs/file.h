@@ -23,6 +23,9 @@ typedef struct _file_t {
     int pos;
     int mode;
 
+    int sblk;       
+    int cblk;
+    int p_index;
     struct _fs_t * fs;
 }file_t;
 

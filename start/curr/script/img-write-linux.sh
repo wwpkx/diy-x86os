@@ -19,15 +19,15 @@ dd if=kernel.elf of=$DISK1_NAME bs=512 conv=notrunc seek=100
 
 # 写应用程序init，临时使用
 # dd if=init.elf of=$DISK1_NAME bs=512 conv=notrunc seek=5000
-dd if=shell.elf of=$DISK1_NAME bs=512 conv=notrunc seek=5000
+# dd if=shell.elf of=$DISK1_NAME bs=512 conv=notrunc seek=5000
 
 # 写应用程序，使用系统的挂载命令
-# export DISK2_NAME=disk2.img
-# export TARGET_PATH=mp
-# rm -rf $TARGET_PATH
-# mkdir $TARGET_PATH
-# sudo mount -o offset=$[128*512],rw $DISK2_NAME $TARGET_PATH
-# sudo cp -v init.elf $TARGET_PATH/init
-# sudo cp -v shell.elf $TARGET_PATH
-# sudo cp -v loop.elf $TARGET_PATH/loop
-# sudo umount $TARGET_PATH
+export DISK2_NAME=disk2.img
+export TARGET_PATH=mp
+rm -rf $TARGET_PATH
+mkdir $TARGET_PATH
+sudo mount -o offset=$[128*512],rw $DISK2_NAME $TARGET_PATH
+sudo cp -v init.elf $TARGET_PATH/init
+sudo cp -v shell.elf $TARGET_PATH
+sudo cp -v loop.elf $TARGET_PATH/loop
+sudo umount $TARGET_PATH

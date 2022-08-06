@@ -3,6 +3,35 @@
 
 #pragma pack(1)
 
+#define FAT_CLUSTER_INVALID         0xFFF8
+
+#define DIRITEM_NAME_FREE           0xE5
+#define DIRITEM_NAME_END            0x00
+
+#define DIRITEM_ATTR_READ_ONLY      0x1
+#define DIRITEM_ATTR_HIDDEN         0x2
+#define DIRITEM_ATTR_SYSTEM         0x4
+#define DIRITEM_ATTR_VOLUME_ID      0x8
+#define DIRITEM_ATTR_DIRECTORY      0x10
+#define DIRITEM_ATTR_ARCHIVE        0x20
+#define DIRITEM_ATTR_LONG_NAME      0xF
+
+
+typedef struct _diritem_t {
+    uint8_t DIR_Name[11];
+    uint8_t DIR_Attr;
+    uint8_t DIR_NTRes;
+    uint8_t DIR_CrtTimeTeenth;
+    uint16_t DIR_CrtTime;
+    uint16_t DIR_CrtDate;
+    uint16_t DIR_LastAccDate;
+    uint16_t DIR_FstClusHI;
+    uint16_t DIR_WrtTime;
+    uint16_t DIR_WrtDate;
+    uint16_t DIR_FstClusLO;
+    uint32_t DIR_FileSize;
+}diritem_t;
+
 typedef struct _dbr_t {
     uint8_t BS_jmpBoot[3];
     uint8_t BS_OEMName[8];
@@ -42,8 +71,11 @@ typedef struct _fat_t {
     uint32_t cluster_byte_size;
 
     uint8_t * fat_buffer;
+    int curr_sector;
 
     struct _fs_t * fs;
 }fat_t;
+
+typedef uint16_t cluster_t;
 
 #endif

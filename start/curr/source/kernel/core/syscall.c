@@ -29,6 +29,7 @@ static const syscall_hanler_t sys_table[] = {
     [SYS_sbrk] = (syscall_hanler_t)sys_sbrk,
     [SYS_fstat] = (syscall_hanler_t)sys_fstat,
     [SYS_dup] = (syscall_hanler_t)sys_dup,
+    [SYS_ioctl] = (syscall_hanler_t)sys_ioctl,
 
     [SYS_opendir] = (syscall_hanler_t)sys_opendir,
     [SYS_readdir] = (syscall_hanler_t)sys_readdir,
