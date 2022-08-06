@@ -21,10 +21,6 @@ extern fs_op_t devfs_op;
 extern fs_op_t fatfs_op;
 static fs_t * root_fs;
 
-static uint8_t TEMP_ADDR[100*1024];
-static uint8_t * temp_pos;
-#define TEMP_FILE_ID 100
-
 static int is_fd_bad(int file) {
     if ((file <  0) && (file >= TASK_OFILE_NR)) {
         return 1;
@@ -87,15 +83,6 @@ static void fs_unprotect (fs_t * fs) {
 
 // /dev/  /home
 int sys_open(const char * name, int flags, ...) {
-    if (kernel_strncmp(name, "/shell.elf", 3) == 0) {
-        int dev_id = dev_open(DEV_DISK, 0xa0, (void *)0);
-        dev_read(dev_id, 5000, (uint8_t *)TEMP_ADDR, 80);
-        
-        // read_disk(5000, 80, (uint8_t *)TEMP_ADDR);
-        temp_pos = TEMP_ADDR;
-        return TEMP_FILE_ID;
-    }
-
     file_t * file = file_alloc();
     if (!file) {
         return -1;
@@ -146,12 +133,6 @@ sys_open_failed:
  }
 
 int sys_read(int file, char * ptr, int len) {
-    if (file == TEMP_FILE_ID) {
-        kernel_memcpy(ptr, temp_pos, len);
-        temp_pos += len;
-        return len;
-    } 
-
     if (is_fd_bad(file) || !ptr || !len) {
         return 0;
     }
@@ -198,11 +179,6 @@ int sys_write(int file, char * ptr, int len) {
 }
 
 int sys_lseek(int file, int ptr, int dir) {
-    if (file == TEMP_FILE_ID) {
-        temp_pos = (uint8_t *)(TEMP_ADDR + ptr);
-        return 0;
-    }
-
     if (is_fd_bad(file)) {
         return 0;
     }
@@ -221,10 +197,6 @@ int sys_lseek(int file, int ptr, int dir) {
 }
 
 int sys_close (int file) {
-    if (file == TEMP_FILE_ID) {
-        return 0;
-    }
-    
     if (is_fd_bad(file)) {
         log_printf("file error");
         return 0;
@@ -395,6 +367,25 @@ int sys_opendir (const char * name, DIR * dir) {
     int err = root_fs->op->opendir(root_fs, name, dir);
     fs_unprotect(root_fs);
 
+    return err;
+}
+
+int sys_ioctl (int file, int cmd, int arg0, int arg1) {
+    if (is_fd_bad(file)) {
+        log_printf("file %d is not valid.", file);
+        return -1;
+    }
+
+    file_t * p_file = task_file(file); 
+    if (!p_file) {
+        log_printf("file not opend");
+        return -1;
+    }
+
+    fs_t * fs = p_file->fs;
+    fs_protect(fs);
+    int err = fs->op->ioctl(p_file, cmd, arg0, arg1);
+    fs_unprotect(fs);
     return err;
 }
 
