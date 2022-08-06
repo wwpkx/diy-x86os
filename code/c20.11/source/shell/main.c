@@ -121,6 +121,7 @@ static int do_less (int argc, char ** argv) {
                 puts("show file content");
                 puts("less [-l] file");
                 puts("-l show file line by line.");
+                break;
             case '?':
                 if (optarg) {
                     fprintf(stderr, "Unknown option: -%s\n", optarg);

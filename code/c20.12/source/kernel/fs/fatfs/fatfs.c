@@ -177,12 +177,12 @@ int fatfs_mount (struct _fs_t * fs, int dev_major, int dev_minor) {
 
 	// 简单检查是否是fat16文件系统, 可以在下边做进一步的更多检查。此处只检查做一点点检查
 	if (fat->tbl_cnt != 2) {
-        log_printf("%s: fat table num error, major: %x, minor: %x", dev_major, dev_minor);
+        log_printf("fat table num error, major: %x, minor: %x", dev_major, dev_minor);
 		goto mount_failed;
 	}
 
     if (kernel_memcmp(dbr->BS_FileSysType, "FAT16", 5) != 0) {
-        log_printf("%s: not a fat16 file system, major: %x, minor: %x", dev_major, dev_minor);
+        log_printf("not a fat16 file system, major: %x, minor: %x", dev_major, dev_minor);
         goto mount_failed;
     }
 
