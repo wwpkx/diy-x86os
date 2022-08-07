@@ -14,6 +14,7 @@
 #define TTY_IBUF_SIZE				512		// tty输入缓存大小
 #define TTY_OBUF_SIZE				512		// tty输出缓存大小
 #define TTY_CMD_ECHO				0x1		// 开回显
+#define TTY_CMD_IN_COUNT			0x2		// 获取输入缓冲区中已有的数据量
 
 typedef struct _tty_fifo_t {
 	char * buf;

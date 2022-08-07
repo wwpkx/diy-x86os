@@ -347,13 +347,19 @@ static void run_builtin (const cli_cmd_t * cmd, int argc, char ** argv) {
  * 遍历搜索目录，看看文件是否存在，存在返回文件所在路径
  */
 static const char * find_exec_path (const char * file_name) {
+    static char path[255];
+
     int fd = open(file_name, 0);
     if (fd < 0) {
-        return (const char * )0;
+        sprintf(path, "%s.elf", file_name);
+        fd = open(path, 0);
+        if (fd < 0) {
+            return (const char * )0;
+        }
     }
 
     close(fd);
-    return file_name;
+    return path;
 }
 
 /**

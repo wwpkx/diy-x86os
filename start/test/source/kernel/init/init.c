@@ -72,9 +72,10 @@ void move_to_first_task(void) {
 }
 
 void init_main(void) {
+    log_printf("==============================");
     log_printf("Kernel is running....");
     log_printf("Version: %s, name: %s", OS_VERSION, "tiny x86 os");
-    log_printf("%d %d %x %c", -123, 123456, 0x12345, 'a');
+    log_printf("==============================");
 
     // 初始化任务
     task_first_init();

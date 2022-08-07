@@ -304,13 +304,14 @@ static int expand_file(file_t * file, int inc_bytes) {
         // 文件非空，当前簇的空闲量，如果空间够增长，则直接退出了
         // 例如：大小为2048，再扩充1024,簇大小为1024
         int cfree = fat->cluster_byte_size - (file->size % fat->cluster_byte_size);
-        if (cfree >= inc_bytes) {
-            file->size += inc_bytes;
+        if (cfree > inc_bytes) {
             return 0;
         }
 
-        // 不够，则分配新簇用来放额外的空间
-        cluster_cnt = up2(inc_bytes - cfree, fat->cluster_byte_size) / fat->cluster_byte_size; 
+        cluster_cnt = up2(inc_bytes - cfree, fat->cluster_byte_size) / fat->cluster_byte_size;
+        if (cluster_cnt == 0) {
+            cluster_cnt = 1;
+        }
     }
 
     cluster_t start = cluster_alloc_free(fat, cluster_cnt);

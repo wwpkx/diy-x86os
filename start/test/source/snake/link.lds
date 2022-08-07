@@ -1,7 +1,7 @@
 ENTRY(_start)
 SECTIONS
 {
-	. = 0x83000000;
+	. = 0x84000000;
 	.text : {
 		*(*.text)
 	}
