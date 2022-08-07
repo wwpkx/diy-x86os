@@ -169,6 +169,52 @@ less_quit:
     return 0;
 }
 
+static int do_cp (int argc, char ** argv) {
+    if (argc < 3) {
+        fprintf(stderr, "no [from] or no [to]");
+        return -1;
+    }
+
+    FILE * from, * to;
+    from = fopen(argv[1], "rb");
+    to = fopen(argv[2], "wb");
+    if (!from || !to) {
+        fprintf(stderr, "open file failed");
+        goto ls_failed;
+    }
+
+    char * buf = (char *)malloc(255);
+    int size;
+    while ((size = fread(buf, 1, 255, from)) > 0) {
+        fwrite(buf, 1, size, to);
+    }
+    free(buf);
+ls_failed:
+    if (from) {
+        fclose(from);
+    }
+
+    if (to) {
+        fclose(to);
+    }
+    return 0;
+}
+
+static int do_rm (int argc, char ** argv) {
+    if (argc < 2) {
+        fprintf(stderr, "no file");
+        return -1;
+    }
+
+    int err = unlink(argv[1]);
+    if (err < 0) {
+        fprintf(stderr, "rm file failed: %s", argv[1]);
+        return err;
+    }
+
+    return 0;
+}
+
 static const cli_cmd_t cmd_list[] = {
     {
         .name = "help",
@@ -196,6 +242,16 @@ static const cli_cmd_t cmd_list[] = {
         .do_func = do_less,
     },
     {
+        .name = "cp",
+        .usage = "cp src dest -- copy file",
+        .do_func = do_cp,
+    },
+    {
+        .name = "rm",
+        .usage = "rm file - remove file",
+        .do_func = do_rm,
+    },
+    {   
         .name = "quit",
         .usage = "quit from shell",
         .do_func = do_exit,
@@ -233,14 +289,24 @@ static void cli_init (const char * promot, const cli_cmd_t * cmd_list, int size)
     cli.cmd_end = cmd_list + size;
 }
 
+// cmd.exe  cmd
+// loop.elf loop
 static const char * find_exec_path(const char * filename) {
-    int fd = open(filename, 0);
-    if (fd < 0) {
-        return (const char *)0;
-    } 
+    static char path[255];
 
-    close(fd);
-    return filename;
+    int fd = open(filename, 0);  // loop loop.elf
+    if (fd < 0) {
+        sprintf(path, "%s.elf", filename);
+        fd = open(path, 0);
+        if (fd < 0) {
+            return (const char *)0;
+        }
+        close(fd);
+        return path;
+    } else {
+        close(fd);
+        return filename;
+    }
 }
 
 // shell - ls - ls0, ls1

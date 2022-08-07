@@ -25,9 +25,10 @@ diskpart /s a.txt
 del a.txt
 
 @REM 复制应用程序
-copy /Y init.elf %TARGET_PATH%:\init
-copy /Y shell.elf %TARGET_PATH%:\shell.elf
-copy /Y loop %TARGET_PATH%:\loop
+@REM copy /Y init.elf %TARGET_PATH%:\init
+@REM copy /Y shell.elf %TARGET_PATH%:\shell.elf
+@REM copy /Y loop %TARGET_PATH%:\loop
+copy /Y *.elf %TARGET_PATH%:\
 
 echo select vdisk file="%cd%\%DISK2_NAME%" >a.txt
 echo detach vdisk >>a.txt

@@ -3,7 +3,10 @@
 
 #pragma pack(1)
 
+#include "ipc/mutex.h"
+
 #define FAT_CLUSTER_INVALID         0xFFF8
+#define CLUSTER_FAT_FREE            0
 
 #define DIRITEM_NAME_FREE           0xE5
 #define DIRITEM_NAME_END            0x00
@@ -74,6 +77,7 @@ typedef struct _fat_t {
     int curr_sector;
 
     struct _fs_t * fs;
+    mutex_t mutex;
 }fat_t;
 
 typedef uint16_t cluster_t;

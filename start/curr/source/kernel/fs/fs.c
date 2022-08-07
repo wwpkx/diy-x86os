@@ -117,7 +117,7 @@ int sys_open(const char * name, int flags, ...) {
 
     fs_protect(fs);
     int err = fs->op->open(fs, name, file);
-    if (file < 0) {
+    if (err < 0) {
         fs_unprotect(fs);
         log_printf("open %s failed", name);
         goto sys_open_failed;
@@ -400,6 +400,14 @@ int sys_readdir (DIR * dir, struct dirent * dirent) {
 int sys_closedir (DIR * dir) {
     fs_protect(root_fs);
     int err = root_fs->op->closedir(root_fs, dir);
+    fs_unprotect(root_fs);
+
+    return err;
+}
+
+int sys_unlink (const char * path) {
+    fs_protect(root_fs);
+    int err = root_fs->op->unlink(root_fs, path);
     fs_unprotect(root_fs);
 
     return err;
