@@ -46,23 +46,6 @@ static void update_cursor_pos (console_t * console) {
     irq_leave_protection(state);
 }
 
-void console_set_cursor(int idx, int visiable) {
-    console_t *console = console_buf + idx;
-
-    irq_state_t state = irq_enter_protection();
-    if (visiable) {
-        outb(0x3D4, 0x0A);
-        outb(0x3D5, (inb(0x3D5) & 0xC0) | 0);
-        outb(0x3D4, 0x0B);
-        outb(0x3D5, (inb(0x3D5) & 0xE0) | 15);
-    } else {
-        outb(0x3D4, 0x0A);
-        outb(0x3D5, 0x20);
-    }
-    irq_leave_protection(state);
-}
-
-
 void console_select(int idx) {
     console_t * console = console_buf + idx;
     if (console->disp_base == 0) {

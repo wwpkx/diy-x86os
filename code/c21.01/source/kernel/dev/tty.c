@@ -209,21 +209,13 @@ int tty_control (device_t * dev, int cmd, int arg0, int arg1) {
 	case TTY_CMD_ECHO:
 		if (arg0) {
 			tty->iflags |= TTY_IECHO;
-			console_set_cursor(tty->console_idx, 1);
 		} else {
 			tty->iflags &= ~TTY_IECHO;
-			console_set_cursor(tty->console_idx, 0);
-		}
-		break;
-	case TTY_CMD_IN_COUNT:
-		if (arg0) {
-			*(int *)arg0 = sem_count(&tty->isem);
 		}
 		break;
 	default:
 		break;
 	}
-	return 0;
 }
 
 /**

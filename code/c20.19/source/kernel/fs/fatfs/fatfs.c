@@ -155,12 +155,11 @@ int diritem_name_match (diritem_t * item, const char * path) {
 /**
  * 缺省初始化driitem
  */
-int diritem_init(diritem_t * item, uint8_t attr,
-		const char * name, cluster_t cluster, uint32_t size) {
+int diritem_init(diritem_t * item, uint8_t attr,const char * name) {
     to_sfn((char *)item->DIR_Name, name);
-    item->DIR_FstClusHI = (uint16_t )(cluster >> 16);
-    item->DIR_FstClusL0 = (uint16_t )(cluster & 0xFFFF);
-    item->DIR_FileSize = size;
+    item->DIR_FstClusHI = (uint16_t )(FAT_CLUSTER_INVALID >> 16);
+    item->DIR_FstClusL0 = (uint16_t )(FAT_CLUSTER_INVALID & 0xFFFF);
+    item->DIR_FileSize = 0;
     item->DIR_Attr = attr;
     item->DIR_NTRes = 0;
 
@@ -393,7 +392,7 @@ int fatfs_open (struct _fs_t * fs, const char * path, file_t * file) {
     } else if ((file->mode & O_CREAT) && (p_index >= 0)) {
         // 创建一个空闲的diritem项
         diritem_t item;
-        diritem_init(&item, 0, path, FAT_CLUSTER_INVALID, 0);
+        diritem_init(&item, 0, path);
         int err = write_dir_entry(fat, &item, p_index);
         if (err < 0) {
             log_printf("create file failed.");

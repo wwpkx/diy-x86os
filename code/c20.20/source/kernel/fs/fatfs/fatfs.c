@@ -199,12 +199,11 @@ int diritem_name_match (diritem_t * item, const char * path) {
 /**
  * 缺省初始化driitem
  */
-int diritem_init(diritem_t * item, uint8_t attr,
-		const char * name, cluster_t cluster, uint32_t size) {
+int diritem_init(diritem_t * item, uint8_t attr,const char * name) {
     to_sfn((char *)item->DIR_Name, name);
-    item->DIR_FstClusHI = (uint16_t )(cluster >> 16);
-    item->DIR_FstClusL0 = (uint16_t )(cluster & 0xFFFF);
-    item->DIR_FileSize = size;
+    item->DIR_FstClusHI = (uint16_t )(FAT_CLUSTER_INVALID >> 16);
+    item->DIR_FstClusL0 = (uint16_t )(FAT_CLUSTER_INVALID & 0xFFFF);
+    item->DIR_FileSize = 0;
     item->DIR_Attr = attr;
     item->DIR_NTRes = 0;
 
@@ -350,8 +349,6 @@ static int move_file_pos(file_t* file, fat_t * fat, uint32_t move_bytes, int exp
             }
 
             next = cluster_get_next(fat, file->cblk);
-            log_printf("expand %d, file size: %d", move_bytes, file->size);
-
         }
 
         file->cblk = next;
@@ -400,8 +397,6 @@ int fatfs_mount (struct _fs_t * fs, int dev_major, int dev_minor) {
     fat->data_start = fat->root_start + fat->root_ent_cnt * 32 / SECTOR_SIZE;
     fat->curr_sector = -1;
     fat->fs = fs;
-    mutex_init(&fat->mutex);
-    fs->mutex = &fat->mutex;
 
 	// 简单检查是否是fat16文件系统, 可以在下边做进一步的更多检查。此处只检查做一点点检查
 	if (fat->tbl_cnt != 2) {
@@ -494,10 +489,11 @@ int fatfs_open (struct _fs_t * fs, const char * path, file_t * file) {
             file->cblk = file->sblk = FAT_CLUSTER_INVALID;
             file->size = 0;
         }
+        return 0;
     } else if ((file->mode & O_CREAT) && (p_index >= 0)) {
         // 创建一个空闲的diritem项
         diritem_t item;
-        diritem_init(&item, 0, path, FAT_CLUSTER_INVALID, 0);
+        diritem_init(&item, 0, path);
         int err = write_dir_entry(fat, &item, p_index);
         if (err < 0) {
             log_printf("create file failed.");
@@ -505,9 +501,10 @@ int fatfs_open (struct _fs_t * fs, const char * path, file_t * file) {
         }
 
         read_from_diritem(fat, file, &item, p_index);
+        return 0;
     }
 
-    return 0;
+    return -1;
 }
 
 /**
@@ -619,6 +616,8 @@ int fatfs_write (char * buf, int size, file_t * file) {
         buf += curr_write;
         nbytes -= curr_write;
         total_write += curr_write;
+
+        // 不考虑不截断文件的写入，这样计算文件大小略麻烦
         file->size += curr_write;
 
         // 前移文件指针

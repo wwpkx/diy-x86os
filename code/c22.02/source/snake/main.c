@@ -200,6 +200,13 @@ static void move_forward (int dir) {
 		return;
 	}
 
+	body_part_t * next_part = snake.head->next;
+	if (next_part) {
+		if ((next_row == next_part->row) && (next_col == next_part->col)) {
+			return;
+		}
+	}
+
 	// 先不管有没有食物，都生成一个头部，然后前移
 	add_head(next_row, next_col);
 

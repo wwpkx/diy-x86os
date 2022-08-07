@@ -229,10 +229,8 @@ static int do_cp (int argc, char ** argv) {
 
     char * buf = (char *)malloc(255);
     int size = 0;
-    int total = 0;
     while ((size = fread(buf, 1, 255, from)) > 0) {
         fwrite(buf, 1, size, to);
-        total += size;
     }
     free(buf);
 
