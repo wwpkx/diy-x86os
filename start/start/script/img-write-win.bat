@@ -1,10 +1,12 @@
 if not exist "disk1.vhd" (
     echo "disk1.vhd not found in image directory"
+    notepad win_error.txt
     exit -1
 )
 
 if not exist "disk2.vhd" (
     echo "disk2.vhd not found in image directory"
+    notepad win_error.txt
     exit -1
 )
 
