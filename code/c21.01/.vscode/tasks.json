@@ -8,10 +8,9 @@
             "type": "shell",
             "command": "bash ${workspaceRoot}/script/img-write-osx.sh",
             "windows": {
-                // windows下特殊一些
-                "command": "${workspaceRoot}/script/img-write-win.bat",
+                "command": "${workspaceRoot}/script/img-write-win.bat"
             },
-            "linux":{
+            "linux": {
                 "command": "bash ${workspaceRoot}/script/img-write-linux.sh"
             },
             "options": {
@@ -23,15 +22,15 @@
             "type": "shell",
             "command": "bash ${workspaceRoot}/script/qemu-debug-osx.sh",
             "windows": {
-                // windows下特殊一些
-                "command": "${workspaceRoot}/script/qemu-debug-win.bat",
+                "command": "${workspaceRoot}/script/qemu-debug-win.bat"
             },
-            "linux":{
-                "command": "bash ${workspaceRoot}/script/qemu-debug-linux.sh",
+            "linux": {
+                "command": "bash ${workspaceRoot}/script/qemu-debug-linux.sh"
             },
             "options": {
                 "cwd": "${workspaceRoot}/../../image/"
-            }
+            },
+            "problemMatcher": []
         },
         {
             "label": "调试准备",
@@ -39,7 +38,7 @@
             "dependsOn": [
                 "写映像文件",
                 "启动qemu"
-            ],
+            ]
         }
     ]
 }
