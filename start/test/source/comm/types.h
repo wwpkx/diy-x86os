@@ -8,7 +8,9 @@
 #ifndef TYPES_H
 #define TYPES_H
 
-// 基本整数类型
+// 基本整数类型，下面的写法和视频中的不同，加了一些宏处理
+// 主要是因为将要使用newlib库，newlib有同样使用typedef定义uint8_t类型
+// 为了避免冲突，加上_UINT8_T_DECLARED的配置
 #ifndef _UINT8_T_DECLARED
 #define _UINT8_T_DECLARED
 typedef unsigned char uint8_t;
