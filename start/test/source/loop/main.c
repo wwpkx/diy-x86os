@@ -12,7 +12,7 @@
 #include <getopt.h>
 #include <stdlib.h>
 #include <sys/file.h>
-#include "fs/file.h"
+//#include "fs/file.h"
 
 int main (int argc, char ** argv) {
     // 要加上这个，不然libapp不会被加入编译链接中
