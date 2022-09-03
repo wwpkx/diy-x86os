@@ -356,10 +356,12 @@ static const char * find_exec_path (const char * file_name) {
         if (fd < 0) {
             return (const char * )0;
         }
+        close(fd);
+        return path;
+    } else {
+        close(fd);
+        return file_name;
     }
-
-    close(fd);
-    return path;
 }
 
 /**
@@ -451,4 +453,4 @@ int main (int argc, char **argv) {
     }
 
     return 0;
-}
+}   

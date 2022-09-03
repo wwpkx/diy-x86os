@@ -2,8 +2,18 @@ if [ -f "disk1.vhd" ]; then
     mv disk1.vhd disk1.dmg
 fi
 
+if [ ! -f "disk1.dmg" ]; then
+    echo "error: no disk1.vhd, download it first!!!"
+    exit -1
+fi
+
 if [ -f "disk2.vhd" ]; then
     mv disk2.vhd disk2.dmg
+fi
+
+if [ ! -f "disk2.dmg" ]; then
+    echo "error: no disk2.vhd, download it first!!!"
+    exit -1
 fi
 
 export DISK1_NAME=disk1.dmg
