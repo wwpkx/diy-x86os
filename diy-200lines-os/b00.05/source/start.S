@@ -40,7 +40,7 @@ read_self_all:
 
 	//  加载idt和gdt表, 进入保护模式
 	cli					// 关中断
-	lgdt [gdt_desc]		// 加载gdt表
+	lgdt gdt_desc		// 加载gdt表，原来写的是[gdt_desc]，在windows上不识别，所以改了
 	mov $1, %eax
 	lmsw %ax			// 设置PE位，进入保护模式
 	jmp $KERNEL_CODE_SEG, $_start_32	// 进入32位保护模式代码，可以运行32位指令

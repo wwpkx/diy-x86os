@@ -6,7 +6,7 @@
        {
             "label": "启动qemu",
             "type": "shell",
-            "command": "qemu-system-i386 -m 128M -s -S  -drive file=disk.img,index=0,media=disk,format=raw -d int",
+            "command": "bash ${workspaceRoot}/script/qemu-debug-osx.sh",
             "windows": {
                 // windows下特殊一些
                 "command": "${workspaceRoot}/script/qemu-debug-win.bat",
@@ -15,7 +15,7 @@
                 "command": "bash ${workspaceRoot}/script/qemu-debug-linux.sh",
             },
             "options": {
-                "cwd": "${workspaceRoot}/../image"
+                "cwd": "${workspaceRoot}/../image/"
             }
         },
     ]
