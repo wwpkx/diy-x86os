@@ -1,0 +1,15 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0", 
+    "tasks": [
+       {
+            "label": "启动qemu",
+            "type": "shell",
+            "command": "qemu-system-i386 -m 128M -s -S  -drive file=disk.img,index=0,media=disk,format=raw -d int",
+            "options": {
+                "cwd": "${workspaceRoot}/../image"
+            }
+        },
+    ]
+}
