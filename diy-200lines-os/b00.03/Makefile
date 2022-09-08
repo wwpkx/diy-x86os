@@ -8,8 +8,11 @@
 
 # 工具链前缀，如果是windows和mac，使用x86_64-elf-
 # 如果是linux，使用x86_64-linux-gnu-
-TOOL_PREFIX = x86_64-elf-
-// TOOL_PREFIX = x86_64-linux-gnu-
+ifeq ($(LANG),)
+	TOOL_PREFIX = x86_64-linux-gnu-
+else
+	TOOL_PREFIX = x86_64-elf-
+endif
 
 # GCC编译参数
 CFLAGS = -g -c -O0 -m32 -fno-pie -fno-stack-protector -nostdlib -nostdinc

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="78abeb53-9ed2-4c95-a994-e7ca090e564d" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/b00.00/script/qemu-debug-linux.sh" beforeDir="false" afterPath="$PROJECT_DIR$/b00.00/script/qemu-debug-linux.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/b00.00/script/qemu-debug-osx.sh" beforeDir="false" afterPath="$PROJECT_DIR$/b00.00/script/qemu-debug-osx.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/b00.00/script/qemu-debug-win.bat" beforeDir="false" afterPath="$PROJECT_DIR$/b00.00/script/qemu-debug-win.bat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/b00.01/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/b00.01/Makefile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/b00.01/script/qemu-debug-linux.sh" beforeDir="false" afterPath="$PROJECT_DIR$/b00.01/script/qemu-debug-linux.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/b00.01/script/qemu-debug-osx.sh" beforeDir="false" afterPath="$PROJECT_DIR$/b00.01/script/qemu-debug-osx.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/b00.01/script/qemu-debug-win.bat" beforeDir="false" afterPath="$PROJECT_DIR$/b00.01/script/qemu-debug-win.bat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/b00.02/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/b00.02/Makefile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/b00.02/script/qemu-debug-linux.sh" beforeDir="false" afterPath="$PROJECT_DIR$/b00.02/script/qemu-debug-linux.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/b00.02/script/qemu-debug-osx.sh" beforeDir="false" afterPath="$PROJECT_DIR$/b00.02/script/qemu-debug-osx.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/b00.02/script/qemu-debug-win.bat" beforeDir="false" afterPath="$PROJECT_DIR$/b00.02/script/qemu-debug-win.bat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/b00.03/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/b00.03/Makefile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/b00.03/script/qemu-debug-linux.sh" beforeDir="false" afterPath="$PROJECT_DIR$/b00.03/script/qemu-debug-linux.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/b00.03/script/qemu-debug-osx.sh" beforeDir="false" afterPath="$PROJECT_DIR$/b00.03/script/qemu-debug-osx.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/b00.03/script/qemu-debug-win.bat" beforeDir="false" afterPath="$PROJECT_DIR$/b00.03/script/qemu-debug-win.bat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/b00.04/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/b00.04/Makefile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/b00.04/script/qemu-debug-linux.sh" beforeDir="false" afterPath="$PROJECT_DIR$/b00.04/script/qemu-debug-linux.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/b00.04/script/qemu-debug-osx.sh" beforeDir="false" afterPath="$PROJECT_DIR$/b00.04/script/qemu-debug-osx.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/b00.04/script/qemu-debug-win.bat" beforeDir="false" afterPath="$PROJECT_DIR$/b00.04/script/qemu-debug-win.bat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/b00.05/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/b00.05/Makefile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/b00.05/script/qemu-debug-linux.sh" beforeDir="false" afterPath="$PROJECT_DIR$/b00.05/script/qemu-debug-linux.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/b00.05/script/qemu-debug-osx.sh" beforeDir="false" afterPath="$PROJECT_DIR$/b00.05/script/qemu-debug-osx.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/b00.05/script/qemu-debug-win.bat" beforeDir="false" afterPath="$PROJECT_DIR$/b00.05/script/qemu-debug-win.bat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/b00.06/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/b00.06/Makefile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/b00.06/script/qemu-debug-linux.sh" beforeDir="false" afterPath="$PROJECT_DIR$/b00.06/script/qemu-debug-linux.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/b00.06/script/qemu-debug-osx.sh" beforeDir="false" afterPath="$PROJECT_DIR$/b00.06/script/qemu-debug-osx.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/b00.06/script/qemu-debug-win.bat" beforeDir="false" afterPath="$PROJECT_DIR$/b00.06/script/qemu-debug-win.bat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/b00.06/source/os.c" beforeDir="false" afterPath="$PROJECT_DIR$/b00.06/source/os.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/b00.07/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/b00.07/Makefile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/b00.07/script/qemu-debug-linux.sh" beforeDir="false" afterPath="$PROJECT_DIR$/b00.07/script/qemu-debug-linux.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/b00.07/script/qemu-debug-osx.sh" beforeDir="false" afterPath="$PROJECT_DIR$/b00.07/script/qemu-debug-osx.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/b00.07/script/qemu-debug-win.bat" beforeDir="false" afterPath="$PROJECT_DIR$/b00.07/script/qemu-debug-win.bat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/b00.07/source/os.c" beforeDir="false" afterPath="$PROJECT_DIR$/b00.07/source/os.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/b00.08/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/b00.08/Makefile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/b00.08/script/qemu-debug-linux.sh" beforeDir="false" afterPath="$PROJECT_DIR$/b00.08/script/qemu-debug-linux.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/b00.08/script/qemu-debug-osx.sh" beforeDir="false" afterPath="$PROJECT_DIR$/b00.08/script/qemu-debug-osx.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/b00.08/script/qemu-debug-win.bat" beforeDir="false" afterPath="$PROJECT_DIR$/b00.08/script/qemu-debug-win.bat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/b00.08/source/os.c" beforeDir="false" afterPath="$PROJECT_DIR$/b00.08/source/os.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/b00.09/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/b00.09/Makefile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/b00.09/script/qemu-debug-linux.sh" beforeDir="false" afterPath="$PROJECT_DIR$/b00.09/script/qemu-debug-linux.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/b00.09/script/qemu-debug-osx.sh" beforeDir="false" afterPath="$PROJECT_DIR$/b00.09/script/qemu-debug-osx.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/b00.09/script/qemu-debug-win.bat" beforeDir="false" afterPath="$PROJECT_DIR$/b00.09/script/qemu-debug-win.bat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/b00.09/source/os.c" beforeDir="false" afterPath="$PROJECT_DIR$/b00.09/source/os.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/b00.10/os_elf.txt" beforeDir="false" afterPath="$PROJECT_DIR$/b00.10/os_elf.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/b00.10/script/qemu-debug-linux.sh" beforeDir="false" afterPath="$PROJECT_DIR$/b00.10/script/qemu-debug-linux.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/b00.10/script/qemu-debug-osx.sh" beforeDir="false" afterPath="$PROJECT_DIR$/b00.10/script/qemu-debug-osx.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/b00.10/script/qemu-debug-win.bat" beforeDir="false" afterPath="$PROJECT_DIR$/b00.10/script/qemu-debug-win.bat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/b00.10/source/os.c" beforeDir="false" afterPath="$PROJECT_DIR$/b00.10/source/os.c" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectId" id="2EURn3P3xgj3VQK2pVIK0echSaR" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "last_opened_file_path": "D:/tongban/diy-x86os/diy-200lines-os"
+  }
+}]]></component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="78abeb53-9ed2-4c95-a994-e7ca090e564d" name="Changes" comment="" />
+      <created>1662648340119</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1662648340119</updated>
+    </task>
+    <servers />
+  </component>
+</project>

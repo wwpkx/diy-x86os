@@ -1,0 +1,105 @@
+ELF Header:
+  Magic:   7f 45 4c 46 01 01 01 00 00 00 00 00 00 00 00 00 
+  Class:                             ELF32
+  Data:                              2's complement, little endian
+  Version:                           1 (current)
+  OS/ABI:                            UNIX - System V
+  ABI Version:                       0
+  Type:                              EXEC (Executable file)
+  Machine:                           Intel 80386
+  Version:                           0x1
+  Entry point address:               0x7c00
+  Start of program headers:          52 (bytes into file)
+  Start of section headers:          21688 (bytes into file)
+  Flags:                             0x0
+  Size of this header:               52 (bytes)
+  Size of program headers:           32 (bytes)
+  Number of program headers:         2
+  Size of section headers:           40 (bytes)
+  Number of section headers:         14
+  Section header string table index: 13
+
+Section Headers:
+  [Nr] Name              Type            Addr     Off    Size   ES Flg Lk Inf Al
+  [ 0]                   NULL            00000000 000000 000000 00      0   0  0
+  [ 1] .text             PROGBITS        00007c00 000c00 000423 00  AX  0   0  1
+  [ 2] .eh_frame         PROGBITS        00008024 001024 0000b0 00   A  0   0  4
+  [ 3] .data             PROGBITS        0000a000 002000 0028ec 00  WA  0   0 4096
+  [ 4] .bss              NOBITS          0000d000 0048ec 005800 00  WA  0   0 4096
+  [ 5] .comment          PROGBITS        00000000 0048ec 000011 01  MS  0   0  1
+  [ 6] .debug_aranges    PROGBITS        00000000 004900 000040 00      0   0  8
+  [ 7] .debug_info       PROGBITS        00000000 004940 00032a 00      0   0  1
+  [ 8] .debug_abbrev     PROGBITS        00000000 004c6a 000146 00      0   0  1
+  [ 9] .debug_line       PROGBITS        00000000 004db0 000105 00      0   0  1
+  [10] .debug_str        PROGBITS        00000000 004eb5 0001d8 01  MS  0   0  1
+  [11] .symtab           SYMTAB          00000000 005090 000280 10     12  20  4
+  [12] .strtab           STRTAB          00000000 005310 000127 00      0   0  1
+  [13] .shstrtab         STRTAB          00000000 005437 00007f 00      0   0  1
+Key to Flags:
+  W (write), A (alloc), X (execute), M (merge), S (strings), I (info),
+  L (link order), O (extra OS processing required), G (group), T (TLS),
+  C (compressed), x (unknown), o (OS specific), E (exclude),
+  p (processor specific)
+
+There are no section groups in this file.
+
+Program Headers:
+  Type           Offset   VirtAddr   PhysAddr   FileSiz MemSiz  Flg Align
+  LOAD           0x000000 0x00007000 0x00007000 0x010d4 0x010d4 R E 0x1000
+  LOAD           0x002000 0x0000a000 0x0000a000 0x028ec 0x08800 RW  0x1000
+
+ Section to Segment mapping:
+  Segment Sections...
+   00     .text .eh_frame 
+   01     .data .bss 
+
+There is no dynamic section in this file.
+
+There are no relocations in this file.
+
+The decoding of unwind sections for machine type Intel 80386 is not currently supported.
+
+Symbol table '.symtab' contains 40 entries:
+   Num:    Value  Size Type    Bind   Vis      Ndx Name
+     0: 00000000     0 NOTYPE  LOCAL  DEFAULT  UND 
+     1: 00007c00     0 SECTION LOCAL  DEFAULT    1 
+     2: 00008024     0 SECTION LOCAL  DEFAULT    2 
+     3: 0000a000     0 SECTION LOCAL  DEFAULT    3 
+     4: 0000d000     0 SECTION LOCAL  DEFAULT    4 
+     5: 00000000     0 SECTION LOCAL  DEFAULT    5 
+     6: 00000000     0 SECTION LOCAL  DEFAULT    6 
+     7: 00000000     0 SECTION LOCAL  DEFAULT    7 
+     8: 00000000     0 SECTION LOCAL  DEFAULT    8 
+     9: 00000000     0 SECTION LOCAL  DEFAULT    9 
+    10: 00000000     0 SECTION LOCAL  DEFAULT   10 
+    11: 00000000     0 FILE    LOCAL  DEFAULT  ABS start.o
+    12: 00007c0f     0 NOTYPE  LOCAL  DEFAULT    1 read_self_all
+    13: 00007e00     0 NOTYPE  LOCAL  DEFAULT    1 _start_32
+    14: 00007e6b     0 NOTYPE  LOCAL  DEFAULT    1 gdt_desc
+    15: 00007e71     0 NOTYPE  LOCAL  DEFAULT    1 idt_desc
+    16: 00007e4b     0 NOTYPE  LOCAL  DEFAULT    1 task_0_entry
+    17: 00000000     0 FILE    LOCAL  DEFAULT  ABS os.c
+    18: 0000a000  4096 OBJECT  LOCAL  DEFAULT    3 pg_table
+    19: 0000c8e8     4 OBJECT  LOCAL  DEFAULT    3 task_tss.1769
+    20: 0000c0e8  2048 OBJECT  GLOBAL DEFAULT    3 gdt_table
+    21: 0000d000  4096 OBJECT  GLOBAL DEFAULT    4 task0_dpl3_stack
+    22: 0000e000  4096 OBJECT  GLOBAL DEFAULT    4 task1_dpl3_stack
+    23: 00007e77    22 FUNC    GLOBAL DEFAULT    1 task_0
+    24: 0000c000   104 OBJECT  GLOBAL DEFAULT    3 task0_tss
+    25: 0000f000  4096 OBJECT  GLOBAL DEFAULT    4 map_phy_buffer
+    26: 00007efa   297 FUNC    GLOBAL DEFAULT    1 os_init
+    27: 00007e57     0 NOTYPE  GLOBAL DEFAULT    1 timer_init
+    28: 00010000  4096 OBJECT  GLOBAL DEFAULT    4 task1_dpl0_stack
+    29: 0000c080   104 OBJECT  GLOBAL DEFAULT    3 task1_tss
+    30: 00007c00     0 NOTYPE  GLOBAL DEFAULT    1 _start
+    31: 00007ea3    31 FUNC    GLOBAL DEFAULT    1 outb
+    32: 0000c8ec     0 NOTYPE  GLOBAL DEFAULT    4 __bss_start
+    33: 0000b000  4096 OBJECT  GLOBAL DEFAULT    3 pg_dir
+    34: 0000c8ec     0 NOTYPE  GLOBAL DEFAULT    3 _edata
+    35: 00012800     0 NOTYPE  GLOBAL DEFAULT    4 _end
+    36: 00007e8d    22 FUNC    GLOBAL DEFAULT    1 task_1
+    37: 00011000  2048 OBJECT  GLOBAL DEFAULT    4 idt_table
+    38: 00011800  4096 OBJECT  GLOBAL DEFAULT    4 task0_dpl0_stack
+    39: 00007ec2    56 FUNC    GLOBAL DEFAULT    1 task_sched
+
+No version information found in this file.

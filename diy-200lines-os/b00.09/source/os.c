@@ -20,7 +20,7 @@ typedef unsigned int uint32_t;
  * @brief 系统调用的API处理函数
  */
 void do_syscall (int func, char *str, char color) {
-    static int row = 0;
+    static int row = 1;     // 初始值不能为0，否则其初始化值不确定
 
     if (func == 2) {
         // 显示器共80列，25行，按字符显示，每个字符需要用两个字节表示
@@ -170,7 +170,7 @@ void os_init (void) {
     outb(0xff, 0xa1);       // 屏幕所有中断
 
     // 设置定时器，每100ms中断一次
-    int tmo = (1193180 / 100);      // 时钟频率为1193180
+    int tmo = (1193180 / 10);      // 时钟频率为1193180
     outb(0x36, 0x43);               // 二进制计数、模式3、通道0
     outb((uint8_t)tmo, 0x40);
     outb(tmo >> 8, 0x40);
